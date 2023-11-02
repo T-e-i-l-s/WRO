@@ -1,0 +1,53 @@
+
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+
+code[1] = 0
+
+Sub Read_Color
+  If ((Sensor.ReadPercent(3) + Sensor.ReadPercent(2)) / 2 < 30) Then
+    color = "Black"
+  Else
+    color = "White"
+  EndIf
+EndSub
+
+Sub Read_Code
+  Sensor.SetMode(1, 0)
+  Sensor.SetMode(2, 0)
+  err = 0
+  Motor.ResetCount("BC")
+  For i = 1 To 4
+    Read_Color()
+    While (color = "White")
+      Program.Delay(3)
+      Read_Color()
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", -15 + err * 2, 15 + err * 2)
+    EndWhile
+    a = (Math.Abs(Motor.GetCount("B")) + Math.Abs(Motor.GetCount("C"))) / 2
+    Motor.ResetCount("BC")
+    While ((Math.Abs(Motor.GetCount("B")) + Math.Abs(Motor.GetCount("C"))) / 2 < 7)
+      Program.Delay(2)
+    EndWhile
+    Read_Color()
+    While (color = "Black")
+      Program.Delay(3)
+      Read_Color()
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", -15 + err * 2, 15 + err * 2)
+    EndWhile
+    length = 62.4 * Math.Pi / 360 * ((Math.Abs(Motor.GetCount("B")) + Math.Abs(Motor.GetCount("C"))) / 2) / 10
+    code[i] = Math.Floor(length)
+  EndFor
+  Motor.Stop("BC", "True")
+  x1 = code[1]
+  x2 = code[2]
+  x3 = code[3]
+EndSub
+Read_Code()
+LCD.Clear()
+LCD.Text(1,1,20,20,x1)
+LCD.Text(1,1,45,20,x2)
+LCD.Text(1,1,70,20,x3)
+Program.Delay(2000000000000)

@@ -1,0 +1,41 @@
+Sensor.SetMode(1,4)
+Sensor.SetMode(4,4)
+While "true"
+
+  Col =Sensor.ReadRaw(1,2)
+  RGB1 = Col[0] + Col[1] + Col[2]
+  Col =Sensor.ReadRaw(4,2)
+  RGB4 = Col[0] + Col[1] + Col[2]
+  
+  
+  if 9<RGB1 And RGB1<17 Then
+    color1 = 5
+  ElseIf 1<RGB1 And RGB1<5 Then
+    color1 = 1
+  ElseIf 19<RGB1 And RGB1<30 Then
+    color1 = 6
+  Else
+    color1 = 0
+  EndIf
+  
+  
+  if 9<RGB4 And RGB4<17 Then
+    color4 = 5
+  ElseIf 1<RGB4 And RGB4<5 Then
+    color4 = 1
+  ElseIf 19<RGB4 And RGB4<30 Then
+    color4 = 6
+  Else
+    color4 = 0
+  EndIf
+  
+  
+  LCD.Clear()
+  LCD.Text(1,50,50,2,RGB1)
+  LCD.Text(1,90,50,2,RGB4)
+  LCD.Text(1,50,80,2,color1)
+  LCD.Text(1,90,80,2,color4)
+  
+  Program.Delay(1000)
+  
+EndWhile

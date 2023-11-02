@@ -1,0 +1,1647 @@
+Motor.Invert("b")'  Переменные цветов
+g=0
+r=0
+y=0
+w=0
+color=0
+x=0
+c=0
+S=0
+max2=0
+max3=0
+min2=0
+min3=0
+Sensor.SetMode(1,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+k1=0.15
+k2=8
+k3=0.2
+S3=0
+S2=0
+Speed=0
+Speedl=0
+Speedr=0
+eold=0
+n=0
+
+p=0
+i=0
+I2CPORT = 1 'Порт
+I2CSLVADDR = 1 'Адрес
+
+' ========= САБЫ ======================================
+Sub us 'ускоренная езда по энкодерам до перекрестка
+  'k1=0.1
+  L=3.14*80
+  X=0
+  X=360/L*S
+  
+  Motor.ResetCount("bc")
+  While (Motor.GetCount("b")+Motor.GetCount("c"))/2<x
+    a3()
+    a2()
+    speed=80
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  a3()
+  a2()
+  While S3>15 And S2>15 Or S3<15 And S2<15 ' доезд до линии
+    a3()
+    a2()
+    speed=60
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+EndSub
+'=====================================================
+Sub pl 'Поворот налево к лампочкам
+  Motor.MoveSync("bc",30,30,50,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S2>15
+    a3()
+    a2()
+    Motor.StartSync("bc",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  While S2<15
+    a3()
+    a2()
+    Motor.StartSync("bc",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+'=====================================================
+'=====================================================
+Sub pr 'Поворот направо к лампочкам
+  Motor.MoveSync("bc",30,30,60,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S3>15
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  While S3<15
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+'=====================================================
+Sub npl 'отъезд-поворот-налево
+  a2()
+  a3()
+  'отъезд назад до черной линии
+  While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>10 And S2<10 'отъезд
+    a2()
+    a3()
+    Motor.StartPower("bc",-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  Motor.MoveSync("bc",20,20,50,"true")
+  Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",-20,20,90,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S2>10
+    a3()
+    a2()
+    Motor.StartSync("bc",-20,20)
+  EndWhile
+  'Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S2<60
+    a3()
+    a2()
+    Motor.StartSync("bc",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+ ' zamoroz()
+EndSub
+'=====================================================
+'=====================================================
+Sub npp 'отъезд-поворот направо
+  a2()
+  a3()
+  'отъезд назад до черной линии
+  While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>10 And S2<10 'отъезд
+    a2()
+    a3()
+    Motor.StartPower("bc",-60)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  Motor.MoveSync("bc",60,60,90,"true")
+  Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",30,-30,90,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S3>10
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  'Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S3<60
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+'=====================================================
+Sub redl ' Отвоз красной лампы если она по счету ПЕРВАЯ
+  
+   Thread.Run = zadvig ' ПАРАЛЛЕЛЬНЫЙ ПОТОК - задвижение
+  a3()
+  a2()
+  While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>10 And S2<10
+    a3()
+    a2()
+    Speed=80
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",30,30,70,"true")
+  Motor.MoveSync("bc",30,-30,180,"true") ' поворот направо к мусорке
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'zamoroz()
+  Motor.ResetCount("bc")
+  
+  a2()
+  a3()
+  While Motor.GetCount("b")<400
+    a2()
+    a3()
+    Speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  Motor.Start("d",-30)
+  Program.Delay(500)
+  Motor.Stop("d","true")
+  
+  Motor.MoveSync("bc",40,40,150,"true")
+  Motor.MoveSync("bc",0,-80,400,"true")
+  Motor.MoveSync("bc",30,30,100,"true")
+ Motor.MoveSync("bc",30,30,70,"true")
+  Motor.MoveSync("bc",30,-30,180,"true")
+  a2()
+  a3()
+  While Sensor.ReadPercent(3)>6
+    a2()
+    a3()
+    Speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+ Motor.MoveSync("bc",30,30,50,"true")
+  Motor.MoveSync("bc",-30,30,180,"true") ' поворот направо к мусорке
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+EndSub
+'=======================================================
+'САБ =======================================================
+'езда от Мусорки до первого устр-ва умного дома потом до 1-ой белой лампы и возврат на линию
+Sub bellam
+  While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+    Motor.Stop("bc","true")
+    Motor.MoveSync("bc",30,30,50,"true")
+'zamoroz()
+
+a3()
+a2()
+While S3>15
+a3()
+a2()
+  Motor.StartSync("bc",30,-30)
+EndWhile
+Motor.Stop("bc","true")
+a3()
+a2()
+While S3<15
+a3()
+a2()
+  Motor.StartSync("bc",30,-30)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+
+  'a2()
+  'a3()
+  'While S2>10
+  'Motor.StartSync("bc",30,0)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'zamoroz()
+  
+  'a2()
+  'a3()
+  'While Sensor.ReadPercent(2)>55
+  '  Motor.StartSync("bc",20,-20)
+ ' EndWhile
+  'Motor.Stop("bc","true")
+   
+  'a3()
+  'a2()
+  'While S3>10 And S2>10 Or S3<10 And S2<10
+   ' a3()
+   ' a2()
+   ' speed=50
+   ' polin2d()
+ ' EndWhile
+  'Motor.Stop("bc","true")
+  
+ 
+  'zamoroz()
+ Motor.ResetCount("bc")
+   While Motor.GetCount("b")<200 'от 1-ой базы до поворота на мусорку
+    Speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  For i=1 To 1
+    a3()
+    a2()
+    While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+    Motor.Stop("bc","true")
+    Motor.MoveSync("bc",30,30,50,"true")
+  EndFor
+  'zamoroz()
+  'Motor.MoveSync("bc",20,20,20,"true")
+Motor.Stop("bc","true")
+'zamoroz()
+a3()
+  a2()
+  j=80
+While S3>15
+a3()
+    a2()
+    If j>30 Then
+      j=j-0.1
+      EndIf
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+a3()
+  a2()
+  j=80
+While S3<25
+a3()
+    a2()
+    
+    If j>30 Then
+      j=j-0.1
+      EndIf
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+  'Motor.MoveSync("bc",30,30,20,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,-30,100,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",50,-30,70,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,0,50,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,-30,30,"true")
+  'zamoroz()
+  
+  Motor.ResetCount("bc")
+  While (Motor.GetCount("b")+Motor.GetCount("c"))/2<50
+    a3()
+    a2()
+    speed=30
+   a3()
+  a2()
+  e=S3-((min3+max3)/2)
+  u=k1*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  Motor.MoveSync("bc",30,30,50,"true")
+  
+  Motor.Start("d",50) ' ==== забрали 1-ую белую лампу и поехали на отвоз ее ===================
+  Program.Delay(500)
+  Motor.Stop("bc","true")
+    Motor.MoveSync("bc",-30,-30,50,"true")
+    Motor.MoveSync("bc",20,0,350,"true")
+   a2()
+  a3()
+  'отъезд назад до черной линии
+  While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>6 And S2<6 'отъезд
+    a2()
+    a3()
+    Motor.StartPower("bc",20)
+  EndWhile
+  Motor.Stop("bc","true")
+
+
+  Motor.MoveSync("bc",30,30,70,"true")
+Motor.Stop("bc","true")
+'zamoroz()
+
+a3()
+a2()
+While S3>10
+a3()
+a2()
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+
+a3()
+a2()
+While S3<15
+a3()
+a2()
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+  Program.Delay(100)
+'Motor.MoveSync("bc",0,20,50,"true")
+
+EndSub
+
+'=======================================================
+' Саб езда от Мусорки до 2-ой белой лампы и возврат на линию
+Sub bellam2
+  'Thread.Run = zadvig
+  
+  'Program.Delay(100)
+  
+  'Motor.MoveSync("bc",30,30,80,"true")
+  'Motor.ResetCount("bc")
+  
+  'Motor.MoveSync("bc",-30,30,210,"true")
+  'zamoroz()
+  'Motor.Stop("bc","true")
+  Motor.MoveSync("bc",30,30,70,"true")
+  Motor.MoveSync("bc",-30,30,180,"true")
+  'zamoroz()
+  
+  a2()
+  a3()
+  While Sensor.ReadPercent(2)>60
+    Motor.StartSync("bc",10,-10)
+  EndWhile
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,30,50,"true")
+  
+  a2()
+  a3()
+  While (Motor.GetCount("b")+Motor.GetCount("c"))/2<80
+    a3()
+    a2()
+    speed=60
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  'a3()
+  'a2()
+  'While S3>10 And S2>10 Or S3<10 And S2<10
+  '  a3()
+  ' speed=30
+  ' polin2d()
+  
+  ' EndWhile
+  'Motor.Stop("bc","true")
+  'Motor.MoveSync("bc",30,30,70,"true")
+  'Motor.MoveSync("bc",30,-30,210,"true")
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'a3()
+  'L=3.14*62
+  'X=0
+  ' S=50
+  'X=360/L*S
+  'Motor.MoveSync("bc",30,-30,X,"true")
+  
+  a3()
+  a2()
+  While S3>10 And S2>10 Or S3<10 And S2<10
+    a3()
+    a2()
+    speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",60,60,70,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S3>10
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  While S3<15
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  a3()
+  a2()
+  For i=1 To 2
+    a3()
+    a2()
+    While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+    Motor.MoveSync("bc",30,30,50,"true")
+  EndFor
+  'zamoroz()
+  'Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",20,20,20,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  j=80
+  While S3>10
+    a3()
+    a2()
+    If j>30 Then
+      j=j-0.1
+    EndIf
+    Motor.StartSync("bc",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  j=80
+  While S3<15
+    a3()
+    a2()
+    
+    If j>30 Then
+      j=j-0.1
+    EndIf
+    Motor.StartSync("bc",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  'Motor.MoveSync("bc",30,30,20,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,-30,100,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",50,-30,70,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,0,50,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,-30,30,"true")
+  'zamoroz()
+  
+  Motor.ResetCount("bc")
+  While (Motor.GetCount("b")+Motor.GetCount("c"))/2<50
+    a3()
+    a2()
+    speed=30
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  Motor.MoveSync("bc",20,20,50,"true")
+  
+  Motor.Start("d",30)
+  Program.Delay(500)
+  Motor.Stop("bc","true")
+  
+  Motor.ResetCount("bc")
+  While (Motor.GetCount("b") + Motor.GetCount("c"))/2>-200
+    Motor.StartPower("bc",-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("bc",20,-20,180,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  'Motor.ResetCount("bc")
+  
+  a2()
+  a3()
+  While S3>10 And S2>10 Or S3>10 And S2<10 Or S3<10 And S2>10
+    a2()
+    a3()
+    Motor.StartPower("bc",40)
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",60,60,70,"true")
+  'Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S3>10
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  'Motor.Stop("bc","true")
+  a3()
+  a2()
+  While S3<15
+    a3()
+    a2()
+    Motor.StartSync("bc",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+'=======================================================
+'=======================================================
+' Саб езда от Мусорки до 3-ей белой лампы и возврат на линию
+Sub bellam3
+  
+  While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+    Motor.Stop("bc","true")
+    Motor.MoveSync("bc",30,30,50,"true")
+'zamoroz()
+
+a3()
+a2()
+While S3>15
+a3()
+a2()
+  Motor.StartSync("bc",30,-30)
+EndWhile
+Motor.Stop("bc","true")
+a3()
+a2()
+While S3<15
+a3()
+a2()
+  Motor.StartSync("bc",30,-30)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+
+  'a2()
+  'a3()
+  'While S2>10
+  'Motor.StartSync("bc",30,0)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'zamoroz()
+  
+  'a2()
+  'a3()
+  'While Sensor.ReadPercent(2)>55
+  '  Motor.StartSync("bc",20,-20)
+ ' EndWhile
+  'Motor.Stop("bc","true")
+   
+  'a3()
+  'a2()
+  'While S3>10 And S2>10 Or S3<10 And S2<10
+   ' a3()
+   ' a2()
+   ' speed=50
+   ' polin2d()
+ ' EndWhile
+  'Motor.Stop("bc","true")
+  
+ 
+  'zamoroz()
+ Motor.ResetCount("bc")
+   While Motor.GetCount("b")<200 'от 1-ой базы до поворота на мусорку
+    Speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+a2()
+k1=0.2
+k2=0
+  For i=1 To 3
+    a3()
+    a2()
+    While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+  Motor.MoveSync("bc",20,20,30,"true")
+  'zamoroz()
+  EndFor
+  'zamoroz()
+  'zamoroz()
+  Motor.Stop("bc","true")
+ '; Motor.MoveSync("bc",30,30,20,"true")
+  'zamoroz()
+  k1=0.2
+k2=8
+  Motor.MoveSync("bc",20,-20,180,"true")
+  'zamoroz()
+  
+'Motor.MoveSync("bc",50,-30,70,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,0,50,"true")
+  'zamoroz()
+  
+ ' Motor.MoveSync("bc",30,-30,30,"true")
+  'zamoroz()
+  
+  Motor.MoveSync("bc",20,20,100,"true")
+  'zamoroz()
+  
+ ' Motor.MoveSync("bc",20,20,50,"true")
+  
+  Motor.Start("d",30) 'захватили 3-ю белую лампу
+  Program.Delay(500)
+Motor.Stop("bc","true")
+'zamoroz()
+  Motor.MoveSync("bc",60,60,100,"true")
+  Motor.MoveSync("bc",30,0,400,"true")
+  'zamoroz()
+Motor.MoveSync("bc",20,20,200,"true")
+'Motor.MoveSync("bc",0,20,130,"true")
+Motor.MoveSync("bc",20,0,300,"true")
+Motor.MoveSync("bc",0,20,300,"true")
+  a2()
+  a3()
+  While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>10 And S2<10
+    a2()
+    a3()
+    Motor.StartPower("bc",80)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  '  Motor.MoveSync("bc",30,30,70,"true")
+  Motor.MoveSync("bc",60,60,40,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S3>10
+    a3()
+    a2()
+    Motor.StartSync("bc",10,-10)
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  While S3<15
+    a3()
+    a2()
+    Motor.StartSync("bc",10,-10)
+  EndWhile
+  Motor.Stop("bc","true")
+  For i=1 To 1
+    a3()
+    a2()
+    While S3>10 And S2>10 Or S3<10 And S2<10
+      a3()
+      a2()
+      speed=60
+      polin2d()
+    EndWhile
+    Motor.Stop("bc","true")
+    
+    Motor.MoveSync("bc",30,30,50,"true")
+  EndFor
+  Motor.Stop("bc","true")
+  
+ 
+  
+EndSub
+'=======================================================
+
+'САБ отвоза 1-ой красной лампы от 1-ой базы в Мусорку, потом забор 1-ой белой лампы
+' и отвоз ее в 1 базу а потом проезд на 2-ую базу для скана 2-ой лампы
+Sub red_1
+ ' zamoroz()
+  Motor.MoveSync("bc",20,20,50,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S2>15
+    a3()
+    a2()
+    Motor.StartSync("bc",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S2<15
+    a3()
+    a2()
+    Motor.StartSync("bc",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'zamoroz()
+  Motor.ResetCount("bc")
+  
+  While (Motor.GetCount("b") + Motor.GetCount("c") )/2<270
+    speed=50
+    'k1=0.2
+    polin2d()
+  EndWhile
+  
+  Motor.Stop("bc","true")
+  Program.Delay(100)
+  
+  'Motor.MoveSync("bc",20,20,200,"true")
+  Motor.Start("d",20) 'захватили красную лампу на 1-ой базе
+  Program.Delay(500)
+  Motor.Stop("d","true")
+  
+  '========== отвоз 1-ой красной лампочки в утиль ================
+  '===============================================================
+  'a2()
+  'a3()
+  'отъезд назад до черной линии
+  'While S3>15 And S2>15 Or S3<15 And S2>15 Or S3>15 And S2<15 'отъезд
+  'a2()
+  'a3()
+  'Motor.StartPower("bc",-60)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'zamoroz()
+  
+  'Program.Delay(100)
+  'Motor.MoveSync("bc",60,60,70,"true")
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  'a3() ' поворот налево на 92,4594 градуса просто чтоб уйти от линий
+  'L=3.14*62
+  'X=0
+  'S=50
+  'X=360/L*S
+  ' Motor.MoveSync("bc",-30,30,X,"true")
+  
+  'While Sensor.ReadPercent(2)>15 'поворот налево до черной линии до 2-го датчика
+  'Motor.StartSync("bc",-30,30)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'While Sensor.ReadPercent(2)<15 'поворот налево до черной линии до 2-го датчика
+  'Motor.StartSync("bc",-30,30)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  'Motor.MoveSync("bc",-30,30,210,"true")
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  npl()
+  
+  S=1470
+  L=3.14*80
+  X=0
+  X=360/L*S
+  Motor.ResetCount("bc")
+  While Motor.GetCount("b")<X 'от 1-ой базы до поворота на мусорку
+    
+    Speed=80
+    polin2dus()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'Motor.MoveSync("bc",20,20,50,"true")
+  
+  redl() 'САБ езды отвоза к мусорке красной лампы - начинается с проезда
+  'до перекрестка и поворота направо к мусорке
+  
+  bellam() 'САБ езды от Мусорки до первого устр-ва умного дома потом до 1-ой белой
+  'лампы и возврат на линию
+  
+  S=1400 'от Беллам до поворота до поворота к 1-ой лампе
+  us()
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  Motor.MoveSync("bc",20,20,70,"true") ' проезд прямо для поворота налево
+  
+  Motor.Stop("bc","true")
+  'zamoroz()
+  a3()
+  a2()
+  While S2>15
+    a3()
+    a2()
+    Motor.StartSync("bc",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  While S2<15
+    a3()
+    a2()
+    Motor.StartSync("bc",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  'Motor.MoveSync("bc",-30,30,220,"true") ' поворот налево к 1-ой лампе
+  'zamoroz()
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  Motor.ResetCount("bc")
+  
+  While (Motor.GetCount("b") + Motor.GetCount("c") )/2<200
+    a3()
+    a2()
+    speed=80
+    'k1=0.2
+    polin2d()
+  EndWhile
+  
+  Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  'Motor.MoveSync("bc",20,20,200,"true")
+  Motor.Start("d",-30) 'выгрузили белую лампу на 1-ой базе
+  Program.Delay(500)
+  Motor.Stop("d","true")
+  
+  'a2()
+  'a3()
+  'While S3>15 And S2>15 Or S3<15 And S2>15 Or S3>15 And S2<15 'отъезд назад до линии
+  'a2()
+  'a3()
+  'Motor.StartPower("bc",-60)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  'Motor.MoveSync("bc",30,30,70,"true")
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'a3()
+  'L=3.14*62
+  'X=0
+  'S=50
+  'X=360/L*S
+  'Motor.MoveSync("bc",-30,30,X,"true")
+  
+  'While Sensor.ReadPercent(2)>10
+  'Motor.StartSync("bc",-30,30)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  ' Повернули налево на линию выровнялись и стоим до РЕШЕНИЯ
+  '===============================================================================
+  
+  'Motor.MoveSync("bc",60,60,70,"true") ' проезд прямо для поворота налево
+  'Motor.MoveSync("bc",-30,30,210,"true") ' поворот налево к 2-ой базе
+  'zamoroz()
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  
+  'While Sensor.ReadPercent(3)<55 And Sensor.ReadPercent(2)<55 or Sensor.ReadPercent(3)<55 And        Sensor.ReadPercent(2)>55 or Sensor.ReadPercent(3)>55 And Sensor.ReadPercent(2)<55
+  'Motor.StartSync("bc",-10,10)
+  'EndWhile
+  
+  Thread.Run = vidvig ' ПАРАЛЛЕЛЬНЫЙ ПОТОК - выдвижение
+  
+  npl()
+  
+  a3()
+  a2()
+  While S3>15 And S2>15 Or S3<15 And S2<15
+    a3()
+    a2()
+    speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("bc",30,30,50,"true")
+  
+  a3()
+  a2()
+  While S3>15 And S2>15 Or S3<15 And S2<15
+    a3()
+    a2()
+    speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  'приехали после отвоза красной лампы с 1-ой базы на 2-ой перекресток
+  'для сканирования 2-ой лампы
+  
+EndSub
+'=============================================================
+
+' САБ езда от ближней батареи до перекрестка
+Sub sb1
+  Motor.MoveSync("bc",-40,-40,200,"true")
+  Motor.MoveSync("bc",-40,40,300,"true")
+  
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S2>10
+    a3()
+    a2()
+    Motor.StartSync("bc",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S2<15
+    a3()
+    a2()
+    Motor.StartSync("bc",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Program.Delay(100)
+  'zamoroz()
+  
+  Motor.ResetCount("bc")
+  While (Motor.GetCount("b")+Motor.GetCount("c"))/2<200
+    a3()
+    a2()
+    speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  
+  a3()
+  a2()
+  While S3>10 And S2>10 Or S3<10 And S2<10
+    a3()
+    a2()
+    speed=60
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+'=======================================================
+' САБ сканирование Кубиков - здесь хайтехник просто сканирует 1 раз и выдает три значения H S V
+
+Sub hsv
+  
+  Sensor.SetMode(1,2)
+  I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(I2CPORT,I2CSLVADDR,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed / 255
+  sGreen = sGreen / 255
+  sBlue = sBlue / 255
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) Then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) Then
+    max = sBlue
+  EndIf
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) Then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) Then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  'LCD.Write(10,80,Color)
+  'Program.Delay(100)
+EndSub
+
+'=============================================================
+
+' Саб сканирования цвета 100 раз на расстоянии Х
+Sub hsv_100
+  p=0
+  x=0
+  d=0
+  z=0
+  Sensor.SetMode(1,2)
+  I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  ' СКАНИРУЕМ Кубик-красный на дальнем 1
+  
+  For p=1 To 100
+    hsv()
+    x=x+H
+    z=z+S
+    d=d+V
+  EndFor
+  H=x/100
+  S=z/100
+  V=d/100
+  
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  'LCD.Write(10,80,Color)
+  'Program.Delay(1000)
+  
+EndSub
+
+'==================================================================
+' САБ сканирование Кубиков и определение цвета и запись в переменную COLOR на БЛИЖНЕМ расстоянии
+
+Sub hsv_b
+  
+  Sensor.SetMode(1,2)
+  I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(I2CPORT,I2CSLVADDR,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed / 255
+  sGreen = sGreen / 255
+  sBlue = sBlue / 255
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) Then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) Then
+    max = sBlue
+  EndIf
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) Then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) Then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+  'If (H > 300 And H < 360) or (H>=0 And H<=20)
+  If (H > 300 And H < 360) Or (H>=0 And H<=20) And (S>0.3 And S<=1) And (V>0.025 And V<0.1) Then
+    'If (H > 300 And H < 360) Or (S>0.3 And S<0.5) Then
+    Color = 5  'Red
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+  ElseIf (H >= 20 And H < 60) And S>=0.4 And V>0.030 Then
+    Color = 4  'Yellow
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+    'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+    'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  Else
+    color = 6
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+  EndIf
+  
+EndSub
+'=====================================================================
+
+' САБ сканирование Кубиков и определение цвета и запись в переменную COLOR на ДАЛЬНЕМ расстоянии
+
+Sub hsv_d
+  
+  Sensor.SetMode(1,2)
+  I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(I2CPORT,I2CSLVADDR,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed / 255
+  sGreen = sGreen / 255
+  sBlue = sBlue / 255
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) Then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) Then
+    max = sBlue
+  EndIf
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) Then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) Then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+  'If (H > 300 And H < 360) or (H>=0 And H<=20)
+  If (H > 200 And H < 360) Or (H>=0 And H<=30) And (S>0.3 And S<=1) And (V>=0 And V<0.02) Then
+    'If (H > 300 And H < 360) Or (S>0.3 And S<0.5) Then
+    Color = 5  'Red
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+  ElseIf (H >= 0 And H < 60) And (S>=0.4 And S<=1) And V>0.0030 Then
+    Color = 4  'Yellow
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+    'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+    'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  Else
+    color = 6
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+  EndIf
+  
+EndSub
+'=====================================================================
+
+' Саб сканирования цвета 100 раз на БЛИЖНЕМ расстоянии
+Sub hsv_rgb_b
+  p=0
+  x=0
+  Sensor.SetMode(1,2)
+  I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  ' СКАНИРУЕМ Кубик-1
+  LCD.Clear()
+  hsv()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  LCD.Write(10,80,Color)
+  Program.Delay(100)
+  For p=1 To 100
+    hsv_b()
+    x=x+H
+  EndFor
+  H=x/100
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  Program.Delay(100)
+  
+  If (H > 100 And H < 360) Or (H>=0 And H<=20) And (S>0.3 And S<=1) And (V>0.025 And V<0.1) Then
+    'If (H > 300 And H < 360) Or (S>0.3 And S<0.5) Then
+    Color = 5  'Red
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    Speaker.Wait()
+  ElseIf (H >= 20 And H < 60) And S>=0.4 And V>0.030 Then
+    Color = 4  'Yellow
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    Speaker.Wait()
+    'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+    'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  Else
+    color = 6
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    Speaker.Wait()
+  EndIf
+  LCD.Clear()
+  LCD.Write(10,10,Color)
+  Program.Delay(1000)
+EndSub
+
+'=============================================================
+
+' Саб сканирования цвета 100 раз на ДАЛЬНЕМ расстоянии
+Sub hsv_rgb_d
+  p=0
+  x=0
+  Sensor.SetMode(1,2)
+  I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  ' СКАНИРУЕМ Кубик-1
+  LCD.Clear()
+  hsv_d()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  LCD.Write(10,80,Color)
+  'Program.Delay(100)
+  For p=1 To 100
+    hsv_d()
+    x=x+H
+  EndFor
+  
+  H=x/100
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  'Program.Delay(100)
+  
+  If (H > 200 And H < 360) Or (H>=0 And H<=40) And (S>0.3 And S<=1) And (V>=0 And V<0.02) Then
+    'If (H > 300 And H < 360) Or (S>0.3 And S<0.5) Then
+    Color = 5  'Red
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    Speaker.Wait()
+  ElseIf (H >= 0 And H < 100) And (S>=0.4 And S<=1) And V>0.0030 Then
+    Color = 4  'Yellow
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    Speaker.Wait()
+    'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+    'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  Else
+    color = 6
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    Speaker.Wait()
+  EndIf
+  LCD.Clear()
+  LCD.Write(10,10,Color)
+  Program.Delay(1000)
+EndSub
+
+'============================================================
+
+'==================================================================
+' Саб вычисления среднего значения для 3-го датчика
+Sub a3
+  S3=100*(Sensor.ReadPercent(3)-min3)/(max3-min3)
+  
+EndSub
+'=========================
+
+' Саб вычисления среднего значения для 2-го датчика
+Sub a2
+  S2=100*(Sensor.ReadPercent(2)-min2)/(max2-min2)
+  
+EndSub
+'=======================
+
+' Саб езда по линии по 2-ум датчикам (для вайлов)
+Sub polin2d
+  a3()
+  a2()
+  e=S2-S3
+  u=k1*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  Motor.StartPower("C",Speedr)
+  
+EndSub
+'================================================
+'=======================
+
+' Саб езда по линии по 2-ум датчикам (для вайлов) ускоренная
+Sub polin2dus
+  a3()
+  a2()
+  e=S2-S3
+  u=k3*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  Motor.StartPower("C",Speedr)
+  
+EndSub
+'================================================
+'Саб заморозки
+Sub zamoroz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+'======================================================
+
+' Саб задвигания датчика
+Sub zadvig
+Motor.Start("a",80)
+Program.Delay(100)
+while Motor.GetSpeed("a")>20
+    Motor.Start("a",80)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+'==================================================
+
+' Саб выдвигания датчика
+Sub vidvig
+Motor.Start("a",-80)
+Program.Delay(350)
+  Motor.Stop("a","true")
+EndSub
+
+'========================================================
+' САБ езда назад до линии с ВЫРАВНИВАНИЕМ по ЛИНИИ по дат 2 и 3
+Sub Virav_naz
+  Sensor.SetMode(2,0)
+  Sensor.SetMode(3,0)
+  While Sensor.ReadPercent(2)>10 And Sensor.ReadPercent(3)>10
+    Motor.StartSync("BC",-20,-20)
+  EndWhile
+  Motor.Stop("BC","True")
+  While Sensor.ReadPercent(2)>10
+    Motor.Start("B",-20)
+  EndWhile
+  Motor.Stop("B","True")
+  While Sensor.ReadPercent(3)>10
+    Motor.Start("C",-20)
+  EndWhile
+  Motor.Stop("C","True")
+  '===========================
+  While Sensor.ReadPercent(2)<10
+    Motor.Start("B",20)
+  EndWhile
+  Motor.Stop("B","True")
+  While Sensor.ReadPercent(3)<10
+    Motor.Start("C",20)
+  EndWhile
+  Motor.Stop("C","True")
+EndSub
+
+' ===============================================================
+' САБ езда прямо до линии с ВЫРАВНИВАНИЕМ по линии !!!!
+Sub Virav
+  Sensor.SetMode(2,0)
+  Sensor.SetMode(3,0)
+  While Sensor.ReadPercent(2)>7 And Sensor.ReadPercent(3)>7
+    Motor.StartSync("BC",20,20)
+  EndWhile
+  Motor.Stop("BC","True")
+  While Sensor.ReadPercent(2)>7
+    Motor.Start("B",20)
+  EndWhile
+  Motor.Stop("B","True")
+  While Sensor.ReadPercent(3)>7
+    Motor.Start("C",20)
+  EndWhile
+  Motor.Stop("C","True")
+  
+  While Sensor.ReadPercent(2)<7
+    Motor.Start("B",-20)
+  EndWhile
+  Motor.Stop("B","True")
+  While Sensor.ReadPercent(3)<7
+    Motor.Start("C",-20)
+  EndWhile
+  Motor.Stop("C","True")
+EndSub
+F=EV3File.OpenRead("a123/colib.dat")
+min2=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+min3=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+max2=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+max3=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+EV3File.Close(F)
+LCD.Clear()
+LCD.Text(1,10,10,1,min2)
+LCD.Text(1,20,20,1,min3)
+LCD.Text(1,30,30,1,max2)
+LCD.Text(1,40,40,1,max3)
+Program.Delay(100)
+' =====================================================
+' === Саб измерения цвета Хайтехником в режиме ргб
+Sub rgb
+  sendarray[0]=66
+  recvarray = Sensor.CommunicateI2C(I2CPORT,I2CSLVADDR,1,4,sendarray)
+  
+  a[i]=recvarray[0]
+  
+  If a[i]=5 Or a[i]=14 Or a[i]=6 Then ' желтый
+    Speaker.Note(100,"C#1",500)
+  ElseIf a[i]=1 Or a[i]=10 Or a[i]=7 Or a[i]=8 Then ' красный
+    Speaker.Note(100,"C#5",500)
+  ElseIf a[i]=3 Or a[i]=2 Or a[i]=4 Then ' синий
+    Speaker.Note(50,"C#9",1000)
+  EndIf
+  
+EndSub
+' a2()
+  'a3()
+  'отъезд назад до черной линии
+ ' While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>10 And S2<10 'отъезд
+   ' a2()
+   ' a3()
+   ' Motor.StartPower("bc",-40)
+  'EndWhile
+  '.Stop("bc","true")
+  'zamoroz()
+  Virav_naz()
+  Motor.MoveSync("bc",20,20,40,"true")
+  Motor.Stop("bc","true")
+  
+  Motor.MoveSync("bc",-20,20,90,"true")
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S2>10
+    a3()
+    a2()
+    Motor.StartSync("bc",-20,20)
+  EndWhile
+  'Motor.Stop("bc","true")
+  'zamoroz()
+  
+  a3()
+  a2()
+  While S2<60
+    a3()
+    a2()
+    Motor.StartSync("bc",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+ ' zamoroz()

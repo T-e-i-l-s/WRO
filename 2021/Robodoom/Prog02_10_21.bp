@@ -1,0 +1,28 @@
+Motor.Invert("B")
+Sensor.SetMode(1,0)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,0)
+s1=0
+s2=0
+k=0.225
+v=20
+min1=100
+max1=0
+min2=100
+max2=0
+
+'163
+'82
+'41
+'257,48
+'62,8
+'12,56
+
+'==========================================================================================
+
+a = 750*3.14
+b = 35*3.14
+Motor.MoveSync("BC",16,100,a,"true")
+Program.Delay(3000)
+Motor.MoveSync("BC",16,100,b,"true")

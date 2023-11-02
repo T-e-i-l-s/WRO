@@ -1,0 +1,12 @@
+F1_m = 0 ' global variable init 
+A_m = "" ' global variable init 
+B_m = "" ' global variable init 
+F1_m = EV3File.OpenRead ( "num.txt" )
+A_m = EV3File.ReadLine ( F1_m )
+B_m = EV3File.ReadLine ( F1_m )
+EV3File.Close ( F1_m )
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 1 , "color = " + A_m )
+LCD.Text ( 1 , 20 , 60 , 1 , "r/g/b = " + B_m )
+While "true"
+EndWhile

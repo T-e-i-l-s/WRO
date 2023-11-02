@@ -1,0 +1,53 @@
+I2CPORT_m = 0 ' global variable init 
+I2CSLVADDR_m = 0 ' global variable init 
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+HICOL_m[0] = 0 ' global variable init 
+COL_m = 0 ' global variable init 
+COL1_m = 0 ' global variable init 
+COL4_m = 0 ' global variable init 
+I2_1 = 0 ' local variable init 
+SENDARRAY_1[0] = 0 ' local variable init 
+I2CPORT_1 = 0 ' local variable init 
+RECVARRAY_1[0] = 0 ' local variable init 
+RED_1 = 0 ' local variable init 
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 4 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+HICOL_m [ 0 ] = 60
+HICOL_m [ 1 ] = 180
+HICOL_m [ 2 ] = 180
+HICOL_m [ 3 ] = 300
+HICOL_m [ 4 ] = 10
+HICOL_m [ 5 ] = 60
+COL_m = 0
+Sub COLOR_1
+SENDARRAY_1 [ 0 ] = 66
+I2CPORT_1 = I2_1
+RECVARRAY_1 = Sensor.CommunicateI2C ( I2CPORT_1 , 1 , 1 , 4 , SENDARRAY_1 )
+RED_1 = RECVARRAY_1 [ 1 ]
+if RED_1 > HICOL_m [ 0 ] and RED_1 < HICOL_m [ 1 ] Then
+COL_m = 5
+ElseIf RED_1 > HICOL_m [ 2 ] And RED_1 < HICOL_m [ 3 ] Then
+COL_m = 6
+ElseIf RED_1 > HICOL_m [ 4 ] And RED_1 < HICOL_m [ 5 ] Then
+COL_m = 1
+Else
+COL_m = 0
+EndIf
+EndSub
+While "true"
+I2_1 = 1
+COLOR_1()
+COL1_m = COL_m
+I2_1 = 4
+COLOR_1()
+COL4_m = COL_m
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , COL1_m )
+LCD.Text ( 1 , 50 , 20 , 2 , COL4_m )
+Program.Delay ( 2000 )
+EndWhile

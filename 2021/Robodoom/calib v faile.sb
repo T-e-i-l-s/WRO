@@ -1,0 +1,30 @@
+min1=100
+max1=0
+min2=100
+max2=0
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<500
+  s1=Sensor.ReadPercent(2)
+  s2=Sensor.ReadPercent(3)
+  If s1<min1 Then
+    min1=s1
+    EndIf
+  If s1>max1 Then
+    max1=s1
+  EndIf
+  If s2<min2 Then
+    min2=s2
+    EndIf
+  If s2>max2 Then
+    max2=s2
+  EndIf
+  Motor.StartSync("BC",40,40)
+EndWhile
+Motor.Stop("BC","true")
+F1=EV3File.OpenWrite("wro/calib.dat")
+EV3File.WriteLine(F1,min1)
+EV3File.WriteLine(F1,max1)
+EV3File.WriteLine(F1,min2)
+EV3File.WriteLine(F1,max2)
+EV3File.Close(F1)

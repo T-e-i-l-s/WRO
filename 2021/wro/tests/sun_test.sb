@@ -1,0 +1,47 @@
+k=0.4
+min1=100
+max1=0
+min2=100
+max2=0
+i=0
+sun=2
+num=0 
+a=0
+gray=0
+black=12
+col=0
+red=0
+go=0
+v=65
+Sensor.SetMode(4,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(1,0)
+'калибровка======================================
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<210
+  s1=Sensor.ReadPercent(2)
+  s2=Sensor.ReadPercent(3)
+  If s1<min1 Then
+    min1=s1
+    EndIf
+  If s1>max1 Then
+    max1=s1
+  EndIf
+  If s2<min2 Then
+    min2=s2
+    EndIf
+  If s2>max2 Then
+    max2=s2
+  EndIf
+  Motor.StartSync("BC",40,40)
+EndWhile
+Motor.Stop("BC","true")
+tosun=Sensor.ReadRawValue(1,0)
+If tosun<300 Then
+  sun=2
+Else
+  sun=1
+EndIf
+LCD.Clear()
+LCD.Text(1,20,20,2,sun)
+Program.Delay(10000)

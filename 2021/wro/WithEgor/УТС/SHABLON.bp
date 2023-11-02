@@ -1,0 +1,144 @@
+'  НАЗНАЧЕНИЕ ПЕРЕМЕННЫХ
+'  Переменные цветов
+g=0
+r=0
+y=0
+w=0
+color=0
+x=0
+Motor.Invert("b")
+max2=0
+max3=0
+min2=0
+min3=0
+
+Sensor.SetMode(1,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+k1=0.15
+k2=8
+Speed=0
+Speedl=0
+Speedr=0
+eold=0
+n=0
+
+p=0
+i=0
+I2CPORT = 1 'Порт
+I2CSLVADDR = 1 'Адрес
+
+' ========= САБЫ ======================================
+'=======================================================
+
+'==================================================================
+' Саб вычисления среднего значения для 3-го датчика
+Sub a3
+  S3=100*(Sensor.ReadPercent(3)-min3)/(max3-min3)
+  
+EndSub
+'=========================
+
+' Саб вычисления среднего значения для 2-го датчика
+Sub a2
+  S2=100*(Sensor.ReadPercent(2)-min2)/(max2-min2)
+  
+EndSub
+'=======================
+
+' Саб езда по линии по 2-ум датчикам (для вайлов)
+Sub polin2d
+  a3()
+  a2()
+  e=S2-S3
+  u=k1*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  Motor.StartPower("C",Speedr)
+  
+EndSub
+'================================================
+
+'Саб заморозки
+Sub zamoroz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+'======================================================
+
+' Саб задвигания датчика
+Sub zadvig
+  Motor.Start("a",20)
+  Program.Delay(100)
+  While Motor.GetSpeed("a")>7
+    Motor.Start("a",20)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+'==================================================
+
+' Саб выдвигания датчика
+Sub vidvig
+  Motor.Start("a",-20)
+  Program.Delay(100)
+  While Motor.GetSpeed("a")<-7
+    Motor.Start("a",-20)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+
+
+'==========================================================================================================================================================================================================================================================================================================================================================Н А Ч А Л О ========================================
+' сначала вызываем значения переменных из файлов калибровки
+
+'переменные максимальных и минимальных значений датчиков освещ для езды по линии
+
+F=EV3File.OpenRead("WRO2021/colib.dat")
+min2=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+min3=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+max2=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+max3=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+EV3File.Close(F)
+LCD.Clear()
+LCD.Text(1,10,10,1,min2)
+LCD.Text(1,20,20,1,min3)
+LCD.Text(1,30,30,1,max2)
+LCD.Text(1,40,40,1,max3)
+Program.Delay(100)
+Motor.MoveSync("bc",30,0,130,"true")
+Motor.MoveSync("bc",0,30,130,"true")
+Motor.ResetCount("bc")
+Motor.Start("bcd",40)
+
+While (Motor.GetCount("b") + Motor.GetCount("c") )/2<500
+  
+  If Sensor.ReadPercent(2) > max2 Then
+    max2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(2) < min2 Then
+    min2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(3) > max3 Then
+    max3=Sensor.ReadPercent(3)
+  EndIf
+  If Sensor.ReadPercent(3) < min3 Then
+    min3=Sensor.ReadPercent(3)
+  EndIf
+  
+EndWhile
+
+Motor.Stop("bc","true")
+ a3()
+    a2()
+    While "true" ' проезд до перекрестка
+      a3()
+      a2()
+      speed=80
+      polin2d()
+    EndWhile

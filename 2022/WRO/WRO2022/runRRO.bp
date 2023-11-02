@@ -1,0 +1,930 @@
+'WRO 2022 junior
+
+'Готовимся к езде по линии=====================================================================
+Sensor.SetMode (2,0)
+Sensor.SetMode (3,0)
+min1 = 100
+max1 = 0
+min2 = 100
+max2 = 0
+k= 0.7
+v= 45
+
+'Обнуляемся====================================================================================
+LCD.Clear ()
+zone1 = 0
+zone2 = 0
+black = 0
+grad = 0
+mm = 0
+sp = 0
+colors [1] = 0
+colors [2] = 0
+colors [3] = 0
+colors [4] = 0
+colors [5] = 0
+colors [6] = 0
+colors [7] = 0
+colors [8] = 0
+colors [9] = 0
+colors [10] = 0
+colors [11] = 0
+colors [12] = 0
+id = 0
+red = 0
+start = 0
+
+'Готовимся к считыванию цветов=================================================================
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+
+
+'Сабы для линии================================================================================
+
+Sub sen1
+  s1 = 100 * ( Sensor.ReadPercent ( 2 ) - min1) / ( max1 - min1 )
+EndSub
+
+Sub sen2
+  S2 = 100 * ( Sensor.ReadPercent ( 3 ) - min2 ) / ( max2 - min2 )
+EndSub
+
+Sub line
+  sen1 ()
+  sen2 ()
+  U = s1 - s2
+  Motor.StartPower ( "C" , v + U * k )
+  Motor.StartPower ( "B" , v - U * k )
+EndSub
+
+
+
+'Езда по формулам==============================================================================
+
+Function move (in number l , in number sp)
+  Motor.ResetCount ( "BC" )
+  While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= l
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 0.8 )
+    Motor.StartPower ( "B" , sp - U * 0.8 )
+  EndWhile
+  Motor.Stop ( "BC" , "true" )
+EndFunction
+
+Function tomm (in number mm , in number sp)
+  l = mm / ( 82 * 3.14 ) * 360
+  Motor.ResetCount ( "BC" )
+  move(l,sp)
+  sp = 0
+EndFunction
+
+Sub left
+  l = 60 / (82 * 3.14) * 360
+  Motor.Move ("BC" , 20 , l , "true")
+  Motor.MoveSync ( "BC" , -20 , 20 , 140 , "true" )
+  While Sensor.ReadPercent ( 3 ) < 20
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 3 ) > 15
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  right2(10)
+EndSub
+ 
+Sub right
+  l = 55 / (82 * 3.14) * 360
+  Motor.Move ("BC" , 20 , l , "true")
+  Motor.MoveSync("BC",20,-20,130,"true")
+  While Sensor.ReadPercent ( 2 ) < 20
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 2 ) > 15
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  left2(10)
+EndSub
+
+Function left1 (in number grad)
+  l = ((2 * 3.14 * 186 * grad) / 360)
+  l = l / (3.14 * 82) * 360
+  Motor.ResetCount ("BC")
+  Motor.StartPower ("C",60)
+  While Motor.GetCount ("C") <= l
+  EndWhile
+  Motor.Stop ("BC","true")
+EndFunction
+
+Function right1 (in number grad)
+  l = ((2 * 3.14 * 186 * grad) / 360)
+  l = l / (3.14 * 82) * 360
+  Motor.ResetCount ("BC")
+  Motor.StartPower ("B",60)
+  While Motor.GetCount ("B") <= l
+  EndWhile
+  Motor.Stop ("BC","true")
+EndFunction
+
+Function left2 (in number grad)
+  l = ( ( 2 * 3.14 * 186 * grad ) / 360 ) / 2
+  l = l / (3.14*82) * 360
+  Motor.ResetCount ("BC")
+  Motor.StartPower ("C",60)
+  Motor.StartPower ("B",-60)
+  While (Math.Abs(Motor.GetCount ("C")) + Math.Abs(Motor.GetCount("B"))) / 2 <= l
+  EndWhile
+  Motor.Stop ("BC","true")
+EndFunction
+
+Function right2 (in number grad)
+  l = ((2 * 3.14 * 186 * grad ) / 360 ) / 2
+  l = l / ( 3.14 * 82 ) * 360
+  Motor.ResetCount( "BC" )
+  Motor.StartPower("C",-60)
+  Motor.StartPower("B",60)
+  While (Math.Abs(Motor.GetCount ("C")) + Math.Abs(Motor.GetCount ("B"))) / 2 <= l
+  EndWhile
+  Motor.Stop("BC","true")
+EndFunction
+
+
+
+'Заморозка=====================================================================================
+
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+
+
+
+'Работа с объектами на поле====================================================================
+
+Sub open
+  Motor.Start ("A",30)
+  Program.Delay (1000)
+  Motor.Stop ("A","true")
+  Motor.Start ("A",5)
+EndSub
+
+Sub close
+  Motor.Start ("A",-30)
+  Program.Delay (1000)
+  Motor.Stop ("A", "true")
+EndSub
+
+zone = 0
+r1 = 0
+Sub water
+  redd= red + 1
+  
+  if id = 1 or id = 2 Then
+    zone = 1
+  elseif id = 3 or id = 4 Then
+        zone = 2
+  elseif id = 5 or id = 6 Then
+        zone = 3
+  elseif id = 7 or id = 8 Then
+        zone = 4
+  elseif id = 9 or id = 10 Then
+        zone = 5
+  elseif id = 11 or id = 12 Then
+        zone = 6  
+  EndIf
+  if (r1 = zone) Then
+    
+  else
+    If id = 2 Or id = 6 Or id = 9 Or id = 10 Then
+      tomm(230,-50)
+      Motor.Move ("D",-28,360,"true")
+      tomm(230,50)
+    Else
+      Motor.Move ("D",-28,360,"true")
+    EndIf
+  EndIf
+  r1 = zone
+EndSub
+
+
+
+'Считывание цвета==============================================================================
+
+Sub HSV1
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  
+  
+  
+  if id = 3 or id = 6 or id = 10 or id = 12 Then
+    
+    'датчик1 дал
+    If (H > 3 And H < 75) or (  H > 350 and H < 370) Then    
+      Color = 5
+    ElseIf (sRed > 40 And sRed < 123) or (sRed >320) Then
+      Color = 1
+    ElseIf sRed > 123 And sRed < 320  Then
+      Color = 6   
+    Else
+      color = 0
+    EndIf
+    
+  Else
+    
+    'датчик1 близ
+    If (H > 0 And H < 60) or (  H > 360 and H < 370) Then    
+      Color = 5
+    ElseIf (sRed > 35 And sRed < 240) or (sRed >350) Then
+      Color = 1
+    ElseIf sRed > 240 And sRed < 320  Then
+      Color = 6   
+    Else
+      color = 0
+    EndIf
+    
+  EndIf
+  
+  LCD.Text(1,20,20,2, Color)
+EndSub
+
+Sub HSV4
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(4,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed '/ 255
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  if id = 4 or id = 5 or id = 9 or id = 11 Then
+    
+        'датчик4 дал
+      If (H > 0 and H < 30) or ( H > 330 and H < 370 ) Then    
+        Color = 5
+      ElseIf sRed > 7.8 and sRed < 18 Then
+        Color = 1 
+      ElseIf sRed > 18 Then
+        Color = 6   
+      Else
+        color = 0
+      EndIf
+    
+  Else
+    
+    'датчик4 близ
+    If (H > 4 and H < 28) or ( H > 330 and H < 370 ) Then    
+      Color = 5
+    ElseIf sRed > 24 and sRed < 58 Then
+      Color = 1 
+    ElseIf sRed > 57 Then
+      Color = 6   
+    Else
+      color = 0
+    EndIf
+    
+  EndIf
+  
+  
+  LCD.Text(1,70,20,2, Color) 
+EndSub
+
+
+
+'Чaсти программы===============================================================================
+
+Sub finish
+  if start = 1 Then
+    finish = 2
+  Else
+    finish = 1
+  EndIf
+EndSub
+
+Function start(in number start)
+  if start = 1 Then
+    @finish = 2
+  Else
+    @finish = 1
+  EndIf
+  if (start = 1)Then
+    right1(165)
+    left1(65)
+    Motor.Start("BC",-35)
+    Program.Delay(1500)
+    Motor.ResetCount ( "BC" )
+    tomm(900,60)
+    Motor.Start("BC",30)
+    Program.Delay(2000)
+    tomm(200,-50)
+    left1(96)
+    Motor.Start("BC",-10)
+    Program.Delay(2500)
+    tomm(100,30)
+  Else
+    left1(80)
+    right1(80)
+    finish = 1
+  EndIf
+EndFunction
+
+
+
+'Обработка объекта=============================================================================
+
+Sub cube
+  LCD.Clear()
+  id = id + 1
+  Program.Delay(500)
+  If ( id = 1 Or id = 2 Or id = 4 Or id = 5 Or id = 8 Or id = 9 Or id = 11 ) Then
+    HSV4()
+  Else
+    HSV1()
+  EndIf
+  
+  if color = 5 Then
+    EV3.SetLEDColor("RED","NORMAL")
+  ElseIf color = 6 Then
+    EV3.SetLEDColor("ORANGE","NORMAL")
+  ElseIf color = 1 Then
+    EV3.SetLEDColor("GREEN","NORMAL")
+  Else
+    Speaker.Note(70, "B7", 200)
+  EndIf
+  LCD.Text(1,70,50,1, "H:" + H) 
+  LCD.Text(1,70,80,1, "R:" + sRed) 
+  program.delay(700)
+  EV3.SetLEDColor("OFF","NORMAL")
+  If color = 5 Then
+    water()
+  ElseIf color = 1 Then
+    if black <> 1 Then
+      If id = 1 Or id = 2 Then
+        tomm(100,-30)
+        right2(96)
+        tomm(60,20)
+        close()
+        tomm(40,-20)
+        left2(96)
+        tomm(100,30)
+      ElseIf id = 5 Or id = 9 Or id = 11 Then
+        tomm(100,-30)
+        right2(96)
+        tomm(100,20)
+        close()
+        tomm(70,-20)
+        left2(96)
+        tomm(125,30)
+      ElseIf id = 6 Or id = 10 Or id = 12 Then
+        tomm(100,-30)
+        left2(96)
+        tomm(95,20)
+        close()
+        tomm(85,-20)
+        right2(96)
+        tomm(125,30)
+      ElseIf id = 3 Then
+        tomm(15,-30)
+        left1(195)
+        tomm(10,30)
+        close()
+        grad = 195
+        l = ((2 * 3.14 * 186 * grad) / 360)
+        l = l / (3.14 * 82) * 360
+        Motor.ResetCount ("BC")
+        Motor.StartPower ("c",-40)
+        While   Math.abs(Motor.GetCount ("C")) <= l
+        EndWhile
+        Motor.Stop ("BC","true")
+        Motor.Start("BC",-10)
+        Program.Delay(2500)
+        tomm(55,30)
+      ElseIf id = 4 Then
+        right2(122)
+        tomm(123,30)
+        close()
+        tomm(93,-30)
+        left2(122)
+        Motor.Start("BC",-10)
+        Program.Delay(2500)
+        tomm(55,30)
+      ElseIf id = 7 Then
+        left2(135)
+        tomm(90,30)
+        close()
+        tomm(70,-30)
+        right2(135)
+        Motor.Start("BC",-10)
+        Program.Delay(2500)
+        tomm(55,30)
+      ElseIf id = 8 then
+        right2(135)
+        tomm(85,30)
+        close()
+        tomm(45,-30)
+        left2(135)
+        Motor.Start("BC",-10)
+        Program.Delay(2500)
+        tomm(55,30)
+      EndIf
+      black = 1
+    EndIf
+  ElseIf color = 6 Then
+    if zone1 = 0 Then
+      if id = 1 or id = 2 Then
+        zone1 = 1
+      elseif id = 3 or id = 4 Then
+        zone1 = 2
+      elseif id = 5 or id = 6 Then
+        zone1 = 3
+      elseif id = 7 or id = 8 Then
+        zone1 = 4
+      elseif id = 9 or id = 10 Then
+        zone1 = 5
+      elseif id = 11 or id = 12 Then
+        zone1 = 6  
+      EndIf
+    Else
+      if id = 1 or id =2 Then
+        zone2 = 1
+      elseif id = 3 or id = 4 Then
+        zone2 = 2
+      elseif id = 5 or id = 6 Then
+        zone2 = 3
+      elseif id = 7 or id = 8 Then
+        zone2 = 4
+      elseif id = 9 or id = 10 Then
+        zone2 = 5
+      elseif id = 11 or id = 12 Then
+        zone2 = 6  
+      EndIf
+    EndIf
+  EndIf
+EndSub
+
+
+
+
+
+'==============================================================================================
+'================******===*******======*======*****=====*******================================
+'================*===========*========*=*=====*====*=======*===================================
+'================*===========*=======*===*====*====*=======*===================================
+'================******======*======*=====*===*****========*===================================
+'=====================*======*======*******===*==*=========*===================================
+'=====================*======*======*=====*===*===*========*===================================
+'================******======*======*=====*===*====*=======*===================================
+'==============================================================================================
+
+
+
+
+
+'=================================================================
+'==============================PART1==============================
+'=================================================================
+
+
+'выезд из зоня старта
+start(2)
+
+'проезд через завал
+Motor.StartPower("BC",90)
+Program.Delay(1200)
+Motor.Stop ("BC","false")
+Motor.StartPower ("BC",50)
+While Sensor.ReadPercent(2) < 27 And Sensor.ReadPercent(3) < 27
+EndWhile
+Motor.Stop ("BC","false")
+
+'отъезд назад и поворот для выравнивания об стенку
+tomm(150,-30)
+left2(90)
+Motor.StartPower("BC",-60)
+Program.Delay(1000)
+
+'возвращение к линии
+tomm(170,30)
+right2(90)
+Motor.StartPower("BC",50)
+While Sensor.ReadPercent(2) < 15 And Sensor.ReadPercent(3) < 15
+EndWhile
+tomm(15,20)
+Motor.StartPower("BC",20)
+While Sensor.ReadPercent (2) > 10 And Sensor.ReadPercent (3) > 10
+EndWhile
+Motor.Stop ("BC","true")
+
+'езда по линии к зоне №1
+right()
+Motor.ResetCount("BC")
+While (Motor.GetCount("B") + Motor.GetCount ("C")) / 2 < 50
+  line()
+EndWhile
+While Sensor.ReadPercent(2) > 15
+  line()
+EndWhile
+left()
+Motor.ResetCount ( "BC" )
+While (Motor.GetCount ("B") + Motor.GetCount("C")) / 2 < 170
+  line()
+EndWhile
+
+'выравнивание по линии
+k = 1
+v = 30
+While Sensor.ReadPercent (2) > 10 Or Sensor.ReadPercent (3) > 10
+  line()
+EndWhile
+Motor.Stop ("BC","true")
+k = 0.7
+v = 45
+
+
+'=================================================================
+'==============================PART2==============================
+'=================================================================
+
+
+'скан объектов
+
+tomm(222,40)
+cube()'1
+
+tomm(375,40)
+cube()'2
+
+tomm(175,40)
+left2(96)
+Motor.Start("BC",-10)
+Program.Delay(2000)
+tomm(50,40)
+cube()'3
+cube()'4
+
+tomm(400,40)
+cube()'5
+
+tomm(275,40)
+cube()'6
+
+tomm(134,40)
+left2(96)
+Motor.Start("BC",-10)
+Program.Delay(2500)
+tomm(55,40)
+cube()'7
+cube()'8
+
+right1(35)
+left1(35)
+
+tomm(438,40)
+left2(96)
+Motor.Start("BC",-10)
+Program.Delay(1500)
+tomm(325,40)
+cube()'9
+cube()'10
+
+tomm(120,40)
+cube()'11
+cube()'12
+
+
+'=================================================================
+'==============================PART3==============================
+'=================================================================
+
+
+'к линии,для езды к зоне выгрузки химии
+tomm(50,40)
+right2(100)
+tomm(300,50)
+
+Motor.StartPower("B",40)
+While Sensor.ReadPercent(2)< 15
+  
+EndWhile
+While Sensor.ReadPercent(2)> 15
+  
+EndWhile
+Motor.Stop("BC","true")
+'выгрузка химиката
+Thread.Run = open
+k = 0.7
+v = 45
+Motor.ResetCount ("BC")
+While (Motor.GetCount ("B") + Motor.GetCount ("C")) / 2 < 650
+  line()
+EndWhile
+k = 0.5
+v = 25
+While Sensor.ReadPercent (2) > 10 Or Sensor.ReadPercent (3) > 10
+  line()
+EndWhile
+Motor.Stop ("BC","true")
+k = 0.7
+v = 45
+
+'поворот и выравнивание об стенку
+tomm(100,-30)
+left2(96)
+Motor.StartPower("BC",-60)
+Program.Delay(3000)
+Motor.Stop("BC","true")
+right1(100)
+
+
+'=================================================================
+'==============================PART4==============================
+'=================================================================
+
+
+'проезд через препятствие
+tomm(600,60)
+Motor.Start("BC",50)
+Program.Delay(2000)
+
+'поворот для захвата маркера
+tomm(220,-30)
+left2(93)
+Motor.StartPower("BC",-50)
+Program.Delay(2000)
+Motor.Stop("BC","true")
+tomm(310,30)
+'захват первого маркера
+close()
+
+
+
+'вычислении оптимальной зоны для выгрузки первого маркера
+
+if zone1 = 0 Then
+  zone1 = 1
+EndIf
+if zone2 = 0 Then
+  zone2 = 5
+EndIf
+
+if zone1 = 4 Then
+  z = zone1
+ElseIf zone2 = 4 Then
+  z = zone2 
+ElseIf zone1 = 5 Then
+  z = zone1
+ElseIf zone2 = 5 Then
+  z = zone2
+Elseif zone1 = 6 Then
+  z = zone1
+ElseIf zone2 = 6 Then
+  z = zone2
+Elseif zone1 = 1 Then
+  z = zone1
+ElseIf zone2 = 1 Then
+  z = zone2  
+Elseif zone1 = 3 Then
+  z = zone1
+ElseIf zone2 = 3 Then
+  z = zone2   
+EndIf
+
+  
+'выгрузка первого маркера
+if z = 1 Then
+  right2(42)
+  open()
+  tomm(300,30)
+    
+  tomm(290,-30)
+  left2(42)
+ElseIf z = 3 Then
+  right2(45)
+  open()
+  tomm(110,30)
+    
+  tomm(100,-30)
+  left2(45)
+ElseIf z = 4 Then
+  tomm(50,-30)
+  right2(75)
+  open()
+  tomm(50,30)
+    
+  tomm(40,-30)
+  left2(75)
+  tomm(50,30)
+ElseIf z = 5 Then
+  tomm(60,-30)
+  right2(80)
+  open()
+  tomm(200,30)
+   
+  tomm(190,-30)
+  left2(80)
+  tomm(70,30) 
+ElseIf z = 6 Then
+  right2(60)
+  open()
+  tomm(230,30)
+    
+  tomm(220,-30)
+  left2(60)
+EndIf
+
+'захват второго маркера
+tomm(350,40)
+close()
+left2(192)
+tomm(50,30)
+
+
+if z = zone1 Then
+  z = zone2
+Else
+  z = zone1
+EndIf
+
+'выгрузка второго маркера
+if z = 5 Then
+  left2(42)
+  open()
+  tomm(310,30)
+    
+  tomm(300,-30)
+  right2(42)
+ElseIf z = 3 Then
+  left2(40)
+  open()
+  tomm(115,30)
+    
+  tomm(105,-30)
+  right2(40)
+ElseIf z = 2 Then
+  tomm(80,-30)
+  left2(55)
+  open()
+  tomm(75,30)
+    
+  tomm(65,-30)
+  right2(55)
+  tomm(90,30)
+ElseIf z = 1 Then
+  tomm(60,-30)
+  left2(85)
+  open()
+  tomm(190,30)
+   
+  tomm(180,-30)
+  right2(85)
+  tomm(70,30) 
+ElseIf z = 6 Then
+  tomm(60,-30)
+  left2(55)
+  open()
+  tomm(250,30)
+    
+  tomm(240,-30)
+  right2(55)
+  tomm(60,30)
+EndIf
+
+'финиш,определяется в сабе старт в зависимости от зоны старта
+if finish = 1 Then
+  thread.run = close
+  Motor.Start("BC",50)
+  Program.Delay(2500)
+  tomm(115,-30)
+  left1(96)
+  Motor.Start("BC",40)
+  Program.Delay(800) 
+else 
+  Motor.Start("BC",-50)
+  Program.Delay(1500)
+  tomm(115,30)
+  grad = 96
+  l = ((2 * 3.14 * 186 * grad) / 360)
+  l = l / (3.14 * 82) * 360
+  Motor.ResetCount ("BC")
+  Motor.StartPower ("c",-40)
+  While   Math.abs(Motor.GetCount ("C")) <= l
+  EndWhile
+  Motor.Stop ("BC","true")
+  Motor.Start("BC",-40)
+  Program.Delay(800)  
+EndIf
+
+
+
+
+
+'=================================================================
+'==========================TheEnd!!!==============================
+'==========================TheEnd!!!==============================
+'==========================TheEnd!!!==============================
+'=================================================================
+
+
+
+

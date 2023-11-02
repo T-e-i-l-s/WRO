@@ -1,0 +1,300 @@
+DATA16 FD_NATIVECODECOMMAND
+DATA16 FD_NATIVECODERESPONSE
+DATA32 STOPLCDUPDATE
+DATA32 NUMMAILBOXES
+ARRAY8 MOTORISINVERTED 4     
+ARRAY8 FIRSTOF2  16
+ARRAY16 LOCKS 2           
+DATA32 s1out1
+DATA32 s1out2
+DATA32 s1out3
+DATA32 s2out1
+DATA32 s2out2
+DATA32 s2out3
+DATA32 s3out1
+DATA32 s3out2
+DATA32 s3out3
+DATA32 s4out1
+DATA32 s4out2
+DATA32 s4out3
+DATA32 getTachoA
+DATA32 tmpTachoA
+DATA8 getSpeedA
+DATA8 setSpeedA
+DATA8 setPowerA
+DATA32 getTachoB
+DATA32 tmpTachoB
+DATA8 getSpeedB
+DATA8 setSpeedB
+DATA8 setPowerB
+DATA32 getTachoC
+DATA32 tmpTachoC
+DATA8 getSpeedC
+DATA8 setSpeedC
+DATA8 setPowerC
+DATA32 getTachoD
+DATA32 tmpTachoD
+DATA8 getSpeedD
+DATA8 setSpeedD
+DATA8 setPowerD
+DATA16 newArray1d
+DATA32 newSize1d
+DATA32 newIndex1d
+DATA32 timeMC1
+DATA32 timeMC2
+DATA32 timeMC3
+DATA32 timeMC4
+DATA32 timeMC5
+DATA32 timeMC6
+DATA32 timeMC7
+DATA32 timeMC8
+DATA32 timeMC9
+DATA32 timeMC1tmp
+DATA32 timeMC2tmp
+DATA32 timeMC3tmp
+DATA32 timeMC4tmp
+DATA32 timeMC5tmp
+DATA32 timeMC6tmp
+DATA32 timeMC7tmp
+DATA32 timeMC8tmp
+DATA32 timeMC9tmp
+DATAF VJ_M
+DATAF VC_M
+DATAF VI_M
+ARRAY16 VA_M 2
+ARRAY16 VB_M 2
+
+vmthread MAIN
+{
+    MOVE32_32 0 STOPLCDUPDATE
+    MOVE32_32 0 NUMMAILBOXES
+    OUTPUT_RESET 0 15
+
+	WRITE8 0 0 MOTORISINVERTED
+	WRITE8 0 1 MOTORISINVERTED
+	WRITE8 0 2 MOTORISINVERTED
+	WRITE8 0 3 MOTORISINVERTED
+	WRITE8 0 0 FIRSTOF2
+	WRITE8 0 1 FIRSTOF2
+	WRITE8 0 2 FIRSTOF2
+	WRITE8 1 3 FIRSTOF2
+	WRITE8 0 4 FIRSTOF2
+	WRITE8 1 5 FIRSTOF2
+	WRITE8 2 6 FIRSTOF2
+	WRITE8 0 7 FIRSTOF2
+	WRITE8 0 8 FIRSTOF2
+	WRITE8 1 9 FIRSTOF2
+	WRITE8 2 10 FIRSTOF2
+	WRITE8 0 11 FIRSTOF2
+	WRITE8 4 12 FIRSTOF2
+	WRITE8 0 13 FIRSTOF2
+	WRITE8 0 14 FIRSTOF2
+	WRITE8 0 15 FIRSTOF2
+    INPUT_DEVICE CLR_ALL -1
+    ARRAY CREATE8 0 LOCKS
+    MOVE32_32 0 s1out1
+	MOVE32_32 0 s1out2
+	MOVE32_32 0 s1out3
+    MOVE32_32 0 s2out1
+	MOVE32_32 0 s2out2
+	MOVE32_32 0 s2out3
+    MOVE32_32 0 s3out1
+	MOVE32_32 0 s3out2
+	MOVE32_32 0 s3out3
+    MOVE32_32 0 s4out1
+	MOVE32_32 0 s4out2
+	MOVE32_32 0 s4out3
+    MOVE32_32 0 timeMC1
+	MOVE32_32 0 timeMC2
+	MOVE32_32 0 timeMC3
+	MOVE32_32 0 timeMC4
+	MOVE32_32 0 timeMC5
+	MOVE32_32 0 timeMC6
+	MOVE32_32 0 timeMC7
+	MOVE32_32 0 timeMC8
+	MOVE32_32 0 timeMC9
+    MOVEF_F 0.0 VJ_M
+    MOVEF_F 0.0 VC_M
+    MOVEF_F 0.0 VI_M
+    CALL ARRAYCREATE_FLOAT VA_M
+    CALL ARRAYCREATE_FLOAT VB_M
+    ARRAY CREATE8 1 LOCKS
+    CALL PROGRAM_MAIN -1
+    PROGRAM_STOP -1
+}
+subcall PROGRAM_MAIN
+{
+    IN_32 SUBPROGRAM
+    DATA32 INDEX
+    ARRAY8 STACKPOINTER 4
+    DATAF F.0
+    DATAF F.1
+    ARRAY32 RETURNSTACK2 128
+    ARRAY32 RETURNSTACK 128
+    DATAS S.0 252
+    MOVE8_8 0 STACKPOINTER
+    MOVEF_F 0.0 VJ_M
+    MOVEF_F 0.0 VC_M
+    MOVEF_F 0.0 VI_M
+    CALL ARRAYSTORE_FLOAT 0.0 0.0 VA_M
+    CALL ARRAYSTORE_FLOAT 0.0 0.0 VB_M
+    MOVEF_F 0.0 VJ_M
+    MOVEF_F 0.0 VC_M
+    CALL LCD.CLEAR
+    MOVEF_F 1.0 VI_M
+  for3:
+    JR_GTF VI_M 8.0 endfor3
+  forbody3:
+    CALL MATH.GETRANDOMNUMBER 11.0 F.1
+    ADDF F.1 1.0 F.0
+    CALL ARRAYSTORE_FLOAT VI_M F.0 VA_M
+    CALL MATH.GETRANDOMNUMBER 11.0 F.1
+    ADDF F.1 1.0 F.0
+    CALL ARRAYSTORE_FLOAT VI_M F.0 VB_M
+    ADDF VI_M 1.0 VI_M
+    JR_LTEQF VI_M 8.0 forbody3
+  endfor3:
+    MOVEF_F 1.0 VI_M
+  for11:
+    JR_GTF VI_M 8.0 endfor11
+  forbody11:
+    CALL ARRAYGET_FLOAT VI_M F.0 VA_M
+    CALL ARRAYGET_FLOAT VI_M F.1 VB_M
+    JR_EQF F.0 F.1 else12_1
+    ADDF VJ_M 1.0 VJ_M
+    MULF 10.0 VJ_M F.0
+    CALL ARRAYGET_FLOAT VI_M F.1 VA_M
+    STRINGS VALUE_FORMATTED F.1 '%g' 99 S.0
+    CALL LCD.WRITE 50.0 F.0 S.0
+    MULF 10.0 VJ_M F.0
+    CALL ARRAYGET_FLOAT VI_M F.1 VB_M
+    STRINGS VALUE_FORMATTED F.1 '%g' 99 S.0
+    CALL LCD.WRITE 70.0 F.0 S.0
+  else12_1:
+  endif12:
+    ADDF VI_M 1.0 VI_M
+    JR_LTEQF VI_M 8.0 forbody11
+  endfor11:
+    MOVEF_F 1.0 VI_M
+  for25:
+    JR_GTF VI_M 8.0 endfor25
+  forbody25:
+    MULF 10.0 VI_M F.0
+    CALL ARRAYGET_FLOAT VI_M F.1 VA_M
+    STRINGS VALUE_FORMATTED F.1 '%g' 99 S.0
+    CALL LCD.WRITE 10.0 F.0 S.0
+    ADDF VI_M 1.0 VI_M
+    JR_LTEQF VI_M 8.0 forbody25
+  endfor25:
+    MOVEF_F 1.0 VI_M
+  for31:
+    JR_GTF VI_M 8.0 endfor31
+  forbody31:
+    MULF 10.0 VI_M F.0
+    CALL ARRAYGET_FLOAT VI_M F.1 VB_M
+    STRINGS VALUE_FORMATTED F.1 '%g' 99 S.0
+    CALL LCD.WRITE 30.0 F.0 S.0
+    ADDF VI_M 1.0 VI_M
+    JR_LTEQF VI_M 8.0 forbody31
+  endfor31:
+    DATA32 milliseconds37
+	MOVEF_32 10000000000.0 milliseconds37
+	DATA32 timer37
+	TIMER_WAIT milliseconds37 timer37
+	TIMER_READY timer37
+ENDTHREAD:
+    RETURN
+}
+subcall ARRAYSTORE_FLOAT   // FFFV
+{
+	IN_F index
+	IN_F value	
+	IN_16 handle
+	
+	DATA32 index32
+	DATA32 len	
+	MOVEF_32 index index32
+
+	ARRAY SIZE handle len
+	JR_LT32 index32 0 negativeindex
+	JR_LT32 index32 len arraybigenough
+
+increasesize:	
+	DATA32 doublelen
+	ADD32 len len doublelen
+	ARRAY RESIZE handle doublelen
+writeloop:	
+	ARRAY_WRITE handle len 0.0
+	ADD32 len 1 len
+	JR_LT32 len doublelen writeloop
+	JR_GTEQ32 index32 len increasesize
+	
+arraybigenough:
+	ARRAY_WRITE handle index32 value
+negativeindex:
+}
+subcall LCD.CLEAR   // V
+{
+	UI_DRAW(TOPLINE,0)
+	UI_DRAW(CLEAN)
+	
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall MATH.GETRANDOMNUMBER   // FF
+{
+	IN_F range
+	OUT_F result
+	
+	DATA16 range_16
+	DATA16 value
+	MOVEF_16 range range_16
+	
+	RANDOM 1 range_16 value
+	MOVE16_F value result
+}
+subcall ARRAYGET_FLOAT     // FFF
+{
+	IN_F index
+	OUT_F value
+	IN_16 handle
+	
+	DATA32 index32
+	DATA32 len
+	MOVEF_32 index index32
+	
+	ARRAY SIZE handle len
+	JR_LT32 index32 0 outofbounds
+	JR_GTEQ32 index32 len outofbounds
+	
+	ARRAY_READ handle index32 value
+	RETURN
+outofbounds:
+	MOVE8_F 0 value	
+}
+subcall LCD.WRITE     // FFSV
+{
+	IN_F x
+	IN_F y
+	IN_S text 252
+	
+	DATA16 x_16
+	DATA16 y_16
+	MOVEF_16 x x_16
+	MOVEF_16 y y_16
+	
+	UI_DRAW SELECT_FONT 1
+	UI_DRAW TEXT 1 x_16 y_16 text
+
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall ARRAYCREATE_FLOAT   // F
+{
+	OUT_16 handle
+	
+	ARRAY CREATEF 8 handle			// create with 8 elements
+	ARRAY FILL handle 0.0
+}

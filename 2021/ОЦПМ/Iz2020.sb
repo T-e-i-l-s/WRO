@@ -1,0 +1,193 @@
+ q=0
+m=1.3
+ i=0
+ v=0
+Sensor.SetMode(1,0)
+Sensor.SetMode(2,0)
+Motor.Invert("b")
+Sensor.SetMode(4,2)
+sesor_line=1
+sesor_line2=2
+Sub line
+  U=(Sensor.ReadPercent(sesor_line)-Sensor.ReadPercent(sesor_line2))
+  Motor.StartPower("B",50+U*m)
+   Motor.StartPower("C",50-U*m)
+ EndSub
+ Sub razv
+  a1=180
+w=171
+Motor.Invert("B")
+d=62.4
+s=w/d*a1
+Motor.MoveSync("BC",20,-20,s,"true")
+EndSub
+Sub r
+  a1=90
+w=171
+Motor.Invert("B")
+d=62.4
+s=w/d*a1
+Motor.MoveSync("BC",20,-20,s,"true")
+EndSub
+Sub l
+  a1=90
+w=171
+Motor.Invert("B")
+d=62.4
+s=w/d*a1
+Motor.MoveSync("BC",-20,20,s,"true")
+EndSub
+  Sub to2
+  r()
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+    Motor.Move("bc",30,70,"true")
+  l()
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+    Motor.Move("bc",30,70,"true")
+    l()
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",20,70,"true")
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",20,250,"true")
+EndSub
+Sub to1
+  l()
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+   Motor.Move("BC",30,50,"true")
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+   line()
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",30,50,"true")
+   While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",30,70,"true")
+  l()
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",20,350,"true")
+EndSub
+
+
+While Sensor.ReadPercent(2)>10
+  Motor.Start("BC",20)
+  
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",20,33,"true")
+v=sensor.ReadRawValue(4,0)
+
+a[i]=v
+Motor.ResetCount("BC")
+ While (Motor.GetCount("B")+Motor.GetCount("C"))/2<85
+  line()
+EndWhile
+Motor.Stop("BC","true")
+For i=1 To 9
+  v=0
+  v=sensor.ReadRawValue(4,0)
+  Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("C"))/2<85
+  line()
+EndWhile
+Motor.Stop("BC","true")
+a[i]=v
+EndFor
+LCD.Clear()
+
+For i=0 to 9
+  q=q+10
+
+LCD.Text(1,20,q,0,a[i])
+EndFor
+
+For i=0 To 9
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+   Motor.Move("BC",20,60,"true")
+  If a[i]=5 Then
+    razv()
+  ElseIf a[i]=4 then
+    l()
+  Elseif a[i]=2 then
+    r()
+  EndIf
+ 
+EndFor
+q=0
+LCD.Clear()
+For i=9 To 0 Step -1
+  If a[i]=4 then
+    a[i]=2
+  ElseIf a[i]=2 then
+   a[i]=4
+   EndIf
+  q=q+10
+  
+LCD.Text(1,20,q,0,a[i])
+EndFor
+
+ While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  razv()
+  Speaker.Note(100,"c#5",1000)
+  If a[0]=5 Then
+    r=2
+  Else
+    r=1
+    EndIf
+For i=9 To r Step -1
+   While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+   Motor.Move("BC",20,65,"true")
+  If a[i]=5 Then
+    razv()
+  ElseIf a[i]=4 then
+    l()
+  Elseif a[i]=2 then
+    r()
+  EndIf
+EndFor
+
+
+
+LCD.Clear()
+LCD.Text(1,20,20,0,a[9])
+Program.Delay(200)
+If a[0]=5 Then
+  While Sensor.ReadPercent(1)>17 Or Sensor.ReadPercent(2)>17
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",20,350,"true")
+  ElseIf a[0]<>4 then
+  to1()
+ElseIf a[0]=4 then
+      Speaker.Note(100,"c#5",1000)
+  to2()
+  EndIf

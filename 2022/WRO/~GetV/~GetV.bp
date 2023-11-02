@@ -1,0 +1,73 @@
+I2CPORT_m = 0 ' global variable init 
+I2CSLVADDR_m = 0 ' global variable init 
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+I2CPORT_1 = 0 ' local variable init 
+SENDARRAY_1[0] = 0 ' local variable init 
+RECVARRAY_1[0] = 0 ' local variable init 
+SNUM_1 = 0 ' local variable init 
+SRED_1 = 0 ' local variable init 
+SGREEN_1 = 0 ' local variable init 
+SBLUE_1 = 0 ' local variable init 
+MAX_1 = 0 ' local variable init 
+MIN_1 = 0 ' local variable init 
+V_1 = 0 ' local variable init 
+S_1 = 0 ' local variable init 
+H_1 = 0 ' local variable init 
+Sensor.SetMode ( 4 , 2 )
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 3
+I2CSLVADDR_m = 1
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+Sub GETV_1
+SENDARRAY_1 [ 0 ] = 66
+RECVARRAY_1 = Sensor.CommunicateI2C ( I2CPORT_1 , I2CSLVADDR_m , 1 , 4 , SENDARRAY_1 )
+SNUM_1 = RECVARRAY_1 [ 0 ]
+SRED_1 = RECVARRAY_1 [ 1 ]
+SGREEN_1 = RECVARRAY_1 [ 2 ]
+SBLUE_1 = RECVARRAY_1 [ 3 ]
+SRED_1 = SRED_1 / 255
+SGREEN_1 = SGREEN_1 / 255
+SBLUE_1 = SBLUE_1 / 255
+If ( SRED_1 > SGREEN_1 ) And ( SRED_1 > SBLUE_1 ) Then
+MAX_1 = SRED_1
+ElseIf ( SGREEN_1 > SRED_1 ) And ( SGREEN_1 > SBLUE_1 ) then
+MAX_1 = SGREEN_1
+ElseIf ( SBLUE_1 > SRED_1 ) And ( SBLUE_1 > SGREEN_1 ) then
+MAX_1 = SBLUE_1
+EndIf
+If ( SRED_1 < SGREEN_1 ) And ( SRED_1 < SBLUE_1 ) Then
+MIN_1 = SRED_1
+ElseIf ( SGREEN_1 < SRED_1 ) And ( SGREEN_1 < SBLUE_1 ) then
+MIN_1 = SGREEN_1
+ElseIf ( SBLUE_1 < SRED_1 ) And ( SBLUE_1 < SGREEN_1 ) then
+MIN_1 = SBLUE_1
+EndIf
+V_1 = MAX_1
+If ( MAX_1 = 0 ) Then
+S_1 = 0
+Else
+S_1 = 1 - MIN_1 / MAX_1
+EndIf
+If ( SRED_1 = MAX_1 ) Then
+If ( SGREEN_1 >= SBLUE_1 ) Then
+H_1 = 60 * ( SGREEN_1 - SBLUE_1 ) / ( MAX_1 - MIN_1 )
+Else
+H_1 = 60 * ( SGREEN_1 - SBLUE_1 ) / ( MAX_1 - MIN_1 ) + 360
+EndIf
+Else
+If ( MAX_1 = SGREEN_1 ) Then
+H_1 = 60 * ( SBLUE_1 - SRED_1 ) / ( MAX_1 - MIN_1 ) + 120
+Else
+H_1 = 60 * ( SRED_1 - SGREEN_1 ) / ( MAX_1 - MIN_1 ) + 240
+EndIf
+EndIf
+LCD.Text ( 1 , 20 , I2CPORT_1 * 10 , 2 , H_1 + S_1 + V_1 )
+EndSub
+While "true"
+LCD.Clear ()
+I2CPORT_1 = 4
+GETV_1()
+Program.Delay ( 2000 )
+EndWhile

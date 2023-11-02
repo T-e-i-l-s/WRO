@@ -1,0 +1,146 @@
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+BLACK_m = 0 ' global variable init 
+X_m = 0 ' global variable init 
+X2_m = 0 ' global variable init 
+X3_m = 0 ' global variable init 
+Y_m = 0 ' global variable init 
+COLOR_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+ERR_m = 0 ' global variable init 
+GRAD_m = 0 ' global variable init 
+MM_m = 0 ' global variable init 
+LINE1_m = 0 ' global variable init 
+Sensor.SetMode ( 1 , 0 )
+Sensor.SetMode ( 4 , 0 )
+S1_m = 0
+S2_m = 0
+K_m = 0.3
+V_m = 35
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+BLACK_m = 13
+X_m = 5
+X2_m = 3
+X3_m = 1
+Y_m = 4
+COLOR_m = 0
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 1 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 4 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LEFT
+Motor.Move ( "BC" , 20 , 7 , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 120 , "false" )
+While Sensor.ReadPercent ( 4 ) > BLACK_m
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT
+Motor.Move ( "BC" , 20 , 7 , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 120 , "false" )
+While Sensor.ReadPercent ( 1 ) > BLACK_m
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub AROUND
+Motor.MoveSync ( "BC" , - 60 , 60 , 240 , "false" )
+While Sensor.ReadPercent ( 4 ) < 50
+Motor.StartSync ( "BC" , - 30 , 30 )
+EndWhile
+While Sensor.ReadPercent ( 3 ) > 13
+Motor.StartSync ( "BC" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+sub LINE
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m + U_m * K_m )
+EndSub
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , 13 + ERR_m * 2 , 9 + ERR_m * 2 )
+While Sensor.ReadPercent ( 4 ) > 25
+EndWhile
+Program.Delay ( 20 )
+Motor.ResetCount ( "BC" )
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , 13 + ERR_m * 2 , 9 + ERR_m * 2 )
+Speaker.Note ( 100 , "c#5" , 100 )
+While Sensor.ReadPercent ( 4 ) < 30
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Speaker.Note ( 100 , "c#5" , 100 )
+GRAD_m = Motor.GetCount ( "c" )
+MM_m = GRAD_m * Math.pi * 8.2 / 360
+MM_m = MM_m + 0.8
+LINE1_m = MM_m
+LINE1_m = Math.Floor ( LINE1_m )
+If LINE1_m = 0 Then
+LINE1_m = 1
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 1 , 20 , 20 , LINE1_m )
+Program.Delay ( 3000 )
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , 13 + ERR_m * 2 , 9 + ERR_m * 2 )
+While Sensor.ReadPercent ( 4 ) > 25
+EndWhile
+Program.Delay ( 20 )
+Motor.ResetCount ( "BC" )
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , 13 + ERR_m * 2 , 9 + ERR_m * 2 )
+Speaker.Note ( 100 , "c#5" , 100 )
+While Sensor.ReadPercent ( 4 ) < 30
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Speaker.Note ( 100 , "c#5" , 100 )
+GRAD_m = Motor.GetCount ( "c" )
+MM_m = GRAD_m * Math.pi * 8.2 / 360
+MM_m = MM_m + 0.8
+LINE1_m = MM_m
+LINE1_m = Math.Floor ( LINE1_m )
+If LINE1_m = 0 Then
+LINE1_m = 1
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 1 , 20 , 20 , LINE1_m )
+Program.Delay ( 3000 )
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , 13 + ERR_m * 2 , 9 + ERR_m * 2 )
+While Sensor.ReadPercent ( 4 ) > 25
+EndWhile
+Program.Delay ( 20 )
+Motor.ResetCount ( "BC" )
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , 13 + ERR_m * 2 , 9 + ERR_m * 2 )
+Speaker.Note ( 100 , "c#5" , 100 )
+While Sensor.ReadPercent ( 4 ) < 30
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Speaker.Note ( 100 , "c#5" , 100 )
+GRAD_m = Motor.GetCount ( "c" )
+MM_m = GRAD_m * Math.pi * 8.2 / 360
+MM_m = MM_m + 0.8
+LINE1_m = MM_m
+LINE1_m = Math.Floor ( LINE1_m )
+If LINE1_m = 0 Then
+LINE1_m = 1
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 1 , 20 , 20 , LINE1_m )
+Program.Delay ( 1000000 )

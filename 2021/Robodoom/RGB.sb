@@ -1,0 +1,27 @@
+Sensor.SetMode(4,4)
+Sub time
+  Program.Delay(500)
+  Buttons.Flush()
+  Buttons.Wait()
+EndSub
+While "true"
+  time()
+RGB=sensor.ReadRaw(4,3)
+Red=RGB[0]
+Green=RGB[1]
+Blue=RGB[2]
+LCD.Clear()
+LCD.Text(1,20,20,1,Red)
+LCD.Text(1,20,45,1,Green)
+LCD.Text(1,20,70,1,Blue)
+Summ=Red+Green+Blue
+time()
+If Summ>50 Then 
+  col=4
+ElseIf Summ>=15 And Summ<50 then
+  col=5
+Else
+  col=0
+EndIf
+LCD.Text(1,60,57,2,col)
+EndWhile

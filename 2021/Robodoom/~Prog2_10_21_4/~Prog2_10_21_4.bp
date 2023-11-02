@@ -1,0 +1,37 @@
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0
+gv_v = 0
+gv_min1 = 0
+gv_max1 = 0
+gv_min2 = 0
+gv_max2 = 0
+gv_mm = 0
+gv_a = 0
+Motor.Invert ( "B" )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Sensor.SetMode ( 4 , 0 )
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0.47
+gv_v = 40
+gv_min1 = 100
+gv_max1 = 0
+gv_min2 = 100
+gv_max2 = 0
+While Sensor.ReadRawValue ( 4 , 0 ) > 150
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 60 , "true" )
+gv_mm = 100
+gv_a = gv_mm / 3.14 * 82
+While ( Motor.GetSpeed ( "b" ) + Motor.GetSpeed ( "c" ) ) / 2 < gv_a
+Motor.Start ( "BC" , 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+While ( Motor.GetSpeed ( "b" ) + Motor.GetSpeed ( "c" ) ) / 2 < gv_a
+Motor.Start ( "BC" , - 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )

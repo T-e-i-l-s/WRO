@@ -1,0 +1,325 @@
+gv_x = 0
+gv_z = 0
+gv_d = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 0
+gv_min3 = 0
+gv_p = 0
+gv_i = 0
+gv_i2cport = 0
+gv_i2cslvaddr = 0
+gv_g = 0
+gv_r = 0
+gv_y = 0
+gv_w = 0
+gv_color = 0
+gv_k1 = 0
+gv_k2 = 0
+gv_speed = 0
+gv_speedl = 0
+gv_speedr = 0
+gv_eold = 0
+gv_n = 0
+gv_q = 0
+gv_s3 = 0
+gv_s2 = 0
+gv_e = 0
+gv_u = 0
+gv_sendarray [ 0 ] = 0
+gv_recvarray [ 0 ] = 0
+gv_snum = 0
+gv_sred = 0
+gv_sgreen = 0
+gv_sblue = 0
+gv_max = 0
+gv_min = 0
+gv_h = 0
+gv_s = 0
+gv_v = 0
+gv_h1 = 0
+gv_s1 = 0
+gv_v1 = 0
+gv_color1 = 0
+gv_h2 = 0
+gv_s22 = 0
+gv_v2 = 0
+gv_color2 = 0
+gv_h4 = 0
+gv_s4 = 0
+gv_v4 = 0
+gv_color4 = 0
+gv_h5 = 0
+gv_s5 = 0
+gv_v5 = 0
+gv_color5 = 0
+gv_x = 0
+gv_z = 0
+gv_d = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 0
+gv_min3 = 0
+Motor.Invert ( "b" )
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+gv_p = 0
+gv_i = 0
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_g = 0
+gv_r = 0
+gv_y = 0
+gv_w = 0
+gv_color = 0
+gv_k1 = 0.15
+gv_k2 = 2
+gv_speed = 0
+gv_speedl = 0
+gv_speedr = 0
+gv_eold = 0
+gv_n = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 100
+gv_min3 = 100
+Motor.ResetCount ( "bc" )
+Motor.Start ( "bc" , 30 )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 500
+If Sensor.ReadPercent ( 2 ) > gv_max2 Then
+gv_max2 = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 2 ) < gv_min2 Then
+gv_min2 = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 3 ) > gv_max3 Then
+gv_max3 = Sensor.ReadPercent ( 3 )
+EndIf
+If Sensor.ReadPercent ( 3 ) < gv_min3 Then
+gv_min3 = Sensor.ReadPercent ( 3 )
+EndIf
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+gv_speed = 20
+gv_q = 1
+For gv_i = 1 To 9
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+If gv_q = 1 Then
+f_hsv_100_0 ()
+gv_h1 = gv_h
+gv_s1 = gv_s
+gv_v1 = gv_v
+If ( gv_h > 120 ) Or ( gv_h = 0 ) Or ( gv_h >= 0 And gv_h <= 20 ) Then
+gv_color1 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+ElseIf ( gv_h < 120 ) Then
+gv_color1 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+Else
+gv_color1 = 6
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Zero" )
+EndIf
+EndIf
+If gv_q = 3 Then
+f_hsv_100_0 ()
+gv_h2 = gv_h
+gv_s22 = gv_s
+gv_v2 = gv_v
+If ( gv_v < 0.043 ) Then
+gv_color2 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color2 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+EndIf
+If gv_q = 8 Then
+f_hsv_100_0 ()
+gv_h4 = gv_h
+gv_s4 = gv_s
+gv_v4 = gv_v
+If ( gv_h < 30 ) Then
+gv_color4 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color4 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+EndIf
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_q = gv_q + 1
+EndFor
+Motor.MoveSync ( "bc" , - 20 , - 20 , 150 , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 300 , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While Sensor.ReadPercent ( 3 ) > 10
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While Sensor.ReadPercent ( 2 ) > 50
+Motor.StartSync ( "bc" , 10 , - 10 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_speed = 50
+gv_q = 0
+For gv_i = 1 To 4
+gv_k1 = 0.2
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_zamoroz_0 ()
+If gv_q = 1 Then
+f_hsv_100_0 ()
+gv_h5 = gv_h
+gv_s5 = gv_s
+gv_v5 = gv_v
+If ( gv_h < 25 ) or gv_h > 280 Then
+gv_color5 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color5 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+EndIf
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_q = gv_q + 1
+EndFor
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h1 )
+LCD.Write ( 10 , 40 , gv_s1 )
+LCD.Write ( 10 , 70 , gv_v1 )
+LCD.Write ( 10 , 100 , gv_color1 )
+LCD.Write ( 40 , 20 , gv_h2 )
+LCD.Write ( 40 , 50 , gv_s22 )
+LCD.Write ( 40 , 80 , gv_v2 )
+LCD.Write ( 40 , 110 , gv_color2 )
+LCD.Write ( 70 , 10 , gv_h4 )
+LCD.Write ( 70 , 40 , gv_s4 )
+LCD.Write ( 70 , 70 , gv_v4 )
+LCD.Write ( 70 , 100 , gv_color4 )
+LCD.Write ( 100 , 20 , gv_h5 )
+LCD.Write ( 100 , 50 , gv_s5 )
+LCD.Write ( 100 , 80 , gv_v5 )
+LCD.Write ( 100 , 110 , gv_color5 )
+Program.Delay ( 1200000 )
+Sub f_hsv_0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_sendarray [ 0 ] = 66
+gv_recvarray = Sensor.CommunicateI2C ( gv_i2cport , gv_i2cslvaddr , 1 , 4 , gv_sendarray )
+gv_snum = gv_recvarray [ 0 ]
+gv_sred = gv_recvarray [ 1 ]
+gv_sgreen = gv_recvarray [ 2 ]
+gv_sblue = gv_recvarray [ 3 ]
+gv_sred = gv_sred / 255
+gv_sgreen = gv_sgreen / 255
+gv_sblue = gv_sblue / 255
+If ( gv_sred > gv_sgreen ) And ( gv_sred > gv_sblue ) Then
+gv_max = gv_sred
+ElseIf ( gv_sgreen > gv_sred ) And ( gv_sgreen > gv_sblue ) then
+gv_max = gv_sgreen
+ElseIf ( gv_sblue > gv_sred ) And ( gv_sblue > gv_sgreen ) then
+gv_max = gv_sblue
+EndIf
+If ( gv_sred < gv_sgreen ) And ( gv_sred < gv_sblue ) Then
+gv_min = gv_sred
+ElseIf ( gv_sgreen < gv_sred ) And ( gv_sgreen < gv_sblue ) then
+gv_min = gv_sgreen
+ElseIf ( gv_sblue < gv_sred ) And ( gv_sblue < gv_sgreen ) then
+gv_min = gv_sblue
+EndIf
+If ( gv_max = gv_min ) Then
+gv_h = 0
+Else
+If ( gv_sred = gv_max ) Then
+If ( gv_sgreen >= gv_sblue ) Then
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min )
+Else
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min ) + 360
+EndIf
+Else
+If ( gv_max = gv_sgreen ) Then
+gv_h = 60 * ( gv_sblue - gv_sred ) / ( gv_max - gv_min ) + 120
+Else
+gv_h = 60 * ( gv_sred - gv_sgreen ) / ( gv_max - gv_min ) + 240
+EndIf
+EndIf
+EndIf
+If ( gv_max = 0 ) Then
+gv_s = 0
+Else
+gv_s = 1 - gv_min / gv_max
+EndIf
+gv_v = gv_max
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h )
+LCD.Write ( 10 , 30 , gv_s )
+LCD.Write ( 10 , 60 , gv_v )
+EndSub
+Sub f_hsv_100_0
+gv_p = 0
+gv_x = 0
+gv_d = 0
+gv_z = 0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+For gv_p = 1 To 100
+f_hsv_0 ()
+gv_x = gv_x + gv_h
+gv_z = gv_z + gv_s
+gv_d = gv_d + gv_v
+EndFor
+gv_h = gv_x / 100
+gv_s = gv_z / 100
+gv_v = gv_d / 100
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h )
+LCD.Write ( 10 , 30 , gv_s )
+LCD.Write ( 10 , 60 , gv_v )
+EndSub
+Sub f_a3_0
+gv_s3 = 100 * ( Sensor.ReadPercent ( 3 ) - gv_min3 ) / ( gv_max3 - gv_min3 )
+EndSub
+Sub f_a2_0
+gv_s2 = 100 * ( Sensor.ReadPercent ( 2 ) - gv_min2 ) / ( gv_max2 - gv_min2 )
+EndSub
+Sub f_polin2d_0
+f_a3_0 ()
+f_a2_0 ()
+gv_e = gv_s2 - gv_s3
+gv_u = gv_k1 * gv_e + gv_k2 * ( gv_e - gv_eold )
+gv_eold = gv_e
+gv_speedl = gv_speed + gv_u
+gv_speedr = gv_speed - gv_u
+Motor.StartPower ( "B" , gv_speedl )
+Motor.StartPower ( "C" , gv_speedr )
+EndSub
+Sub f_zamoroz_0
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub

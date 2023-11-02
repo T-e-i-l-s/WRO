@@ -1,0 +1,261 @@
+'WRO 2022 junior
+
+
+EV3.SetLEDColor("OFF","NORMAL")    
+
+
+
+time.Reset1()
+
+'Готовимся к езде по линии=====================================================================
+Sensor.SetMode (2,0)
+Sensor.SetMode (3,0)
+'=EV3File.OpenRead("colib.txt")
+min1=0'EV3File.ConvertToNumber(EV3File.ReadLine(f))
+min2=0'EV3File.ConvertToNumber(EV3File.ReadLine(f))
+max1=100'EV3File.ConvertToNumber(EV3File.ReadLine(f))
+max2=100'EV3File.ConvertToNumber(EV3File.ReadLine(f))
+'EV3File.Close(f)
+  k = 1
+  v = 70
+
+
+
+maxr = 0
+minr = 0
+maxw = 0
+minw = 0
+maxb = 0
+minb = 0
+
+
+'Обнуляемся====================================================================================
+LCD.Clear ()
+zone1 = 0
+zone2 = 0
+black = 0
+grad = 0
+mm = 0
+sp = 0
+colors [1] = 0
+colors [2] = 0
+colors [3] = 0
+colors [4] = 0
+colors [5] = 0
+colors [6] = 0
+colors [7] = 0
+colors [8] = 0
+colors [9] = 0
+colors [10] = 0
+colors [11] = 0
+colors [12] = 0
+id = 0
+red = 0
+start = 0
+
+'Готовимся к считыванию цветов=================================================================
+
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+
+
+'Сабы для линии================================================================================
+
+Sub sen1
+  s1 = 100 * ( Sensor.ReadPercent ( 2 ) - min1) / ( max1 - min1 )
+EndSub
+
+Sub sen2
+  S2 = 100 * ( Sensor.ReadPercent ( 3 ) - min2 ) / ( max2 - min2 )
+EndSub
+
+Sub line1
+  sen1 ()
+  sen2 ()
+  U = s1 - s2
+  Motor.StartPower ( "C" , v - U * k )
+  Motor.StartPower ( "B" , v + U * k )
+EndSub
+
+Sub line2
+  sen1 ()
+  sen2 ()
+  U = s2 - s1
+  Motor.StartPower ( "C" , v - U * k )
+  Motor.StartPower ( "B" , v + U * k )
+EndSub
+
+
+
+'Езда по формулам==============================================================================
+
+Function move (in number l , in number nsp)
+  Motor.ResetCount ( "BC" )
+  sp = 30
+
+  While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= l
+    a = 90 / ( 82 * 3.14 ) * 360
+    if l - ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 < a and sp > 35 Then
+      sp = sp - 0.9
+      if nsp < 0 Then
+        sp = 0 - sp
+      endif
+    EndIf
+    if ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 < a or sp <nsp Then
+      sp = Math.abs(sp) + 0.2
+      if nsp < 0 Then
+        sp = 0 - sp
+      endif
+    EndIf
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+  EndWhile
+  Motor.Stop ( "BC" , "true" )
+EndFunction
+
+Function tomm (in number mm , in number sp)
+  l = mm / ( 82 * 3.14 ) * 360
+  Motor.ResetCount ( "BC" )
+  move(l,sp)
+  sp = 0
+EndFunction
+
+Sub left
+  l = 60 / (82 * 3.14) * 360
+  Motor.Move ("BC" , 20 , l , "true")
+  Motor.MoveSync ( "BC" , -20 , 20 , 130 , "true" )
+  While Sensor.ReadPercent ( 3 ) < 21
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 3 ) > 10
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+EndSub
+ 
+Sub right
+  l = 63 / (82 * 3.14) * 360
+  Motor.Move ("BC" , 20 , l , "true")
+  Motor.MoveSync("BC",20,-20,130,"true")
+  While Sensor.ReadPercent ( 2 ) < 21
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 2 ) > 10
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+EndSub
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+  Speaker.Note(70, "B7", 200)
+EndSub
+f=EV3File.OpenWrite("cols.txt")
+mm = 150
+Sensor.SetMode (4,2)
+l = mm / ( 82 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+a = 0
+cols[0] = 0
+
+sp = 30
+while Sensor.ReadRawValue(4,0) = 0
+  U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+EndWhile
+
+Motor.ResetCount ( "BC" )
+while Motor.GetCount("B")<l
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+  cols[a] = Sensor.ReadRawValue(4,0)
+  EV3File.WriteLine(f,cols[a] + "; ")
+  a = a + 1
+EndWhile
+
+b1 = 0
+while cols[b1] <> 0
+  b1 = b1 + 1
+EndWhile
+
+b1 = b1  / (a/15)
+
+LCD.Text(1,20,30,2,math.Floor(b1/7))
+
+
+sp = 30
+while Sensor.ReadRawValue(4,0) = 0
+  U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+EndWhile
+a = 0
+
+
+Motor.ResetCount ( "BC" )
+while  Motor.GetCount("B")<l
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+  cols[a] = Sensor.ReadRawValue(4,0)
+  EV3File.WriteLine(f,cols[a] + "; ")
+  a = a + 1
+EndWhile
+motor.Stop("bc","false")
+
+b2 = 0
+while cols[b2] <> 0
+  b2 = b2 + 1
+EndWhile
+
+b2 = b2  / (a/15)
+
+
+
+
+LCD.Text(1,20,60,2,math.Floor(b2/7))
+
+while Sensor.ReadRawValue(4,0) = 0
+  U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+EndWhile
+
+
+a = 0
+Motor.ResetCount ( "BC" )
+while  Motor.GetCount("B")<l
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 10 )
+    Motor.StartPower ( "B" , sp - U * 10)
+  cols[a] = Sensor.ReadRawValue(4,0)
+  EV3File.WriteLine(f,cols[a] + "; ")
+  a = a + 1
+EndWhile
+motor.Stop("bc","false")
+
+b3 = 0
+while cols[b3] <> 0
+  b3 = b3 + 1
+  a =a 
+EndWhile
+
+b3 = b3  / (a/15)
+
+
+LCD.Text(1,20,90,2,math.Floor(b3/7))
+LCD.Text(1,60,45,2,math.Floor(b1/7) + math.Floor(b2/7) + math.Floor(b3/7))
+
+frz()
+ 

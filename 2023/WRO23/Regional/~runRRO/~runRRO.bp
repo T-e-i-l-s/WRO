@@ -1,0 +1,1574 @@
+MAX1_m = 0 ' global variable init 
+MIN1_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+K1_m = 0 ' global variable init 
+V1_m = 0 ' global variable init 
+K2_m = 0 ' global variable init 
+V2_m = 0 ' global variable init 
+K3_m = 0 ' global variable init 
+V3_m = 0 ' global variable init 
+K21_m = 0 ' global variable init 
+V21_m = 0 ' global variable init 
+K31_m = 0 ' global variable init 
+V31_m = 0 ' global variable init 
+RD_m = 0 ' global variable init 
+BLACK_m = 0 ' global variable init 
+BC1_m = 0 ' global variable init 
+WC1_m = 0 ' global variable init 
+BC2_m = 0 ' global variable init 
+WC2_m = 0 ' global variable init 
+RED_m = 0 ' global variable init 
+MM_m = 0 ' global variable init 
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+L_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+DIS_m = 0 ' global variable init 
+T_m = 0 ' global variable init 
+SENDARRAY_m[0] = 0 ' global variable init 
+RECVARRAY_m[0] = 0 ' global variable init 
+NUM_m = 0 ' global variable init 
+R_m = 0 ' global variable init 
+G_m = 0 ' global variable init 
+B_m = 0 ' global variable init 
+RGB_m = 0 ' global variable init 
+MAX_m = 0 ' global variable init 
+MIN_m = 0 ' global variable init 
+H_m = 0 ' global variable init 
+S_m = 0 ' global variable init 
+COL_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+N_m = 0 ' global variable init 
+SP_m = 0 ' global variable init 
+TIME_m = 0 ' global variable init 
+SP_1 = 0 ' local variable init 
+WHITE_1 = 0 ' local variable init 
+U_1 = 0 ' local variable init 
+L_1 = 0 ' local variable init 
+L_2 = 0 ' local variable init 
+SP_2 = 0 ' local variable init 
+DIS_2 = 0 ' local variable init 
+V_2 = 0 ' local variable init 
+U_2 = 0 ' local variable init 
+MM_3 = 0 ' local variable init 
+SP_3 = 0 ' local variable init 
+L_3 = 0 ' local variable init 
+GRAD_4 = 0 ' local variable init 
+SP_4 = 0 ' local variable init 
+L_4 = 0 ' local variable init 
+GRAD_5 = 0 ' local variable init 
+SP_5 = 0 ' local variable init 
+L_5 = 0 ' local variable init 
+GRAD_6 = 0 ' local variable init 
+L_6 = 0 ' local variable init 
+GRAD_7 = 0 ' local variable init 
+L_7 = 0 ' local variable init 
+MOTOR_8 = "" ' local variable init 
+SPEED_8 = 0 ' local variable init 
+MOTOR_9 = "" ' local variable init 
+SPEED_9 = 0 ' local variable init 
+N_10 = 0 ' local variable init 
+I_10 = 0 ' local variable init 
+L_10 = 0 ' local variable init 
+N_11 = 0 ' local variable init 
+I_11 = 0 ' local variable init 
+L_11 = 0 ' local variable init 
+N_12 = 0 ' local variable init 
+I_12 = 0 ' local variable init 
+L_12 = 0 ' local variable init 
+N_13 = 0 ' local variable init 
+I_13 = 0 ' local variable init 
+L_13 = 0 ' local variable init 
+N_14 = 0 ' local variable init 
+I_14 = 0 ' local variable init 
+L_14 = 0 ' local variable init 
+N_15 = 0 ' local variable init 
+I_15 = 0 ' local variable init 
+L_15 = 0 ' local variable init 
+N_16 = 0 ' local variable init 
+I_16 = 0 ' local variable init 
+N_17 = 0 ' local variable init 
+I_17 = 0 ' local variable init 
+Time.Reset1 ()
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Motor.Invert ( "B" )
+MAX1_m = 0
+MIN1_m = 100
+MAX2_m = 0
+MIN2_m = 100
+K1_m = 1.3
+V1_m = 75
+K2_m = 0.74
+V2_m = 55
+K3_m = 1.17
+V3_m = 30
+K21_m = 1.7
+V21_m = 45
+K31_m = 1.3
+V31_m = 20
+RD_m = 45
+BLACK_m = 20
+BC1_m = 0
+WC1_m = 0
+BC2_m = 0
+WC2_m = 0
+RED_m = 0
+MM_m = 0
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 2 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 3 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LINE1
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V1_m + U_m * K1_m )
+Motor.StartPower ( "B" , V1_m - U_m * K1_m )
+EndSub
+Sub LINE2
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V2_m + U_m * K2_m )
+Motor.StartPower ( "B" , V2_m - U_m * K2_m )
+EndSub
+Sub LINE3
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V3_m + U_m * K3_m )
+Motor.StartPower ( "B" , V3_m - U_m * K3_m )
+EndSub
+Sub LINE21
+SEN2 ()
+U_m = Sensor.ReadPercent ( 3 ) - 30
+Motor.StartPower ( "B" , V21_m + U_m * K21_m )
+Motor.StartPower ( "C" , V21_m - U_m * K21_m )
+EndSub
+Sub LINE31
+SEN2 ()
+U_m = Sensor.ReadPercent ( 3 ) - 30
+Motor.StartPower ( "B" , V31_m + U_m * K31_m )
+Motor.StartPower ( "C" , V31_m - U_m * K31_m )
+EndSub
+Sub LINE_TOMM
+Motor.ResetCount ( "BC" )
+L_m = 100 / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+V_m = 20
+K_m = 0.55
+L_m = ( MM_m - 100 ) / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m - U_m * K_m )
+DIS_m = ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2
+DIS_m = ( DIS_m / 360 ) * ( 62 * 3.14 )
+If ( MM_m > 1150 ) Then
+T_m = 0.8
+ElseIf ( MM_m > 350 ) Then
+T_m = 0.55
+Else
+T_m = 0.4
+V_m = 40
+EndIf
+If ( DIS_m < MM_m * 0.4 And V_m < 95 ) Then
+V_m = V_m + 0.6
+ElseIf ( DIS_m > MM_m * T_m And V_m > 15 ) Then
+V_m = V_m - 0.6
+EndIf
+If ( V_m < 35 ) Then
+K_m = 1.2
+ElseIf ( V_m < 55 ) Then
+K_m = 0.8
+ElseIf ( V_m < 100 ) Then
+K_m = 1.2
+EndIf
+EndWhile
+EndSub
+Sub LEFT
+MM_3 = 30
+SP_3 = 20
+TOMM_2()
+GRAD_6 = 60
+LEFT2_1()
+Motor.StartPower ( "B" , - 30 )
+Motor.StartPower ( "C" , 30 )
+While Sensor.ReadPercent ( 3 ) < 30
+EndWhile
+While Sensor.ReadPercent ( 3 ) > 25
+EndWhile
+Motor.Stop ( "BC" , "true" )
+GRAD_7 = 10
+RIGHT2_1()
+EndSub
+Sub RIGHT
+MM_3 = 30
+SP_3 = 20
+TOMM_2()
+GRAD_7 = 60
+RIGHT2_1()
+Motor.StartPower ( "B" , 30 )
+Motor.StartPower ( "C" , - 30 )
+While Sensor.ReadPercent ( 2 ) < 30
+EndWhile
+While Sensor.ReadPercent ( 2 ) > 25
+EndWhile
+Motor.Stop ( "BC" , "true" )
+GRAD_6 = 10
+LEFT2_1()
+EndSub
+Sub AROUND
+GRAD_6 = 140
+LEFT2_1()
+Motor.StartPower ( "B" , - 40 )
+Motor.StartPower ( "C" , 30 )
+While Sensor.ReadPercent ( 3 ) < 30
+EndWhile
+While Sensor.ReadPercent ( 3 ) > 25
+EndWhile
+Motor.Stop ( "BC" , "true" )
+GRAD_7 = 10
+RIGHT2_1()
+EndSub
+Sub TOLINE_1
+Motor.ResetCount ( "BC" )
+WHITE_1 = 0
+Sensor.SetMode ( 2 , 2 )
+Sensor.SetMode ( 3 , 2 )
+while ( WHITE_1 <> 1 )
+While Sensor.ReadRawValue ( 2 , 0 ) <> 6 and Sensor.ReadRawValue ( 3 , 0 ) <> 6
+U_1 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_1 + U_1 * 0.8 )
+Motor.StartPower ( "B" , SP_1 - U_1 * 0.8 )
+EndWhile
+Motor.ResetCount ( "BC" )
+L_1 = 7 / ( 62 * 3.14 ) * 360
+While Math.abs ( Motor.GetCount ( "B" ) ) < L_1
+U_1 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_1 + U_1 * 0.8 )
+Motor.StartPower ( "B" , SP_1 - U_1 * 0.8 )
+EndWhile
+if ( Sensor.ReadRawValue ( 2 , 0 ) = 6 and Sensor.ReadRawValue ( 3 , 0 ) = 6 ) Then
+WHITE_1 = 1
+EndIf
+EndWhile
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+While Sensor.ReadPercent ( 2 ) > 25 And Sensor.ReadPercent ( 3 ) > 25
+U_1 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_1 + U_1 * 0.8 )
+Motor.StartPower ( "B" , SP_1 - U_1 * 0.8 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub MOVE_2
+Motor.ResetCount ( "BC" )
+DIS_2 = 0
+V_2 = 15
+if ( SP_2 < 0 ) Then
+V_2 = V_2 * - 1
+EndIf
+While DIS_2 <= L_2
+U_2 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , V_2 + U_2 * 0.8 )
+Motor.StartPower ( "B" , V_2 - U_2 * 0.8 )
+DIS_2 = Math.Abs ( ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 )
+if Math.abs ( V_2 ) < Math.abs ( SP_2 ) Then
+if ( SP_2 > 0 ) Then
+V_2 = V_2 + 0.2
+Else
+V_2 = V_2 - 0.2
+EndIf
+EndIf
+EndWhile
+EndSub
+Sub TOMM_2
+L_3 = MM_3 / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+L_2 = L_3
+SP_2 = SP_3
+MOVE_2()
+SP_3 = 0
+EndSub
+Sub LEFT1_2
+L_4 = ( ( 2 * 3.14 * 174 * GRAD_4 ) / 360 )
+L_4 = L_4 / ( 3.14 * 64 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "C" , SP_4 )
+While Math.Abs ( Motor.GetCount ( "C" ) ) <= L_4
+Motor.Stop ( "B" , "true" )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub RIGHT1_2
+L_5 = ( ( 2 * 3.14 * 174 * GRAD_5 ) / 360 )
+L_5 = L_5 / ( 3.14 * 64 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "B" , SP_5 )
+While Math.Abs ( Motor.GetCount ( "B" ) ) <= L_5
+Motor.Stop ( "C" , "true" )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub LEFT2_1
+L_6 = ( ( 2 * 3.14 * 174 * GRAD_6 ) / 360 )
+L_6 = L_6 / ( 3.14 * 64 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "B" , - 30 )
+Motor.StartPower ( "C" , 30 )
+While ( Math.Abs ( Motor.GetCount ( "B" ) ) + Math.Abs ( Motor.GetCount ( "C" ) ) ) / 2 <= L_6 / 2
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub RIGHT2_1
+L_7 = ( ( 2 * 3.14 * 174 * GRAD_7 ) / 360 )
+L_7 = L_7 / ( 3.14 * 64 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "B" , 40 )
+Motor.StartPower ( "C" , - 40 )
+While ( Math.Abs ( Motor.GetCount ( "B" ) ) + Math.Abs ( Motor.GetCount ( "C" ) ) ) / 2 <= L_7 / 2
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub FRZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Sub UP_2
+Motor.Stop ( "BC" , "true" )
+Motor.ResetCount ( "AD" )
+Motor.Start ( MOTOR_8 , 0 - SPEED_8 )
+Program.Delay ( 200 )
+while Math.abs ( Motor.GetCount ( MOTOR_8 ) ) < 180 and Math.abs ( Motor.GetSpeed ( MOTOR_8 ) ) > SPEED_8 * 0.3
+EndWhile
+Motor.Stop ( "ADBC" , "true" )
+Speaker.Tone ( 40 , 700 , 200 )
+EndSub
+Sub DOWN_2
+Motor.Stop ( "BC" , "true" )
+Motor.StartPower ( MOTOR_9 , SPEED_9 )
+Motor.Stop ( "BC" , "true" )
+Program.Delay ( 600 )
+Motor.Stop ( "BC" , "true" )
+While Motor.GetSpeed ( MOTOR_9 ) > SPEED_9 * 0.4
+Motor.Stop ( "BC" , "true" )
+EndWhile
+Motor.Move ( MOTOR_9 , - 20 , 20 , "true" )
+Motor.Stop ( "BC" , "true" )
+Speaker.Tone ( 40 , 700 , 200 )
+EndSub
+Sub HSV
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( 1 , 1 , 1 , 4 , SENDARRAY_m )
+NUM_m = RECVARRAY_m [ 0 ]
+R_m = RECVARRAY_m [ 1 ]
+G_m = RECVARRAY_m [ 2 ]
+B_m = RECVARRAY_m [ 3 ]
+RGB_m = R_m + G_m + B_m
+If ( R_m > G_m ) And ( R_m > B_m ) Then
+MAX_m = R_m
+ElseIf ( G_m > R_m ) And ( G_m > B_m ) Then
+MAX_m = G_m
+ElseIf ( B_m > R_m ) And ( B_m > G_m ) Then
+MAX_m = B_m
+EndIf
+If ( R_m < G_m ) And ( R_m < B_m ) Then
+MIN_m = R_m
+ElseIf ( G_m < R_m ) And ( G_m < B_m ) Then
+MIN_m = G_m
+ElseIf ( B_m < R_m ) And ( B_m < G_m ) Then
+MIN_m = B_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( R_m = MAX_m ) Then
+If ( G_m >= B_m ) Then
+H_m = 60 * ( G_m - B_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( G_m - B_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = G_m ) Then
+H_m = 60 * ( B_m - R_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( R_m - G_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+S_m = S_m * 100
+MAX_m = 0
+MIN_m = 100
+EndSub
+Sub COL_BW
+HSV ()
+if ( H_m < 150 or RGB_m > 80 ) Then
+If ( RGB_m > 110 ) Then
+COL_m = 6
+Else
+COL_m = 1
+EndIf
+Else
+COL_m = 0
+EndIf
+EndSub
+While "true"
+COL_BW ()
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 50 , 2 , H_m )
+LCD.Text ( 1 , 20 , 80 , 2 , RGB_m )
+FRZ ()
+EndWhile
+Sub OBJECT_YN
+HSV ()
+if ( RGB_m > 65 and RGB_m < 500 ) Then
+COL_m = 1
+Else
+COL_m = 0
+EndIf
+EndSub
+Sub TOBASE
+Motor.ResetCount ( "BC" )
+MM_m = 100
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+While Sensor.ReadPercent ( 2 ) > BLACK_m
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , 40 + U_m * 0.55 )
+Motor.StartPower ( "B" , 40 - U_m * 0.55 )
+EndWhile
+EndSub
+Sub W1_2
+Motor.Stop ( "BC" , "true" )
+Program.Delay ( 100 )
+MM_3 = 278
+SP_3 = - 25
+TOMM_2()
+GRAD_6 = 90
+LEFT2_1()
+L_10 = 120
+If N_10 = 2 Then
+L_10 = L_10 - 40
+EndIf
+MM_3 = L_10
+SP_3 = 40
+TOMM_2()
+MOTOR_9 = "D"
+SPEED_9 = 15
+DOWN_2()
+SP_1 = - 30
+TOLINE_1()
+MOTOR_8 = "D"
+SPEED_8 = 60
+UP_2()
+if I_10 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub B1_2
+Motor.Stop ( "BC" , "true" )
+Program.Delay ( 100 )
+MM_3 = 90
+SP_3 = - 40
+TOMM_2()
+GRAD_6 = 95
+LEFT2_1()
+L_11 = 120
+If N_11 = 2 Then
+L_11 = L_11 - 45
+EndIf
+MM_3 = L_11
+SP_3 = 30
+TOMM_2()
+MOTOR_9 = "A"
+SPEED_9 = 20
+DOWN_2()
+MM_3 = L_11 - 30
+SP_3 = - 30
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+MOTOR_8 = "A"
+SPEED_8 = 60
+UP_2()
+if I_11 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub W2_2
+GRAD_4 = 92
+SP_4 = - 60
+LEFT1_2()
+MM_3 = 200
+SP_3 = - 60
+TOMM_2()
+Motor.Start ( "BC" , - 20 )
+Program.Delay ( 1000 )
+L_12 = 30
+If N_12 = 2 Then
+L_12 = L_12 + 20
+MM_3 = L_12
+SP_3 = 30
+TOMM_2()
+EndIf
+GRAD_5 = 94
+SP_5 = 40
+RIGHT1_2()
+MM_3 = 40
+SP_3 = - 30
+TOMM_2()
+SP_1 = - 25
+TOLINE_1()
+Motor.Stop ( "BC" , "true" )
+Program.Delay ( 100 )
+MM_3 = 20
+SP_3 = 20
+TOMM_2()
+MM_3 = 185
+SP_3 = 30
+TOMM_2()
+MOTOR_9 = "D"
+SPEED_9 = 15
+DOWN_2()
+GRAD_4 = 160
+SP_4 = - 60
+LEFT1_2()
+MOTOR_8 = "D"
+SPEED_8 = 60
+UP_2()
+GRAD_5 = 70
+SP_5 = - 60
+RIGHT1_2()
+MM_3 = 40
+SP_3 = 30
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+if I_12 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub B2_2
+MM_3 = 70
+SP_3 = - 30
+TOMM_2()
+GRAD_4 = 92
+SP_4 = - 60
+LEFT1_2()
+MM_3 = 200
+SP_3 = - 60
+TOMM_2()
+Motor.Start ( "BC" , - 30 )
+Program.Delay ( 1300 )
+L_13 = 30
+If N_13 = 2 Then
+L_13 = L_13 + 45
+EndIf
+MM_3 = L_13
+SP_3 = 30
+TOMM_2()
+GRAD_4 = 90
+SP_4 = 60
+LEFT1_2()
+SP_1 = 40
+TOLINE_1()
+MM_3 = 280
+SP_3 = - 40
+TOMM_2()
+Program.Delay ( 30 )
+MOTOR_9 = "A"
+SPEED_9 = 20
+DOWN_2()
+GRAD_5 = 110
+SP_5 = - 60
+RIGHT1_2()
+MOTOR_8 = "A"
+SPEED_8 = 60
+UP_2()
+MM_3 = 60
+SP_3 = - 30
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+if I_13 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub W3_2
+MM_3 = 315
+SP_3 = 40
+TOMM_2()
+GRAD_4 = 92
+SP_4 = - 60
+LEFT1_2()
+MM_3 = 200
+SP_3 = - 60
+TOMM_2()
+Motor.Start ( "BC" , - 20 )
+Program.Delay ( 1000 )
+L_14 = 5
+If N_14 = 2 Then
+L_14 = L_14 + 45
+EndIf
+MM_3 = L_14
+SP_3 = 30
+TOMM_2()
+GRAD_5 = 90
+SP_5 = 40
+RIGHT1_2()
+MM_3 = 30
+SP_3 = - 20
+TOMM_2()
+SP_1 = 25
+TOLINE_1()
+MM_3 = 265
+SP_3 = - 30
+TOMM_2()
+Program.Delay ( 100 )
+MOTOR_9 = "D"
+SPEED_9 = 15
+DOWN_2()
+if ( N_14 = 1 ) Then
+GRAD_4 = 187
+SP_4 = - 60
+LEFT1_2()
+Else
+GRAD_4 = 193
+SP_4 = - 60
+LEFT1_2()
+EndIf
+MOTOR_8 = "D"
+SPEED_8 = 60
+UP_2()
+MM_3 = 500
+SP_3 = - 70
+TOMM_2()
+GRAD_5 = 120
+SP_5 = - 60
+RIGHT1_2()
+MM_3 = 50
+SP_3 = 30
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+if I_14 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub B3_2
+GRAD_4 = 90
+SP_4 = 60
+LEFT1_2()
+L_15 = 90
+If N_15 = 2 Then
+L_15 = L_15 - 50
+EndIf
+MM_3 = L_15
+SP_3 = 40
+TOMM_2()
+GRAD_5 = 95
+SP_5 = 40
+RIGHT1_2()
+MM_3 = 35
+SP_3 = 20
+TOMM_2()
+MOTOR_9 = "A"
+SPEED_9 = 20
+DOWN_2()
+MM_3 = 310
+SP_3 = - 60
+TOMM_2()
+MOTOR_8 = "A"
+SPEED_8 = 60
+UP_2()
+GRAD_5 = 90
+SP_5 = - 60
+RIGHT1_2()
+MM_3 = 50
+SP_3 = - 30
+TOMM_2()
+SP_1 = - 20
+TOLINE_1()
+if I_15 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub W4_2
+MM_3 = 129
+SP_3 = 40
+TOMM_2()
+GRAD_4 = 95
+SP_4 = 50
+LEFT1_2()
+If N_16 = 2 Then
+MM_3 = 15
+SP_3 = - 20
+TOMM_2()
+Else
+MM_3 = 30
+SP_3 = 20
+TOMM_2()
+EndIf
+MOTOR_9 = "D"
+SPEED_9 = 15
+DOWN_2()
+MM_3 = 45
+SP_3 = - 20
+TOMM_2()
+GRAD_7 = 115
+RIGHT2_1()
+MOTOR_8 = "D"
+SPEED_8 = 60
+UP_2()
+MM_3 = 280
+SP_3 = - 60
+TOMM_2()
+GRAD_5 = 110
+SP_5 = - 50
+RIGHT1_2()
+SP_1 = - 30
+TOLINE_1()
+if I_16 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub B4_2
+Motor.Stop ( "BC" , "true" )
+Program.Delay ( 100 )
+MM_3 = 280
+SP_3 = 60
+TOMM_2()
+GRAD_4 = 93
+SP_4 = 50
+LEFT1_2()
+If N_17 = 2 Then
+MM_3 = 10
+SP_3 = - 20
+TOMM_2()
+Else
+MM_3 = 30
+SP_3 = 20
+TOMM_2()
+EndIf
+MOTOR_9 = "A"
+SPEED_9 = 20
+DOWN_2()
+MM_3 = 50
+SP_3 = - 20
+TOMM_2()
+if ( N_17 = 1 ) Then
+GRAD_7 = 98
+RIGHT2_1()
+Else
+GRAD_7 = 98
+RIGHT2_1()
+EndIf
+MOTOR_8 = "A"
+SPEED_8 = 60
+UP_2()
+MM_3 = 500
+SP_3 = - 60
+TOMM_2()
+GRAD_5 = 110
+SP_5 = - 50
+RIGHT1_2()
+MM_3 = 60
+SP_3 = 30
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+if I_17 = 1 Then
+LEFT ()
+else
+RIGHT ()
+TOBASE ()
+EndIf
+EndSub
+Sub TH_UP
+Motor.ResetCount ( "AD" )
+Motor.Start ( "AD" , 0 - 90 )
+Program.Delay ( 200 )
+while Math.abs ( Motor.GetCount ( "AD" ) ) < 180 and Math.abs ( Motor.GetSpeed ( "AD" ) ) > 90 * 0.3
+EndWhile
+Motor.Stop ( "AD" , "true" )
+Speaker.Tone ( 40 , 700 , 200 )
+EndSub
+Sub TH_DOWN
+Motor.StartPower ( "AD" , 90 )
+Program.Delay ( 600 )
+While Motor.GetSpeed ( "AD" ) > 90 * 0.7
+EndWhile
+Motor.Move ( "AD" , - 20 , 25 , "true" )
+Speaker.Tone ( 40 , 700 , 200 )
+EndSub
+Thread.Run = TH_DOWN
+Motor.Start ( "BC" , - 30 )
+Program.Delay ( 300 )
+MM_3 = 35
+SP_3 = 20
+TOMM_2()
+GRAD_4 = 90
+SP_4 = 40
+LEFT1_2()
+Motor.Start ( "BC" , - 30 )
+Program.Delay ( 1000 )
+MM_3 = 175
+SP_3 = 35
+TOMM_2()
+Motor.ResetCount ( "BC" )
+MM_m = 77
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE31 ()
+EndWhile
+LCD.Clear ()
+HSV ()
+For I_m = 1 To 4
+COL_BW ()
+If ( COL_m = 1 ) Then
+BC1_m = I_m
+Speaker.Tone ( 40 , 250 , 200 )
+ElseIf ( COL_m = 6 ) Then
+WC1_m = I_m
+Speaker.Tone ( 40 , 1200 , 200 )
+EndIf
+Motor.ResetCount ( "BC" )
+MM_m = 50
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE21 ()
+EndWhile
+EndFor
+LCD.Text ( 2 , 20 , 20 , 2 , BC1_m )
+LCD.Text ( 2 , 20 , 70 , 2 , WC1_m )
+Motor.ResetCount ( "BC" )
+MM_m = 55
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE21 ()
+EndWhile
+For I_m = 1 To 4
+COL_BW ()
+If ( COL_m = 1 ) Then
+BC2_m = I_m
+Speaker.Tone ( 40 , 250 , 200 )
+ElseIf ( COL_m = 6 ) Then
+WC2_m = I_m
+Speaker.Tone ( 40 , 1200 , 200 )
+EndIf
+Motor.ResetCount ( "BC" )
+MM_m = 50
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE21 ()
+EndWhile
+EndFor
+if ( WC1_m = 0 ) Then
+if ( BC1_m <> 1 ) Then
+WC1_m = 1
+Else
+WC1_m = 2
+EndIf
+EndIf
+if ( WC2_m = 0 ) Then
+if ( BC2_m <> 1 ) Then
+WC2_m = 1
+Else
+WC2_m = 2
+EndIf
+EndIf
+if ( BC1_m = 0 ) Then
+if ( WC1_m <> 1 ) Then
+BC1_m = 1
+Else
+BC1_m = 2
+EndIf
+EndIf
+if ( BC2_m = 0 ) Then
+if ( WC2_m <> 4 ) Then
+BC2_m = 1
+Else
+BC2_m = 2
+EndIf
+EndIf
+LCD.Text ( 2 , 70 , 20 , 2 , BC2_m )
+LCD.Text ( 2 , 70 , 70 , 2 , WC2_m )
+V21_m = 15
+Motor.ResetCount ( "BC" )
+MM_m = 50
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE21 ()
+EndWhile
+V21_m = 30
+MM_3 = 150
+SP_3 = - 40
+TOMM_2()
+GRAD_5 = 30
+SP_5 = 40
+RIGHT1_2()
+GRAD_4 = 30
+SP_4 = 40
+LEFT1_2()
+Motor.ResetCount ( "BC" )
+MM_m = 120
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+Motor.ResetCount ( "BC" )
+While Sensor.ReadPercent ( 2 ) > RD_m or Sensor.ReadPercent ( 3 ) > RD_m
+U_m = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , 30 + U_m * 0.8 )
+Motor.StartPower ( "B" , 30 - U_m * 0.8 )
+EndWhile
+MM_3 = 30
+SP_3 = 30
+TOMM_2()
+MOTOR_8 = "AD"
+SPEED_8 = 30
+UP_2()
+MM_3 = 40
+SP_3 = - 60
+TOMM_2()
+GRAD_6 = 35
+LEFT2_1()
+MM_3 = 120
+SP_3 = - 60
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+RIGHT ()
+Motor.ResetCount ( "BC" )
+MM_m = 150
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE3 ()
+EndWhile
+MM_m = 670
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE1 ()
+EndWhile
+OBJECT_YN ()
+If ( COL_m = 1 ) Then
+RED_m = 1
+Speaker.Note ( 50 , "C#5" , 300 )
+EndIf
+While Sensor.ReadPercent ( 2 ) > 30
+LINE2 ()
+EndWhile
+MM_3 = 20
+SP_3 = 90
+TOMM_2()
+MM_m = 200
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE2 ()
+EndWhile
+OBJECT_YN ()
+If ( COL_m = 1 ) Then
+RED_m = 4
+Speaker.Note ( 50 , "C#5" , 300 )
+EndIf
+MM_m = 300
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE2 ()
+EndWhile
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+LINE2 ()
+EndWhile
+RIGHT ()
+MM_m = 50
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE3 ()
+EndWhile
+MM_m = 100
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE2 ()
+EndWhile
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+LINE3 ()
+EndWhile
+RIGHT ()
+MM_m = 450
+LINE_TOMM ()
+While Sensor.ReadPercent ( 2 ) > BLACK_m
+LINE3 ()
+EndWhile
+N_m = 0
+If ( WC1_m = 3 ) Then
+N_14 = 1
+I_14 = N_m
+W3_2()
+N_m = N_m + 1
+EndIf
+If ( BC1_m = 3 ) Then
+N_15 = 1
+I_15 = N_m
+B3_2()
+N_m = N_m + 1
+EndIf
+If ( BC1_m = 2 ) Then
+N_13 = 1
+I_13 = N_m
+B2_2()
+N_m = N_m + 1
+EndIf
+If ( WC1_m = 2 ) Then
+N_12 = 1
+I_12 = N_m
+W2_2()
+N_m = N_m + 1
+EndIf
+If ( WC1_m = 4 ) Then
+N_16 = 1
+I_16 = N_m
+W4_2()
+N_m = N_m + 1
+EndIf
+If ( BC1_m = 4 ) Then
+N_17 = 1
+I_17 = N_m
+B4_2()
+N_m = N_m + 1
+EndIf
+If ( WC1_m = 1 ) Then
+N_10 = 1
+I_10 = N_m
+W1_2()
+N_m = N_m + 1
+EndIf
+If ( BC1_m = 1 ) Then
+N_11 = 1
+I_11 = N_m
+B1_2()
+N_m = N_m + 1
+EndIf
+Motor.ResetCount ( "BC" )
+MM_m = 80
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+While Sensor.ReadPercent ( 2 ) > BLACK_m
+LINE2 ()
+EndWhile
+GRAD_4 = 95
+SP_4 = 60
+LEFT1_2()
+MM_3 = 50
+SP_3 = 60
+TOMM_2()
+GRAD_4 = 95
+SP_4 = 60
+LEFT1_2()
+Motor.Start ( "BC" , - 30 )
+Program.Delay ( 1500 )
+MM_3 = 55
+SP_3 = 30
+TOMM_2()
+GRAD_7 = 90
+RIGHT2_1()
+MM_3 = 50
+SP_3 = 30
+TOMM_2()
+SP_1 = 30
+TOLINE_1()
+MM_3 = 30
+SP_3 = 20
+TOMM_2()
+Motor.Stop ( "BC" , "true" )
+Motor.Start ( "AD" , 60 )
+Program.Delay ( 300 )
+MM_3 = 70
+SP_3 = - 60
+TOMM_2()
+Motor.Stop ( "AD" , "false" )
+Speaker.Tone ( 40 , 700 , 200 )
+GRAD_4 = 80
+SP_4 = - 60
+LEFT1_2()
+GRAD_5 = 80
+SP_5 = - 60
+RIGHT1_2()
+MM_3 = 70
+SP_3 = 30
+TOMM_2()
+Thread.Run = TH_DOWN
+SP_1 = - 30
+TOLINE_1()
+LEFT ()
+Thread.Run = TH_UP
+MM_m = 100
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE3 ()
+EndWhile
+MM_m = 250
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE2 ()
+EndWhile
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+LINE3 ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+if RED_m = 1 Then
+MM_3 = 115
+SP_3 = 30
+TOMM_2()
+Thread.Run = TH_DOWN
+GRAD_5 = 95
+SP_5 = 30
+RIGHT1_2()
+MM_3 = 10
+SP_3 = 20
+TOMM_2()
+MOTOR_8 = "AD"
+SPEED_8 = 30
+UP_2()
+SP_1 = - 30
+TOLINE_1()
+RIGHT ()
+Motor.ResetCount ( "BC" )
+MM_m = 80
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+While Sensor.ReadPercent ( 2 ) > 30
+LINE2 ()
+EndWhile
+MM_3 = 20
+SP_3 = 50
+TOMM_2()
+Motor.ResetCount ( "BC" )
+MM_m = 300
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE2 ()
+EndWhile
+elseif RED_m = 4 Then
+MM_3 = 110
+SP_3 = - 30
+TOMM_2()
+Thread.Run = TH_DOWN
+GRAD_7 = 92
+RIGHT2_1()
+MM_3 = 115
+SP_3 = 30
+TOMM_2()
+MOTOR_8 = "AD"
+SPEED_8 = 30
+UP_2()
+MM_3 = 70
+SP_3 = - 30
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+RIGHT ()
+Motor.ResetCount ( "BC" )
+MM_m = 80
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+Else
+MM_3 = 160
+SP_3 = 40
+TOMM_2()
+GRAD_7 = 90
+RIGHT2_1()
+MM_3 = 250
+SP_3 = 50
+TOMM_2()
+Motor.Start ( "BC" , 30 )
+Program.Delay ( 1000 )
+SP_m = - 30
+Motor.ResetCount ( "BC" )
+Sensor.SetMode ( 2 , 2 )
+Sensor.SetMode ( 3 , 2 )
+While Sensor.ReadRawValue ( 3 , 0 ) <> 6
+U_m = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_m + U_m * 0.8 )
+Motor.StartPower ( "B" , SP_m - U_m * 0.8 )
+EndWhile
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+While Sensor.ReadPercent ( 3 ) > 25
+U_m = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_m + U_m * 0.8 )
+Motor.StartPower ( "B" , SP_m - U_m * 0.8 )
+EndWhile
+MM_3 = 30
+SP_3 = - 20
+TOMM_2()
+Motor.Stop ( "BC" , "true" )
+Thread.Run = TH_DOWN
+Motor.Stop ( "BC" , "true" )
+OBJECT_YN ()
+If ( COL_m = 1 ) Then
+RED_m = 2
+Speaker.Tone ( 40 , 600 , 200 )
+GRAD_6 = 95
+LEFT2_1()
+MM_3 = 100
+SP_3 = 30
+TOMM_2()
+MM_3 = 10
+SP_3 = 20
+TOMM_2()
+MOTOR_8 = "AD"
+SPEED_8 = 30
+UP_2()
+MM_3 = 520
+SP_3 = - 70
+TOMM_2()
+GRAD_4 = 95
+SP_4 = - 60
+LEFT1_2()
+SP_1 = - 30
+TOLINE_1()
+RIGHT ()
+Motor.ResetCount ( "BC" )
+MM_m = 80
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+Else
+RED_m = 3
+GRAD_7 = 90
+RIGHT2_1()
+MM_3 = 190
+SP_3 = 50
+TOMM_2()
+MM_3 = 150
+SP_3 = 20
+TOMM_2()
+MOTOR_8 = "AD"
+SPEED_8 = 20
+UP_2()
+MM_3 = 170
+SP_3 = 40
+TOMM_2()
+GRAD_5 = 90
+SP_5 = 60
+RIGHT1_2()
+SP_1 = 30
+TOLINE_1()
+LEFT ()
+Motor.ResetCount ( "BC" )
+MM_m = 80
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+EndIf
+endif
+MM_m = 200
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE2 ()
+EndWhile
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+LINE2 ()
+EndWhile
+RIGHT ()
+MM_m = 80
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+LINE2 ()
+EndWhile
+If ( RED_m = 1 Or RED_m = 3 ) Then
+MM_3 = 310
+SP_3 = 50
+TOMM_2()
+MOTOR_9 = "AD"
+SPEED_9 = 40
+DOWN_2()
+MM_3 = 50
+SP_3 = - 40
+TOMM_2()
+MM_3 = 220
+SP_3 = - 50
+TOMM_2()
+Else
+MM_3 = 130
+SP_3 = 50
+TOMM_2()
+GRAD_6 = 45
+LEFT2_1()
+MOTOR_9 = "AD"
+SPEED_9 = 40
+DOWN_2()
+MM_3 = 70
+SP_3 = 30
+TOMM_2()
+MM_3 = 40
+SP_3 = - 30
+TOMM_2()
+GRAD_7 = 30
+RIGHT2_1()
+MM_3 = 170
+SP_3 = 30
+TOMM_2()
+MM_3 = 220
+SP_3 = - 30
+TOMM_2()
+EndIf
+Thread.Run = TH_UP
+SP_1 = - 40
+TOLINE_1()
+MM_3 = 35
+SP_3 = 30
+TOMM_2()
+GRAD_7 = 60
+RIGHT2_1()
+Motor.StartPower ( "B" , 30 )
+Motor.StartPower ( "C" , - 30 )
+While Sensor.ReadPercent ( 2 ) < 30
+EndWhile
+While Sensor.ReadPercent ( 2 ) > 25
+EndWhile
+Motor.Stop ( "BC" , "true" )
+GRAD_6 = 20
+LEFT2_1()
+MM_m = 150
+LINE_TOMM ()
+While Sensor.ReadPercent ( 2 ) > BLACK_m
+LINE2 ()
+EndWhile
+GRAD_4 = 40
+SP_4 = 45
+LEFT1_2()
+GRAD_5 = 37
+SP_5 = 45
+RIGHT1_2()
+MM_3 = 600
+SP_3 = 80
+TOMM_2()
+MM_3 = 110
+SP_3 = 40
+TOMM_2()
+GRAD_6 = 90
+LEFT2_1()
+MM_3 = 75
+SP_3 = 40
+TOMM_2()
+SP_1 = 20
+TOLINE_1()
+MM_3 = 25
+SP_3 = 30
+TOMM_2()
+Motor.Stop ( "BC" , "true" )
+Motor.Start ( "AD" , 40 )
+Program.Delay ( 300 )
+MM_3 = 70
+SP_3 = - 50
+TOMM_2()
+Motor.Stop ( "AD" , "false" )
+Speaker.Tone ( 40 , 700 , 200 )
+MM_3 = 130
+SP_3 = - 40
+TOMM_2()
+Thread.Run = TH_DOWN
+GRAD_7 = 98
+RIGHT2_1()
+MM_3 = 300
+SP_3 = 50
+TOMM_2()
+SP_1 = 30
+TOLINE_1()
+RIGHT ()
+MM_m = 100
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE3 ()
+EndWhile
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+LINE2 ()
+EndWhile
+MM_3 = 20
+SP_3 = 30
+TOMM_2()
+MM_m = 150
+L_m = MM_m / ( 62 * 3.14 ) * 360
+While Motor.GetCount ( "B" ) < L_m
+LINE2 ()
+EndWhile
+Motor.ResetCount ( "BC" )
+While Sensor.ReadPercent ( 2 ) > RD_m or Sensor.ReadPercent ( 3 ) > RD_m
+U_m = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , 30 + U_m * 0.8 )
+Motor.StartPower ( "B" , 30 - U_m * 0.8 )
+EndWhile
+MM_3 = 100
+SP_3 = 30
+TOMM_2()
+MM_3 = 10
+SP_3 = 20
+TOMM_2()
+MOTOR_8 = "AD"
+SPEED_8 = 50
+UP_2()
+MM_3 = 40
+SP_3 = - 40
+TOMM_2()
+GRAD_6 = 30
+LEFT2_1()
+MM_3 = 150
+SP_3 = - 60
+TOMM_2()
+SP_1 = - 30
+TOLINE_1()
+RIGHT ()
+MM_m = 900
+LINE_TOMM ()
+While Sensor.ReadPercent ( 2 ) > BLACK_m
+LINE3 ()
+EndWhile
+N_m = 0
+If ( WC2_m = 3 ) Then
+N_14 = 2
+I_14 = N_m
+W3_2()
+N_m = N_m + 1
+EndIf
+If ( BC2_m = 3 ) Then
+N_15 = 2
+I_15 = N_m
+B3_2()
+N_m = N_m + 1
+EndIf
+If ( BC2_m = 2 ) Then
+N_13 = 2
+I_13 = N_m
+B2_2()
+N_m = N_m + 1
+EndIf
+If ( WC2_m = 2 ) Then
+N_12 = 2
+I_12 = N_m
+W2_2()
+N_m = N_m + 1
+EndIf
+If ( WC2_m = 4 ) Then
+N_16 = 2
+I_16 = N_m
+W4_2()
+N_m = N_m + 1
+EndIf
+If ( BC2_m = 4 ) Then
+N_17 = 2
+I_17 = N_m
+B4_2()
+N_m = N_m + 1
+EndIf
+If ( WC2_m = 1 ) Then
+N_10 = 2
+I_10 = N_m
+W1_2()
+N_m = N_m + 1
+EndIf
+If ( BC2_m = 1 ) Then
+N_11 = 2
+I_11 = N_m
+B1_2()
+N_m = N_m + 1
+EndIf
+MM_m = 650
+LINE_TOMM ()
+While Sensor.ReadPercent ( 2 ) > BLACK_m
+LINE2 ()
+EndWhile
+LEFT ()
+MM_m = 50
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE3 ()
+EndWhile
+MM_m = 300
+L_m = MM_m / ( 62 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < L_m
+LINE2 ()
+EndWhile
+While Sensor.ReadPercent ( 2 ) > 25 Or Sensor.ReadPercent ( 3 ) > 25
+LINE2 ()
+EndWhile
+MM_3 = 20
+SP_3 = 30
+TOMM_2()
+GRAD_5 = 50
+SP_5 = 50
+RIGHT1_2()
+MM_3 = 80
+SP_3 = 50
+TOMM_2()
+Motor.Stop ( "ABCD" , "true" )
+TIME_m = Time.Get1 ()
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , TIME_m / 1000 )
+FRZ ()

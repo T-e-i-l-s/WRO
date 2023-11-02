@@ -1,0 +1,854 @@
+'WRO 2022 junior
+
+
+Sensor.SetMode(1,4)
+Sensor.SetMode(4,4)
+
+
+
+EV3.SetLEDColor("OFF","NORMAL")    
+
+
+
+
+
+'Готовимся к езде по линии=====================================================================
+Sensor.SetMode (2,0)
+Sensor.SetMode (3,0)
+f=EV3File.OpenRead("colib.txt")
+min1=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+min2=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+max1=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+max2=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+EV3File.Close(f)
+k= 0.7
+v= 65
+
+
+
+maxr = 0
+minr = 0
+maxw = 0
+minw = 0
+maxb = 0
+minb = 0
+f=EV3File.OpenRead("RROtesting/col1.txt")
+maxr=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+minr=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+maxw=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+minw=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+maxb=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+minb=EV3File.ConvertToNumber(EV3File.ReadLine(f))
+EV3File.Close(f)
+
+
+'Обнуляемся====================================================================================
+LCD.Clear ()
+zone1 = 0
+zone2 = 0
+black = 0
+grad = 0
+mm = 0
+sp = 0
+colors [1] = 0
+colors [2] = 0
+colors [3] = 0
+colors [4] = 0
+colors [5] = 0
+colors [6] = 0
+colors [7] = 0
+colors [8] = 0
+colors [9] = 0
+colors [10] = 0
+colors [11] = 0
+colors [12] = 0
+id = 0
+red = 0
+start = 0
+
+'Готовимся к считыванию цветов=================================================================
+
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+
+
+'Сабы для линии================================================================================
+
+Sub sen1
+  s1 = 100 * ( Sensor.ReadPercent ( 2 ) - min1) / ( max1 - min1 )
+EndSub
+
+Sub sen2
+  S2 = 100 * ( Sensor.ReadPercent ( 3 ) - min2 ) / ( max2 - min2 )
+EndSub
+
+Sub line
+  sen1 ()
+  sen2 ()
+  U = s1 - s2
+  Motor.StartPower ( "C" , v - U * k )
+  Motor.StartPower ( "B" , v + U * k )
+EndSub
+
+
+
+'Езда по формулам==============================================================================
+
+Function move (in number l , in number sp)
+  Motor.ResetCount ( "BC" )
+  While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= l
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 6 )
+    Motor.StartPower ( "B" , sp - U * 6 )
+    a = 90 / ( 82 * 3.14 ) * 360
+    if l - ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 < a and sp > 30 Then
+      sp = sp - 0.4
+      if sp < 0 Then
+        sp = 0 - sp
+      endif
+    EndIf
+  EndWhile
+  Motor.Stop ( "BC" , "true" )
+EndFunction
+
+Function tomm (in number mm , in number sp)
+  l = mm / ( 82 * 3.14 ) * 360
+  Motor.ResetCount ( "BC" )
+  move(l,sp)
+  sp = 0
+EndFunction
+
+Sub left
+  l = 60 / (82 * 3.14) * 360
+  Motor.Move ("BC" , 20 , l , "true")
+  Motor.MoveSync ( "BC" , -20 , 20 , 140 , "true" )
+  While Sensor.ReadPercent ( 3 ) < 20
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 3 ) > 15
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  right2(10,30)
+EndSub
+ 
+Sub right
+  l = 63 / (82 * 3.14) * 360
+  Motor.Move ("BC" , 20 , l , "true")
+  Motor.MoveSync("BC",20,-20,130,"true")
+  While Sensor.ReadPercent ( 2 ) < 20
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 2 ) > 15
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  left2(10,30)
+EndSub
+
+Function left1 (in number grad,in number nsp)
+  l = ((2 * 3.14 * 186 * grad) / 360)
+  l = l / (3.14 * 82) * 360
+  del = l / 3
+  sp = nsp
+  Motor.Stop ( "B" , "true" )
+  Motor.ResetCount ("BC")
+  While Math.Abs(Motor.GetCount("C")) <= l
+    Motor.StartPower ("C",sp)
+  EndWhile
+  Motor.Stop ("BC","true")
+    sp = 0
+EndFunction
+
+Function right1 (in number grad,in number nsp)
+  l = ((2 * 3.14 * 182 * grad) / 360)
+  l = l / (3.14 * 82) * 360
+  del = l / 3
+  sp = nsp
+  Motor.Stop ( "C" , "true" )
+  Motor.ResetCount ("BC")
+  While Math.Abs(Motor.GetCount("B")) <= l
+    Motor.StartPower ("B",sp)
+  EndWhile
+  Motor.Stop ("BC","true")
+    sp = 0
+EndFunction
+
+Function left2 (in number grad, in number nsp)
+  l = ((2 * Math.Pi * 182 * grad ) / 360 ) / 2
+  l = l / ( Math.Pi * 75) * 360
+  del = l / 3
+  sp = 30
+  Motor.ResetCount ( "BC" )
+  While Math.Abs(Motor.GetCount("B")) <= l
+    U = Math.Abs(Motor.GetCount("B")) - Motor.GetCount("C")
+    Motor.StartPower ("B",0-(sp-U*0.8))
+    Motor.StartPower ("C",sp+U*0.8)
+    if Math.Abs(Motor.GetCount("B")) < del and sp < nsp Then
+      sp = sp + 10
+    ElseIf Math.Abs(Motor.GetCount("B")) > del*2 and sp > 30 Then
+      sp = sp - 10
+    EndIf
+  EndWhile
+  Motor.Stop ( "BC" , "true" )
+  sp = 0
+EndFunction
+
+Function right2 (in number grad, in number nsp)
+  l = ((2 * Math.Pi * 186 * grad ) / 360 ) / 2
+  l = l / ( Math.Pi * 75) * 360
+  del = l / 3
+  sp = 30
+  Motor.ResetCount ( "BC" )
+  While Math.Abs(Motor.GetCount("B")) <= l
+    U = Motor.GetCount ("B") - Math.Abs(Motor.GetCount("C"))
+    Motor.StartPower ("B",sp-U*0.8)
+    Motor.StartPower ("C",0-(sp+U*0.8))
+    if Math.Abs(Motor.GetCount("B")) < del and sp < nsp Then
+      sp = sp + 10
+    ElseIf Math.Abs(Motor.GetCount("B")) > del*2 and sp > 30 Then
+      sp = sp - 10
+    EndIf
+  EndWhile
+  Motor.Stop ( "BC" , "true" )
+    sp = 0
+EndFunction
+
+
+'Заморозка=====================================================================================
+
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+  Speaker.Note(70, "B7", 200)
+EndSub
+
+
+
+'Работа с объектами на поле====================================================================
+evcol = 0
+evgre = 0
+id = 0
+  f=EV3File.OpenAppend("RROtesting/evcol.txt")
+  EV3File.WriteLine(f,111111111111111111)
+  EV3File.Close(f)
+  f=EV3File.OpenAppend("RROtesting/evgre.txt")
+  EV3File.WriteLine(f,111111111111111111)
+  EV3File.Close(f)
+sub writef
+  f=EV3File.OpenAppend("RROtesting/evcol.txt")
+  EV3File.WriteLine(f,id + "." + evcol)
+  EV3File.Close(f)
+  f=EV3File.OpenAppend("RROtesting/evgre.txt")
+  EV3File.WriteLine(f,id + "." + evgre)
+  EV3File.Close(f)
+EndSub
+Sub topNiga
+  Motor.StartPower("A",-60)
+  Program.Delay(200)
+  While Motor.GetSpeed("A") < -5
+
+  EndWhile
+  Motor.Start("A",-15)
+EndSub
+
+Sub downNiga
+  Motor.StartPower("A",60)
+  Program.Delay(200)
+  While Motor.GetSpeed("A") > 5
+  EndWhile
+  Motor.Start("A",5)
+EndSub
+
+
+Sub SLOWtopNiga
+  Motor.StartPower("A",-20)
+  Program.Delay(200)
+  While Motor.GetSpeed("A") < -5
+
+  EndWhile
+  Motor.Start("A",-15)
+EndSub
+rd = 0
+Sub water
+  Motor.Move("D",20,95,"true")
+
+EndSub
+
+Motor.ResetCount("D")
+Sub resetD
+  Motor.Move("D",-100,Motor.GetCount("D"),"true")
+EndSub
+
+sub leftNiga
+  left2(120,60)
+  tomm(135,50)
+  Thread.Run = SLOWtopNiga
+  tomm(135,-50)
+  right2(114,30)
+EndSub
+
+
+
+Sub rightNiga
+  right2(122,60)
+  tomm(110,50)
+  topNiga()
+  tomm(105,-50)
+  left2(129,30)
+EndSub
+
+
+Sub tz
+  right1(110,40)
+  tomm(50,40)
+  tomm(50,-40)
+  right1(110,-40)
+EndSub
+
+
+sub z1
+  Motor.MoveSync("BC",60,36,700,"true")
+  topNiga()
+  Motor.MoveSync("BC",-60,-36,700,"true")
+EndSub
+
+sub z2
+  Motor.MoveSync("BC",56,42,560,"true")
+  topNiga()
+  Motor.MoveSync("BC",-56,-42,560,"true")
+EndSub
+
+sub z3
+  Motor.MoveSync("BC",60,30,410,"true")
+  topNiga()
+  Motor.MoveSync("BC",-60,-30,410,"true")
+EndSub
+
+sub z4
+  tomm(50,40)
+  Motor.MoveSync("BC",60,-20,270,"true")
+  topNiga()
+  tomm(30,-40)
+  Motor.MoveSync("BC",-60,20,270,"true")
+  tomm(50,-40)
+EndSub
+
+sub z5
+  Motor.MoveSync("BC",60,4,550,"true")
+  topNiga()
+  Motor.MoveSync("BC",-60,-4,550,"true")
+EndSub
+
+sub z6
+  Motor.MoveSync("BC",60,24,580,"true")
+  topNiga()
+  Motor.MoveSync("BC",-60,-24,580,"true")
+EndSub
+
+
+'Считывание цвета==============================================================================
+
+
+
+Function color (in number port,out number col)
+  Sensor.SetMode(port,2)
+  Program.Delay(170)
+  evcol = Sensor.ReadRawValue(port,0)
+  Program.Delay(30)
+  evgre = 0
+  s = 0
+  Sensor.SetMode(port,3)
+  While (evgre = 0 or evgre = 100) and s < 50
+    evgre = Sensor.ReadPercent(port)
+    s = s + 1
+  EndWhile
+  
+  
+  writef()
+  if (evcol <> 5) And evgre > 0 and evgre < 30 Then
+    col = 1
+  elseif ((evcol <> 5) And (evgre > 70 and evgre < 100)) or evcol = 6 Then
+    col = 6
+  ElseIf evcol = 5 Then
+    col = 5
+  Else
+    col = 0
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,20,20,2, evgre)
+  LCD.Text(1,20,80,2, evcol)
+  
+  if col = 1 Then
+    EV3.SetLEDColor("GREEN","NORMAL")
+  ElseIf col = 5 Then
+    EV3.SetLEDColor("RED","NORMAL")    
+  ElseIf col = 6 Then
+    EV3.SetLEDColor("ORANGE","NORMAL") 
+  Else
+    EV3.SetLEDColor("OFF","NORMAL")    
+  EndIf
+EndFunction
+
+'Чaсти программы===============================================================================
+
+
+
+Function start(in number start,out number finish)
+  @strt = start
+  if start = 1 Then
+    @finish = 2
+  Else
+    @finish = 1
+  EndIf
+  if (start = 1)Then
+    right1(150,80)
+    left1(40,80)
+    Motor.Start("BC",-90)
+    Program.Delay(900)
+    Motor.ResetCount ( "BC" )
+    tomm(900,90)
+    Motor.Start("BC",90)
+    Program.Delay(700)
+    tomm(200,-80)
+    left1(90,90)
+    Motor.Start("BC",-60)
+    Program.Delay(700)
+    tomm(100,80)
+  Else
+    left1(60,90)
+    right1(60,90)
+    finish = 1
+  EndIf
+EndFunction
+
+
+
+'Обработка объекта=============================================================================
+
+
+zn1 =0
+zn2 = 0
+niga = 0
+rd = 0
+col = 0
+
+Sub cube
+  Program.Delay(300)
+  id = id + 1
+  
+  if id = 1 or id = 2 or id = 3 or id = 4 or id = 5 or id = 6 or id = 7 or id = 9 or id = 10 Then
+    color(4,col)
+  Else
+    color(1,col)
+  EndIf
+  if col = 1 Then
+    if niga <> 1 Then
+      if id = 8 Then
+        leftNiga()
+      ElseIf id = 1 or id = 3 or id = 4 or id = 5 or id = 6 or id = 7 or id = 8 or id = 10 then
+        rightNiga()
+      ElseIf id = 12 Then
+        left2(130,60)
+        tomm(100,50)
+        Thread.Run = SLOWtopNiga
+        tomm(100,-50)
+        right2(130,30)
+      ElseIf id = 11 Then
+        tomm(240,-60)
+        left2(48,60)
+        tomm(140,50)       
+        Thread.Run = SLOWtopNiga
+        tomm(140,-50)
+        right2(45,30)
+        tomm(240,60)
+      Else
+        tomm(100,-50)
+        right2(90,50)
+        tomm(60,60)
+        topNiga()
+        tomm(60,-60)
+        left2(95,50)
+        tomm(100,50)
+      EndIf
+      niga = 1
+    EndIf
+  ElseIf col = 5 Then
+    Thread.Run = water
+    rd = rd + 1
+  elseif col = 6 Then
+    if id = 1 or id = 2 Then
+      zone = 1
+    ElseIf id = 3 or id = 4 Then
+      zone = 2
+    ElseIf id = 5 or id = 12 Then
+      zone = 3
+    ElseIf id = 6 or id = 7 Then
+      zone = 4
+    ElseIf id = 8 or id = 9 Then
+      zone = 5
+    ElseIf id = 10 or id = 11 Then
+      zone = 6
+    endif    
+    
+    if zn1 = 0 Then
+      zn1 = zone
+    ElseIf zn2 = 0 Then
+      if zone <> zn1 Then
+        zn2 = zone
+      EndIf
+    endif
+  EndIf
+EndSub
+
+
+
+
+'==============================================================================================
+'================******===*******======*======*****=====*******================================
+'================*===========*========*=*=====*====*=======*===================================
+'================*===========*=======*===*====*====*=======*===================================
+'================******======*======*=====*===*****========*===================================
+'=====================*======*======*******===*==*=========*===================================
+'=====================*======*======*=====*===*===*========*===================================
+'================******======*======*=====*===*====*=======*===================================
+'==============================================================================================
+
+
+
+Function virav(in number sp)
+  Motor.StartPower("BC",sp)
+  Program.Delay(300)
+  While Math.abs(Motor.GetSpeed("B"))>Math.abs(sp) * 0.55 or Math.abs(Motor.GetSpeed("C"))>Math.abs(sp) * 0.62
+  EndWhile
+  Motor.Stop("BC","true")
+  if sp < 0 Then
+    sp = -25
+  Else
+    sp = 25
+  endif  
+  Motor.StartPower("BC",sp)
+  Program.Delay(100)
+  Motor.Stop("BC","true")
+EndFunction
+
+'=================================================================
+'==============================PART1==============================
+'=================================================================
+
+Thread.Run = downNiga
+
+'выезд из зоня старта
+start(2,fin)
+
+'проезд через завал
+move(900,90)
+Motor.ResetCount("BC")
+sp = 50
+While Sensor.ReadPercent(2) < 27 or Sensor.ReadPercent(3) < 27
+  U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+  Motor.StartPower ( "C" , sp + U * 6 )
+  Motor.StartPower ( "B" , sp - U * 6 )
+EndWhile
+Motor.Stop ("BC","false")
+
+'отъезд назад и поворот для выравнивания об стенку
+tomm(150,-80)
+left2(90,80)
+virav(-90)
+
+'возвращение к линии
+tomm(240,80)
+right2(90,80)
+Motor.ResetCount("BC")
+sp = 60
+While Sensor.ReadPercent(2) < 27 or Sensor.ReadPercent(3) < 27
+  U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+  Motor.StartPower ( "C" , sp + U * 6 )
+  Motor.StartPower ( "B" , sp - U * 6 )
+EndWhile
+Motor.Stop ("BC","false")
+tomm(15,80)
+Motor.ResetCount("BC")
+sp = 60
+While Sensor.ReadPercent(2) > 15 or Sensor.ReadPercent(3) > 15
+  U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+  Motor.StartPower ( "C" , sp + U * 6 )
+  Motor.StartPower ( "B" , sp - U * 6 )
+EndWhile
+Motor.Stop ("BC","true")
+'езда по линии к зоне №1
+right()
+Motor.ResetCount("BC")
+While (Motor.GetCount("B") + Motor.GetCount ("C")) / 2 < 50
+  line()
+EndWhile
+While Sensor.ReadPercent(2) > 15
+  line()
+EndWhile
+left()
+Motor.ResetCount ( "BC" )
+While (Motor.GetCount ("B") + Motor.GetCount("C")) / 2 < 170
+  line()
+EndWhile
+
+'выравнивание по линии
+k = 1
+v = 35
+While Sensor.ReadPercent (2) > 25 or Sensor.ReadPercent (3) > 25
+  line()
+EndWhile
+Motor.Stop ("BC","false")
+k = 0.7
+v = 45
+'=================================================================
+'==============================PART2==============================
+'=================================================================
+
+
+'скан объектов
+
+tomm(230,60)
+cube()'1
+
+
+tomm(375,60)
+cube()'2
+
+tomm(115,60)
+cube()'3
+
+tomm(135,60)
+left2(90,90)
+virav(-50)
+tomm(45,60)
+cube()
+
+tomm(410,60)
+cube()'5
+
+tomm(390,60)
+cube()'6
+
+tomm(24,60)
+left2(90,90)
+virav(-70)
+tomm(55,60)
+cube()'7
+
+
+tomm(490,60)
+cube()'8
+
+tomm(120,60)
+left2(90,90)
+virav(-90)
+tomm(330,60)
+cube()'9
+
+tomm(110,50)
+cube()'10 
+if rd < 2 or niga <> 1 or zn1 =0 or zn2 = 0 Then
+ 
+  tomm(32,60)
+  left2(90,90)
+  tomm(355,60)
+  cube()'11
+  tomm(115,60)
+  cube()'12
+  right1(17,-90)
+  left1(17,-90)
+  tomm(730,-90)
+  left2(90,70)
+Else
+  tomm(40,70)
+  left2(90,90)
+  tomm(300,-80)
+  left2(90,90)
+endif
+  Motor.StartPower("BC",-70)
+  While Sensor.ReadPercent(2) < 25 or Sensor.ReadPercent(3) < 25
+  EndWhile
+  While Sensor.ReadPercent(2) > 13 or Sensor.ReadPercent(3) > 13
+  EndWhile
+  left()
+'=================================================================
+'==============================PART3==============================
+'=================================================================
+
+
+
+'выгрузка химиката
+
+
+k = 0.7
+v = 45
+
+While Sensor.ReadPercent(2) < 20 or Sensor.ReadPercent(3) < 20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+k = 0.6
+v = 60
+While Sensor.ReadPercent(2) > 20 or Sensor.ReadPercent(3) > 20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+tomm(30,70)
+Thread.Run = downNiga
+While Sensor.ReadPercent (2) > 10 Or Sensor.ReadPercent (3) > 10
+  line()
+EndWhile
+Motor.Stop ("BC","true")
+k = 0.7
+v = 45
+
+'поворот и выравнивание об стенку
+tomm(100,-40)
+left2(90,90)
+Thread.Run = resetD
+virav(-90)
+right1(100,90)
+
+
+'=================================================================
+'==============================PART4==============================
+'=================================================================
+
+
+'проезд через препятствие
+tomm(600,90)
+virav(90)
+
+
+
+
+if zn1 = 0 Then
+  zn1 = Math.GetRandomNumber(6)
+EndIf
+if zn2 = 0 Then
+  zn2 = zn1
+  while zn2 = zn1
+    zn2 = Math.GetRandomNumber(6)
+  EndWhile
+EndIf
+
+Motor.StartSync("BC",-60,-21)
+Program.Delay(1600)
+Motor.Stop("BC","TRUE")
+Thread.Run = topNiga
+tomm(226,80)
+Thread.run = downNiga
+
+if(zn1 = 1 or zn2 = 1)Then
+  z1()
+  zone1 = 1
+elseif (zn1 = 6 or zn2 = 6)Then
+  z6()
+  zone1 = 6
+elseif (zn1 = 5 or zn2 = 5)Then
+  z5()
+  zone1 = 5
+elseif (zn1 = 2 or zn2 = 2)Then
+  z2()
+  zone1 = 2
+elseif (zn1 = 3 or zn2 =3)Then
+  z3()
+  zone1 = 3
+elseif (zn1 = 4 or zn2 = 4)Then
+  z4()
+  zone1 = 4
+EndIf
+
+left1(28,50)
+right1(28,50)
+Motor.StartPower("B",40)
+While Sensor.ReadPercent(3)>7
+EndWhile
+Motor.Stop("BC","true")
+Motor.StartPower("C",40)
+While Sensor.ReadPercent(3)<9
+EndWhile
+Motor.Stop("BC","true")
+Motor.ResetCount("BC")
+mm = 320
+  l = mm / ( 82 * 3.14 ) * 360
+While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= l and Sensor.ReadPercent(2)< 18 and Sensor.ReadPercent(3)< 18
+  sen2 ()
+  U = s2-2
+  Motor.StartPower ( "C" , 45 - U * 1.3)
+  Motor.StartPower ( "B" , 45 + U * 1.3)
+EndWhile
+Motor.Stop("BC","true")
+right1(45,80)
+downNiga()
+right1(45,-80)
+tomm(346,-80)
+
+if zone1 = zn1 Then
+  zn = zn2
+ElseIf zone1 = zn2 then
+  zn = zn1
+endif
+   
+if(zn = 1)Then
+  z1()
+  zone1 = 1
+elseif (zn= 6)Then
+  z6()
+  zone1 = 6
+elseif (zn = 5)Then
+  z5()
+  zone1 = 5
+elseif (zn = 2)Then
+  z2()
+  zone1 = 2
+elseif (zn =3)Then
+  z3()
+  zone1 = 3
+elseif (zn = 4)Then
+  z4()
+  zone1 = 4
+EndIf
+
+
+
+Thread.Run = downNiga
+if fin = 1 Then
+  Motor.StartPower("BC",-80)
+  Program.Delay(1000)
+  Motor.Stop("BC","TRUE")
+  tomm(120,90)
+  right1(90,-90)
+  Motor.StartPower("BC",-90)
+  Program.Delay(1000)
+  Motor.Stop("BC","TRUE")
+Else
+  tomm(500,100)
+  Motor.StartPower("BC",90)
+  Program.Delay(1000)
+  Motor.Stop("BC","TRUE")
+  tomm(153,-80)
+  left1(90,90)
+  Motor.StartPower("BC",-90)
+  Program.Delay(1000)
+  Motor.Stop("BC","TRUE")
+EndIf
+
+'=================================================================
+'==========================TheEnd!!!==============================
+'==========================TheEnd!!!==============================
+'==========================TheEnd!!!==============================
+'=================================================================
+
+
+
+

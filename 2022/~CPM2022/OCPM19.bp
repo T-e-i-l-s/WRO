@@ -1,0 +1,609 @@
+ Sensor.SetMode(1,0)
+Sensor.SetMode(3,2)
+Sensor.SetMode(4,0)
+
+min1=100
+max1=0
+min2=100
+max2=0
+
+k=0.3
+v=40
+
+
+'================================================
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(1)-min1)/(max1-min1)
+  
+EndSub
+
+'================================================
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(4)-min2)/(max2-min2)
+  
+EndSub
+
+'================================================
+
+
+Sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v+U*k)
+  Motor.StartPower("B",v-U*k)
+EndSub
+
+
+Sub left
+  Motor.Move("BC",20,50,"true")
+  Motor.MoveSync("BC",-20,20,100,"true")
+  While Sensor.ReadPercent(4)>25
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+
+Sub right
+  Motor.Move("BC",20,30,"true")
+  Motor.MoveSync("BC",20,-20,100,"true")
+  While Sensor.ReadPercent(1)>25
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+
+Sub around
+  Motor.MoveSync("BC",-20,20,300,"true")
+  While Sensor.ReadPercent(4)>25
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.Move("BC",-20,150,"true")
+EndSub
+
+Sub color
+    Motor.Move("A",-9,30,"true")
+  color = Sensor.ReadRawValue(3,0)
+      Motor.Move("A",9,30,"true")
+    LCD.Clear()
+  LCD.Text(1,1,20,20,color)
+  Program.Delay(3000)
+  if color = 5 Then
+    y = 1
+  ElseIf color = 4 or color = 7 Then
+    y = 2
+  ElseIf color = 3 Then
+    y = 3
+  ElseIf color = 2 Then
+    y = 4
+  ElseIf color = 6 Then
+    y = 5
+  EndIf
+EndSub
+
+
+Sub rechange
+  Motor.Move("A",-3,90,"true")
+  Program.Delay(300)
+  Motor.Move("BC",-20,220,"true")
+  Program.Delay(300)
+  Motor.Move("A",-3,90,"true")
+  Program.Delay(300)
+  Motor.Move("BC",-20,150,"true")
+  Program.Delay(300)
+  around()
+EndSub
+
+
+Sub code
+        Motor.StartSync("BC",13,13)
+  While Sensor.ReadPercent(1)>25 or Sensor.ReadPercent(4)>25
+  EndWhile
+  Program.Delay(20)
+  Motor.ResetCount("BC")
+        err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+        Motor.StartSync("BC", 13 + err * 2, 13 + err * 2)
+  Speaker.Note(100,"c#5",100)
+  While Sensor.ReadPercent(4)<30
+  EndWhile
+  Motor.Stop("BC","true")
+  Speaker.Note(100,"c#5",100)
+  grad = Motor.GetCount("c")
+  x1 = grad*Math.pi*8.2/360
+  x1 =Math.Floor(x1)
+  x1 = x1 - 1
+  If x1 = 0 Then
+    x1 = 1
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,1,20,20,x1)
+  Program.Delay(3000)
+
+
+
+        err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+        Motor.StartSync("BC", 13 + err * 2, 13 + err * 2)
+  While Sensor.ReadPercent(4)>25
+  EndWhile
+  Program.Delay(20)
+  Motor.ResetCount("BC")
+        err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+        Motor.StartSync("BC", 13 + err * 2, 13 + err * 2)
+  Speaker.Note(100,"c#5",100)
+  While Sensor.ReadPercent(4)<30
+  EndWhile
+  Motor.Stop("BC","true")
+  Speaker.Note(100,"c#5",100)
+  grad = Motor.GetCount("c")
+
+  x2 = grad*Math.pi*8.2/360
+
+  x2 =Math.Floor(x2)
+      x2 = x2 - 1
+  If x2 = 0 Then
+    x2 = 1
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,1,20,20,x2)
+  Program.Delay(3000)
+
+
+
+        err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+        Motor.StartSync("BC", 13 + err * 2, 13 + err * 2)
+  While Sensor.ReadPercent(4)>25
+  EndWhile
+  Program.Delay(20)
+  Motor.ResetCount("BC")
+        err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+        Motor.StartSync("BC", 13 + err * 2, 13 + err * 2)
+  Speaker.Note(100,"c#5",100)
+  While Sensor.ReadPercent(4)<30
+  EndWhile
+  Motor.Stop("BC","true")
+  'Speaker.Note(100,"C#5",100)
+  grad = Motor.GetCount("c")
+
+  x3 = grad*Math.pi*8.2/360
+  x3 =Math.Floor(x3)
+  If x3 = 0 Then
+    x3 = 1
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,1,20,20,x3)
+  Program.Delay(2000)
+
+EndSub
+
+
+
+
+
+'=======================================================
+'___****===*********======*======****======*********====
+'===*==========*=========*=*=====*===*=========*========
+'===*==========*========*===*====*====*========*========
+'===****=======*=======*=====*===******========*========
+'======*=======*=======*******===*===*=========*========
+'======*=======*=======*=====*===*====*========*========
+'===****=======*=======*=====*===*=====*=======*========
+'=======================================================
+
+
+
+'
+'_________                  __________
+'         \ --         --  /
+'          \      /       /                     - С О В А
+'           \____________/
+'
+'
+'
+
+
+
+
+
+
+
+
+
+
+dd = 0
+
+Motor.Move("bc",20,350,"true")
+Motor.ResetCount("BC")
+While (Motor.GetCount("c") + Motor.GetCount("b"))/2 < 200
+  line()
+EndWhile
+Motor.Stop("BC","true")
+'к первой линии
+
+code()
+while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+  line()
+EndWhile
+Motor.Move("bc",20,30,"true")
+
+Motor.Move("A",-10,180,"true")
+color()
+y1 = y
+'едем по x к 1 кубику
+x1 = x1 - 1
+for i = 1 to x1
+    Motor.Move("bc",20,45,"true")
+  while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+    line()
+  EndWhile
+
+EndFor
+Motor.Stop("bc","true")
+'поворот к кубику
+
+if y1 < 3 Then
+  
+  left()
+  
+ElseIf y1 > 3 Then
+  
+  right()
+  
+ElseIf y1 = 3 Then
+    yk = y
+    rechange()
+  color()
+  y2 = y
+  dd = 1
+EndIf
+if dd <> 1 then
+  'езда по y
+
+  y1 = 2
+
+  if y1 = 1 Then
+    
+    y1= 2
+    
+  ElseIf y1 = 2 Then
+    
+    y1 = 1
+    
+  ElseIf y1 = 3 Then
+      
+    y1 = 0
+    
+  ElseIf y1 = 4 Then
+      
+    y1 = 1
+    
+  ElseIf y1 = 5 Then
+      
+    y1= 2
+    
+  EndIf
+    
+  if y1 < 3 Then
+    for i = 1 to y1
+          Motor.Move("bc",20,45,"true")
+      while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+        line()
+      EndWhile
+
+    EndFor
+      Motor.Stop("BC","true")
+
+    'меняем кубик и едем на основную линию
+    yk = y
+
+    rechange()
+    color()
+    y2 = y
+
+
+
+    for i = 1 to y1
+      while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+        line()
+      EndWhile
+      Motor.Move("bc",20,45,"true")
+    EndFor
+    if yk < 3 Then
+      
+      right()
+      
+    ElseIf yk > 3 Then
+      
+      left()
+      
+    EndIf
+    
+  EndIf
+EndIf
+for i = 1 to x1
+    Motor.Move("bc",20,45,"true")
+  while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+    line()
+  EndWhile
+
+EndFor
+
+around()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dd = 0
+
+'едем по x к 2 кубику
+x2 = x2 - 1
+for i = 1 to x2
+    Motor.Move("bc",20,45,"true")
+  while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+    line()
+  EndWhile
+
+EndFor
+Motor.Stop("bc","true")
+'поворот к кубику
+
+if y2 < 3 Then
+  
+  left()
+  
+ElseIf y2 > 3 Then
+  
+  right()
+  
+ElseIf y2 = 3 Then
+    yk = y
+  rechange()
+  color()
+  y3 = y
+  dd = 1
+EndIf
+if dd <> 1 then
+  'езда по y
+
+  y2 = 2
+
+  if y2 = 1 Then
+    
+    y2= 2
+    
+  ElseIf y2 = 2 Then
+    
+    y2 = 1
+    
+  ElseIf y2 = 3 Then
+      
+    y2 = 0
+    
+  ElseIf y2 = 4 Then
+      
+    y2 = 1
+    
+  ElseIf y2 = 5 Then
+      
+    y2= 2
+    
+  EndIf
+    
+  if y2 <> 0  Then
+    for i = 1 to y2
+          Motor.Move("bc",20,45,"true")
+      while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+        line()
+      EndWhile
+
+    EndFor
+  Motor.Stop("bc","true")
+
+    'меняем кубик и едем на основную линию
+        yk = y
+
+      rechange()
+    color()
+      y3 = y
+
+
+    for i = 1 to y2
+      while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+        line()
+      EndWhile
+      Motor.Move("bc",20,45,"true")
+    EndFor
+    if yk < 3 Then
+      
+      right()
+      
+    ElseIf yk > 3 Then
+      
+      left()
+      
+    EndIf
+    
+  EndIf
+EndIf
+for i = 1 to x2
+    Motor.Move("bc",20,45,"true")
+  while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+    line()
+  EndWhile
+
+EndFor
+
+around()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dd = 0
+
+
+
+'едем по x к 3 кубику
+x3 = x3 - 1
+for i = 1 to x3
+    Motor.Move("bc",20,45,"true")
+  while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+    line()
+  EndWhile
+
+EndFor
+Motor.Stop("bc","true")
+'поворот к кубику
+
+if y3 < 3 Then
+  
+  left()
+  
+ElseIf y3 > 3 Then
+  
+  right()
+  
+ElseIf y3 = 3 Then
+  
+      yk = y
+  rechange()
+  color()
+  dd = 1
+EndIf
+if dd <> 1 then
+  'езда по y
+
+  y3 = 2
+
+  if y3 = 1 Then
+    
+    y3= 2
+    
+  ElseIf y3 = 2 Then
+    
+    y3 = 1
+    
+  ElseIf y3 = 3 Then
+      
+    y3 = 0
+    
+  ElseIf y3 = 4 Then
+      
+    y3 = 1
+    
+  ElseIf y3 = 5 Then
+      
+    y3= 2
+    
+  EndIf
+  Motor.Move("bc",20,45,"true")
+  for i = 1 to y3
+          Motor.Move("bc",20,45,"true")
+      while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+        line()
+      EndWhile
+
+    EndFor
+  Motor.Stop("BC","true")
+
+    'меняем кубик и едем на основную линию
+
+
+      rechange()
+      color()
+    
+  for i = 1 to y3
+      LCD.Clear()
+  LCD.Text(1,1,20,20,y3)
+  Program.Delay(2000)
+          Motor.Move("bc",20,45,"true")
+      while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+        line()
+      EndWhile
+  EndFor
+    Motor.Stop("BC","true")
+    if y3 < 3 Then
+      
+      right()
+      
+    ElseIf y3 > 3 Then
+      
+      left()
+      
+    EndIf
+    
+EndIf
+for i = 1 to x3
+    Motor.Move("bc",20,45,"true")
+  while Sensor.ReadPercent(1)>20 or Sensor.ReadPercent(4)>20
+    line()
+  EndWhile
+
+EndFor
+  Motor.Stop("BC","true")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Motor.ResetCount("BC")
+While (Motor.GetCount("c") + Motor.GetCount("b"))/2<200
+  line()
+EndWhile
+Motor.Start("BC",20)
+Program.Delay(7500)
+Motor.Stop("BC","true")
+
+
+
+
+
+
+
+
+
+
+
+
+

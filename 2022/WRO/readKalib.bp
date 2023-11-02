@@ -1,0 +1,63 @@
+f1=EV3File.OpenRead("ld.txt")
+rd1 = EV3File.ReadLine(f1)
+bd1 = EV3File.ReadLine(f1)
+wd1 = EV3File.ReadLine(f1)
+EV3File.Close(f1)
+
+
+f1=EV3File.OpenRead("rd.txt")
+rd2 = EV3File.ReadLine(f1)
+bd2 = EV3File.ReadLine(f1)
+wd2 = EV3File.ReadLine(f1)
+EV3File.Close(f1)
+
+
+
+f1=EV3File.OpenRead("lb.txt")
+rb1 = EV3File.ReadLine(f1)
+bb1 = EV3File.ReadLine(f1)
+wb1 = EV3File.ReadLine(f1)
+EV3File.Close(f1)
+
+
+f1=EV3File.OpenRead("rb.txt")
+rb2 = EV3File.ReadLine(f1)
+bb2 = EV3File.ReadLine(f1)
+wb2 = EV3File.ReadLine(f1)
+EV3File.Close(f1)
+
+while "true"
+  Speaker.Note(100,"c#5",200)
+  LCD.Clear()
+  LCD.Text(1,120,10,1,"<")
+  LCD.Text(1,20,10,1,"rd=" + rd1)
+  LCD.Text(1,20,20,1,"bd=" + bd1)
+  LCD.Text(1,20,30,1,"wd=" + wd1)
+  LCD.Text(1,20,40,1,"rb=" + rb1)
+  LCD.Text(1,20,50,1,"bb=" + bb1)
+  LCD.Text(1,20,60,1,"wb=" + wb1)
+
+
+  While Buttons.Current <> "E"
+  EndWhile
+  Speaker.Note(100,"c#5",200)
+  Program.Delay(300)
+
+
+
+
+
+  Speaker.Note(100,"c#5",200)
+  LCD.Clear()
+  LCD.Text(1,120,10,1,">")
+  LCD.Text(1,20,10,1,"rd=" + rd2)
+  LCD.Text(1,20,20,1,"bd=" + bd2)
+  LCD.Text(1,20,30,1,"wd=" + wd2)
+  LCD.Text(1,20,40,1,"rb=" + rb2)
+  LCD.Text(1,20,50,1,"bb=" + bb2)
+  LCD.Text(1,20,60,1,"wb=" + wb2)
+
+
+  While Buttons.Current <> "E"
+  EndWhile
+EndWhile

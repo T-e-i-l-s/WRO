@@ -1,0 +1,351 @@
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+
+min1=100
+max1=0
+min2=100
+max2=0
+
+grad = 0
+mm = 0
+k=0.7
+v=45
+x[1] = 5
+x[2] = 4
+x[3] = 1
+y[1] = 1
+y[2] = 5
+y[3] = 3
+
+
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+
+I2CPORT = 1 'Порт1
+I2CSLVADDR = 1 'Адрес(не менять)
+MSGSZEV3 = 0
+MSGSZSLV = 0
+
+
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+
+col = 0
+
+'================================================
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)
+  
+EndSub
+
+'================================================
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)
+  
+EndSub
+
+'================================================
+
+Sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v+U*k)
+  Motor.StartPower("B",v-U*k)
+EndSub
+
+Sub toMM
+  l = mm/(82*3.14)*360
+  Motor.Move("BC",20,l,"true")
+EndSub
+
+Sub left
+  l = 43/(82*3.14)*360
+  Motor.Move("BC",20,l,"true")
+  Motor.MoveSync("BC",-20,20,170,"true")
+  While Sensor.ReadPercent(3)>25
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+Sub right
+  l = 48/(82*3.14)*360
+  Motor.Move("BC",20,l,"true")
+  Motor.MoveSync("BC",20,-20,170,"true")
+  While Sensor.ReadPercent(2)>25
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+Sub left1
+  l = ((2*3.14*186*grad)/360)
+  l = l/(3.14*82)*360
+  Motor.MoveSync("BC",0,20,l,"true")
+  Motor.Stop("bc","true")
+EndSub
+
+Sub right1
+  l = ((2*3.14*186*grad)/360)
+  l = l/(3.14*82)*360
+  Motor.MoveSync("BC",20,0,l,"true")
+  Motor.Stop("bc","true")
+EndSub
+
+Sub left2
+  l = ((2*3.14*186*grad)/360)/2
+  l = l/(3.14*82)*360
+  Motor.MoveSync("BC",-20,20,l,"true")
+  Motor.Stop("bc","true")
+EndSub
+
+Sub right2
+  l = ((2*3.14*186*grad)/360)/2
+  l = l/(3.14*82)*360
+  Motor.MoveSync("BC",20,-20,l,"true")
+  Motor.Stop("bc","true")
+EndSub
+
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+
+
+
+Function Col(in number I2, in number dal)
+  Program.Delay(500)
+  sendarray[0] = 66
+  I2CPORT=I2
+  recvarray = Sensor.CommunicateI2C(I2CPORT,1,1,4,sendarray)
+  if (I2CPORT = 1) Then
+    
+    if (dal = 1) Then
+      
+      c = recvarray[3]
+      If (c < 55) Then
+        col = 5
+      ElseIf (c < 121) Then
+        col = 1
+      ElseIf ( c > 200) Then
+        col = 6
+      EndIf
+      
+    ElseIf (dal = 2) Then
+      
+      c = recvarray[1]
+      If (c < 80) Then
+        col = 1
+      ElseIf (c < 140) Then
+        col = 5
+      ElseIf ( c > 140) Then
+        col = 6
+      EndIf
+      
+    EndIf
+    
+  elseif (I2CPORT = 4) Then
+    
+   
+    if (dal = 1) Then
+      
+      c = recvarray[2]
+      If (c < 55) Then
+        col = 1
+      ElseIf (c < 80) Then
+        col = 5
+      ElseIf ( c > 80) Then
+        col = 6
+      EndIf
+      
+    ElseIf (dal = 2) Then
+      
+      c = recvarray[1]
+      If (c < 15) Then
+        col = 1
+      ElseIf (c < 30) Then
+        col = 5
+      ElseIf ( c > 30) Then
+        col = 6
+      EndIf
+      
+    EndIf
+    
+    
+    
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,20,20,2,col)
+  LCD.Text(1,20,60,2,c)
+EndFunction
+  
+'l = (2*3.14*10.2*grad/360)/2
+'=======================================================
+'___****===*********======*======****======*********====
+'===*==========*=========*=*=====*===*=========*========
+'===*==========*========*===*====*====*========*========
+'===****=======*=======*=====*===******========*========
+'======*=======*=======*******===*===*=========*========
+'======*=======*=======*=====*===*====*========*========
+'===****=======*=======*=====*===*=====*=======*========
+'=======================================================
+
+'
+'_________                  __________
+'         \ --         --  /
+'          \      /       /                     - С О В А
+'           \____________/
+'
+'
+'
+
+
+
+
+'right start
+Motor.Move("BC",20,20,"true")
+grad = 90
+right1()
+mm = 650
+  l = mm/(82*3.14)*360
+  Motor.Move("BC",70,l,"true")
+While Sensor.ReadPercent(2)<45 or Sensor.ReadPercent(3)<45
+  Motor.StartPower("BC",70)
+EndWhile
+Motor.Stop("BC","true")
+While Sensor.ReadPercent(2)>15 And Sensor.ReadPercent(3)>15
+  Motor.StartPower("BC",20)
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",-20,200,"true")
+grad = 90
+left2()
+Motor.StartPower("BC",-50)
+Program.Delay(2000)
+Motor.Stop("BC","true")
+Motor.Move("BC",20,300,"true")
+grad = 90
+right2()
+While Sensor.ReadPercent(2)<40 And Sensor.ReadPercent(3)<40
+  Motor.StartPower("BC",30)
+EndWhile
+Motor.Stop("BC","true")
+While Sensor.ReadPercent(2)>25 And Sensor.ReadPercent(3)>25
+  Motor.StartPower("BC",20)
+EndWhile
+Motor.Stop("BC","true")
+right()
+Motor.ResetCount("BC")
+While (Motor.GetCount("B") + Motor.GetCount("C"))/2<75
+  line()
+EndWhile
+Motor.Stop("BC","true")
+While Sensor.ReadPercent(2)>15
+  line()
+EndWhile
+Motor.Stop("BC","true")
+left()
+While Sensor.ReadPercent(2)>15 And Sensor.ReadPercent(3)>15
+  line()
+EndWhile
+Motor.Stop("BC","true")
+
+v = 15
+Motor.ResetCount("BC")
+While (Motor.GetCount("B") + Motor.GetCount("C"))/2<120
+  line()
+EndWhile
+Motor.Stop("BC","true")
+
+While Sensor.ReadPercent(2)>20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+v = 45
+frz()
+
+
+
+
+mm = 220
+toMM()
+col(4,1)
+frz()
+
+mm = 380
+toMM()
+col(4,1)
+frz()
+
+mm = 180
+toMM()
+
+grad = 93
+left2()
+mm = 40
+l = mm/(82*3.14)*360
+Motor.Move("BC",-20,l,"true")
+col(1,2)
+frz()
+col(4,2)
+frz()
+
+mm = 400
+toMM()
+col(4,2)
+frz()
+mm = 270
+toMM()
+col(1,2)
+frz()
+mm = 110
+toMM()
+mm = 35
+toMM()
+
+grad = 96
+left2()
+mm =70
+l = mm/(82*3.14)*360
+Motor.Move("BC",-20,l,"true")
+col(1,1)
+frz()
+col(4,1)
+frz()
+mm = 518.5
+toMM()
+mm = 40
+toMM()
+
+grad = 93
+left2()
+
+mm = 240
+toMM()
+col(1,2)
+frz()
+col(4,2)
+frz()
+
+mm = 115
+toMM()
+col(1,2)
+frz()
+col(4,2)
+frz()
+
+
+
+While "true"
+ 
+EndWhile

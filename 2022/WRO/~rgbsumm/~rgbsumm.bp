@@ -1,0 +1,37 @@
+COL_m[0] = 0 ' global variable init 
+RGB1_m = 0 ' global variable init 
+RGB4_m = 0 ' global variable init 
+COLOR1_m = 0 ' global variable init 
+COLOR4_m = 0 ' global variable init 
+Sensor.SetMode ( 1 , 4 )
+Sensor.SetMode ( 4 , 4 )
+While "true"
+COL_m = Sensor.ReadRaw ( 1 , 2 )
+RGB1_m = COL_m [ 0 ] + COL_m [ 1 ] + COL_m [ 2 ]
+COL_m = Sensor.ReadRaw ( 4 , 2 )
+RGB4_m = COL_m [ 0 ] + COL_m [ 1 ] + COL_m [ 2 ]
+if 9 < RGB1_m And RGB1_m < 17 Then
+COLOR1_m = 5
+ElseIf 1 < RGB1_m And RGB1_m < 5 Then
+COLOR1_m = 1
+ElseIf 19 < RGB1_m And RGB1_m < 30 Then
+COLOR1_m = 6
+Else
+COLOR1_m = 0
+EndIf
+if 9 < RGB4_m And RGB4_m < 17 Then
+COLOR4_m = 5
+ElseIf 1 < RGB4_m And RGB4_m < 5 Then
+COLOR4_m = 1
+ElseIf 19 < RGB4_m And RGB4_m < 30 Then
+COLOR4_m = 6
+Else
+COLOR4_m = 0
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 50 , 50 , 2 , RGB1_m )
+LCD.Text ( 1 , 90 , 50 , 2 , RGB4_m )
+LCD.Text ( 1 , 50 , 80 , 2 , COLOR1_m )
+LCD.Text ( 1 , 90 , 80 , 2 , COLOR4_m )
+Program.Delay ( 1000 )
+EndWhile

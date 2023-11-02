@@ -1,0 +1,33 @@
+MAX2_m = 0 ' global variable init 
+MAX3_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MIN3_m = 0 ' global variable init 
+F_m = 0 ' global variable init 
+Motor.Invert ( "b" )
+MAX2_m = 0
+MAX3_m = 0
+MIN2_m = 100
+MIN3_m = 100
+Motor.ResetCount ( "bc" )
+Motor.Start ( "bc" , 30 )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 500
+If Sensor.ReadPercent ( 2 ) > MAX2_m Then
+MAX2_m = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 2 ) < MIN2_m Then
+MIN2_m = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 3 ) > MAX3_m Then
+MAX3_m = Sensor.ReadPercent ( 3 )
+EndIf
+If Sensor.ReadPercent ( 3 ) < MIN3_m Then
+MIN3_m = Sensor.ReadPercent ( 3 )
+EndIf
+EndWhile
+Motor.Stop ( "bc" , "true" )
+F_m = EV3File.OpenWrite ( "a123/colib.dat" )
+EV3File.WriteLine ( F_m , MIN2_m )
+EV3File.WriteLine ( F_m , MIN3_m )
+EV3File.WriteLine ( F_m , MAX2_m )
+EV3File.WriteLine ( F_m , MAX3_m )
+EV3File.Close ( F_m )

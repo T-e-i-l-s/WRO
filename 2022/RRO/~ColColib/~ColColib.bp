@@ -1,0 +1,86 @@
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+MIN3_m = 0 ' global variable init 
+MAX3_m = 0 ' global variable init 
+MIN4_m = 0 ' global variable init 
+MAX4_m = 0 ' global variable init 
+SUM1_m = 0 ' global variable init 
+SUM2_m = 0 ' global variable init 
+SUM3_m = 0 ' global variable init 
+SUM4_m = 0 ' global variable init 
+A_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+F_m = 0 ' global variable init 
+Sensor.SetMode ( 1 , 0 )
+Sensor.SetMode ( 4 , 0 )
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+MIN3_m = 100
+MAX3_m = 0
+MIN4_m = 100
+MAX4_m = 0
+SUM1_m = 0
+SUM2_m = 0
+SUM3_m = 0
+SUM4_m = 0
+Sub COLOR
+A_m = Sensor.ReadRawValue ( 4 , 0 ) / 100
+EndSub
+Sub FRZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Speaker.Note ( 70 , "B7" , 200 )
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 50 , 2 , "Red" )
+FRZ ()
+for I_m = 1 to 10
+COLOR ()
+If A_m > MAX1_m Then
+MAX1_m = A_m
+EndIf
+If A_m < MIN1_m Then
+MIN1_m = A_m
+EndIf
+EndFor
+Speaker.Note ( 70 , "B7" , 200 )
+LCD.Text ( 1 , 20 , 50 , 2 , "White" )
+FRZ ()
+for I_m = 1 to 10
+COLOR ()
+If A_m > MAX2_m Then
+MAX2_m = A_m
+EndIf
+If A_m < MIN2_m Then
+MIN2_m = A_m
+EndIf
+EndFor
+Speaker.Note ( 70 , "B7" , 200 )
+LCD.Text ( 1 , 20 , 50 , 2 , "Black" )
+FRZ ()
+for I_m = 1 to 10
+COLOR ()
+If A_m > MAX3_m Then
+MAX3_m = A_m
+EndIf
+If A_m < MIN3_m Then
+MIN3_m = A_m
+EndIf
+EndFor
+Speaker.Note ( 70 , "B7" , 500 )
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 50 , 2 , "-" )
+FRZ ()
+F_m = EV3File.OpenWrite ( "RROtesting/col1.txt" )
+EV3File.WriteLine ( F_m , MAX1_m )
+EV3File.WriteLine ( F_m , MIN1_m )
+EV3File.WriteLine ( F_m , MAX2_m )
+EV3File.WriteLine ( F_m , MIN2_m )
+EV3File.WriteLine ( F_m , MAX3_m )
+EV3File.WriteLine ( F_m , MIN3_m )
+EV3File.Close ( F_m )

@@ -1,0 +1,294 @@
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+Sub col1dal
+    sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  
+  
+  
+  If (sGreen > 50) Then    
+    Color = 6
+  ElseIf (S > 0.43 And S < 0.55) Then
+    Color = 1
+  ElseIf S > 0.6 and S < 0.8 Then
+    Color = 5  
+  Else
+    color = 0
+  EndIf
+  
+  LCD.Text(1,20,20,2, Color)
+  LCD.Text(1,20,50,2, S)
+  LCD.Text(1,20,80,2, V)
+EndSub
+
+
+Sub col1bliz
+    sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  
+  
+  
+  If (sGreen > 200) Then    
+    Color = 6
+  ElseIf (S > 0.4 And S < 0.53) Then
+    Color = 1
+  ElseIf S > 0.65 and S < 0.8 Then
+    Color = 5  
+  Else
+    color = 0
+  EndIf
+  
+  LCD.Text(1,20,20,2, Color)
+  LCD.Text(1,20,50,2, S)
+  LCD.Text(1,20,80,2, V)
+EndSub
+
+Sub col4dal
+    sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(4,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  
+  
+  
+  If (sGreen > 24) Then    
+    Color = 6
+  ElseIf (S > 0.04 And S < 0.36) Then
+    Color = 1
+  ElseIf S > 0.36 and S < 0.5 Then
+    Color = 5  
+  Else
+    color = 0
+  EndIf
+  
+  LCD.Text(1,20,20,2, Color)
+  LCD.Text(1,20,50,2, S)
+  LCD.Text(1,20,80,2, V)
+EndSub
+
+Sub col4bliz
+    sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(4,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  
+  
+  
+  If (sGreen > 90) Then    
+    Color = 6
+  ElseIf (S > 0.35 And S < 0.5) Then
+    Color = 1
+  ElseIf S > 0.5 and S < 0.8 Then
+    Color = 5  
+  Else
+    color = 0
+  EndIf
+  
+  LCD.Text(1,20,20,2, Color)
+  LCD.Text(1,20,50,2, S)
+  LCD.Text(1,20,80,2, V)
+EndSub
+
+LCD.Clear()
+While "true"
+  col4bliz()
+EndWhile

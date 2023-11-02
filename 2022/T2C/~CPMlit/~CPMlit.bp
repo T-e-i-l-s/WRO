@@ -1,0 +1,246 @@
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+X_m[0] = 0 ' global variable init 
+Y_m[0] = 0 ' global variable init 
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+G_m = 0 ' global variable init 
+H_m = "" ' global variable init 
+F_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+Q_m = 0 ' global variable init 
+Motor.Invert ( "B" )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+K_m = 0.3
+V_m = 30
+X_m [ 1 ] = 5
+X_m [ 2 ] = 4
+X_m [ 3 ] = 1
+Y_m [ 1 ] = 1
+Y_m [ 2 ] = 5
+Y_m [ 3 ] = 3
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 2 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 3 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LINE
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m - U_m * K_m )
+EndSub
+Sub LEFT
+Motor.Move ( "BC" , 30 , 75 , "true" )
+Motor.MoveSync ( "BC" , - 30 , 30 , 180 , "true" )
+While Sensor.ReadPercent ( 3 ) > 25
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 10 , "true" )
+EndSub
+Sub RIGHT
+Motor.Move ( "BC" , 30 , 70 , "true" )
+Motor.MoveSync ( "BC" , 30 , - 30 , 180 , "true" )
+While Sensor.ReadPercent ( 2 ) > 25
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 10 , "true" )
+EndSub
+Sub AROUND
+Motor.MoveSync ( "BC" , - 20 , 20 , 390 , "true" )
+While Sensor.ReadPercent ( 3 ) > 25
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+While Sensor.ReadPercent ( 3 ) < 45
+Motor.StartSync ( "BC" , 10 , - 10 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+For G_m = 1 To 3
+LCD.Clear ()
+While Buttons.Current <> "E"
+If Buttons.Current = "U" Then
+If X_m [ G_m ] < 7 Then
+X_m [ G_m ] = X_m [ G_m ] + 1
+program.delay ( 350 )
+EndIf
+ElseIf Buttons.Current = "D" Then
+If X_m [ G_m ] > 1 Then
+X_m [ G_m ] = X_m [ G_m ] - 1
+program.delay ( 350 )
+EndIf
+ElseIf Buttons.Current = "R" Then
+If Y_m [ G_m ] < 5 Then
+Y_m [ G_m ] = Y_m [ G_m ] + 1
+program.delay ( 350 )
+EndIf
+ElseIf Buttons.Current = "L" Then
+If Y_m [ G_m ] > 1 Then
+Y_m [ G_m ] = Y_m [ G_m ] - 1
+program.delay ( 350 )
+EndIf
+EndIf
+LCD.Write ( 10 , 10 , "x=" + X_m [ G_m ] )
+LCD.Write ( 10 , 20 , "y=" + Y_m [ G_m ] )
+EndWhile
+LCD.Write ( 10 , 50 , "SAVE" )
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 1000 )
+EndFor
+LCD.Clear ()
+While Buttons.Current <> "E"
+If X_m [ 1 ] = 1 Then
+H_m = "a"
+ElseIf X_m [ 1 ] = 2 Then
+H_m = "b"
+ElseIf X_m [ 1 ] = 3 Then
+H_m = "c"
+ElseIf X_m [ 1 ] = 4 Then
+H_m = "d"
+ElseIf X_m [ 1 ] = 5 Then
+H_m = "e"
+ElseIf X_m [ 1 ] = 6 Then
+H_m = "f"
+ElseIf X_m [ 1 ] = 7 Then
+H_m = "g"
+EndIf
+LCD.Write ( 10 , 10 , H_m + "-" + Y_m [ 1 ] )
+If X_m [ 2 ] = 1 Then
+H_m = "a"
+ElseIf X_m [ 2 ] = 2 Then
+H_m = "b"
+ElseIf X_m [ 2 ] = 3 Then
+H_m = "c"
+ElseIf X_m [ 2 ] = 4 Then
+H_m = "d"
+ElseIf X_m [ 2 ] = 5 Then
+H_m = "e"
+ElseIf X_m [ 2 ] = 6 Then
+H_m = "f"
+ElseIf X_m [ 2 ] = 7 Then
+H_m = "g"
+EndIf
+LCD.Write ( 10 , 30 , H_m + "-" + Y_m [ 2 ] )
+If X_m [ 3 ] = 1 Then
+H_m = "a"
+ElseIf X_m [ 3 ] = 2 Then
+H_m = "b"
+ElseIf X_m [ 3 ] = 3 Then
+H_m = "c"
+ElseIf X_m [ 3 ] = 4 Then
+H_m = "d"
+ElseIf X_m [ 3 ] = 5 Then
+H_m = "e"
+ElseIf X_m [ 3 ] = 6 Then
+H_m = "f"
+ElseIf X_m [ 3 ] = 7 Then
+H_m = "g"
+EndIf
+LCD.Write ( 10 , 50 , H_m + "-" + Y_m [ 3 ] )
+EndWhile
+LCD.Clear ()
+LCD.Write ( 50 , 50 , "START" )
+Program.Delay ( 1000 )
+Speaker.Note ( 100 , "c#5" , 500 )
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < 1650
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+AROUND ()
+While Sensor.ReadPercent ( 1 ) > 20 Or Sensor.ReadPercent ( 4 ) > 20
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+For F_m = 1 To 3
+if X_m [ F_m ] <> 1 then
+Motor.Move ( "bc" , 40 , 40 , "true" )
+For I_m = 1 To X_m [ F_m ] - 1
+Motor.Move ( "bc" , 40 , 60 , "true" )
+While Sensor.ReadPercent ( 1 ) > 15 Or Sensor.ReadPercent ( 4 ) > 15
+LINE ()
+EndWhile
+EndFor
+Motor.Stop ( "BC" , "true" )
+else
+While Sensor.ReadPercent ( 1 ) > 15 Or Sensor.ReadPercent ( 4 ) > 15
+Motor.StartPower ( "BC" , - 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndIf
+If Y_m [ F_m ] < 3 Then
+LEFT ()
+ElseIf Y_m [ F_m ] > 3 Then
+RIGHT ()
+Else
+AROUND ()
+EndIf
+If Y_m [ F_m ] = 1 Then
+Q_m = 2
+ElseIf Y_m [ F_m ] = 2 Then
+Q_m = 1
+ElseIf Y_m [ F_m ] = 4 Then
+Q_m = 1
+ElseIf Y_m [ F_m ] = 5 Then
+Q_m = 2
+EndIf
+If Y_m [ F_m ] <> 3 Then
+For I_m = 1 To Q_m
+Motor.Move ( "bc" , 40 , 40 , "true" )
+While Sensor.ReadPercent ( 1 ) > 15 Or Sensor.ReadPercent ( 4 ) > 15
+LINE ()
+EndWhile
+EndFor
+Motor.Stop ( "BC" , "true" )
+AROUND ()
+Speaker.Note ( 100 , "c#5" , 1000 )
+Program.Delay ( 1000 )
+For I_m = 1 To Q_m
+Motor.Move ( "bc" , 40 , 40 , "true" )
+While Sensor.ReadPercent ( 1 ) > 15 Or Sensor.ReadPercent ( 4 ) > 15
+LINE ()
+EndWhile
+EndFor
+Motor.Stop ( "BC" , "true" )
+If Y_m [ F_m ] < 3 Then
+RIGHT ()
+ElseIf Y_m [ F_m ] > 3 Then
+LEFT ()
+EndIf
+Else
+Speaker.Note ( 100 , "c#5" , 1000 )
+Program.Delay ( 1000 )
+EndIf
+For I_m = 1 To X_m [ F_m ] - 1
+Motor.Move ( "bc" , 40 , 60 , "true" )
+While Sensor.ReadPercent ( 1 ) > 15 Or Sensor.ReadPercent ( 4 ) > 15
+LINE ()
+EndWhile
+EndFor
+Motor.Stop ( "BC" , "true" )
+If F_m <> 3 Then
+AROUND ()
+EndIf
+EndFor
+Motor.Move ( "bc" , 40 , 60 , "true" )
+Motor.ResetCount ( "BC" )
+While Sensor.ReadPercent ( 1 ) > 30 Or Sensor.ReadPercent ( 4 ) > 30
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Motor.Move ( "bc" , 40 , 400 , "true" )

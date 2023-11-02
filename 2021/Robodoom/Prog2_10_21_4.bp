@@ -1,0 +1,28 @@
+Motor.Invert("B")
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,0)
+s1=0
+s2=0
+k=0.47
+v=40
+min1=100
+max1=0
+min2=100
+max2=0
+
+While Sensor.ReadRawValue(4,0)>150
+  Motor.StartSync("BC",20,-20)
+EndWhile
+Motor.Stop("BC","true")
+Motor.MoveSync("BC",20,-20,60,"true")
+mm = 100
+a = mm/3.14*82
+While (Motor.GetSpeed("b")+Motor.GetSpeed("c"))/2<a
+  Motor.Start("BC",20)
+EndWhile
+Motor.Stop("BC","true")
+While (Motor.GetSpeed("b")+Motor.GetSpeed("c"))/2<a
+  Motor.Start("BC",-20)
+EndWhile
+Motor.Stop("BC","true")

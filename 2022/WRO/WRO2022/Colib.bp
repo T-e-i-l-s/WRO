@@ -1,0 +1,323 @@
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+
+
+
+
+Sub HSV1
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+
+EndSub
+
+
+
+
+
+
+
+Sub HSV4
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(4,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed '/ 255
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+
+EndSub
+
+
+
+
+
+
+'Start skaning================================================
+
+LCD.Clear()
+LCD.Text(1,10,5,2,"MaxDistRd")
+While Buttons.Current <> "E"
+  HSV1()
+  LCD.Text(1,10,40,1,"Left(1)")
+  LCD.Text(1,10,75,1,"H:" + Math.Round(H))
+
+  HSV4()
+  LCD.Text(1,110,40,1,"Right(4)")
+  LCD.Text(1,110,75,1,"H:" + Math.Round(H))
+  Program.Delay(700)
+EndWhile
+Speaker.Note(30,"C#5",300)
+HSV1()
+RdDal1 = H
+HSV4()
+RdDal4 = H
+Program.Delay(600)
+
+
+
+
+
+LCD.Clear()                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+LCD.Text(1,10,5,2,"MaxDistWt")
+While Buttons.Current <> "E"
+  HSV1()
+  LCD.Text(1,10,40,1,"Left(1)")
+  LCD.Text(1,10,75,1,"sRed:" + Math.Round(sRed))
+
+  HSV4()
+  LCD.Text(1,110,40,1,"Right(4)")
+  LCD.Text(1,110,75,1,"sRed:" + Math.Round(sRed))
+  Program.Delay(700)
+EndWhile
+Speaker.Note(30,"C#5",300)
+HSV1()
+WtDal1 = sRed
+HSV4()
+WtDal4 = sRed
+Program.Delay(600)
+
+
+
+
+
+LCD.Clear()
+LCD.Text(1,10,5,2,"MaxDistBk")
+While Buttons.Current <> "E"
+  HSV1()
+  LCD.Text(1,10,40,1,"Left(1)")
+  LCD.Text(1,10,75,1,"sRed:" + Math.Round(sRed))
+
+  HSV4()
+  LCD.Text(1,110,40,1,"Right(4)")
+  LCD.Text(1,110,75,1,"sRed:" + Math.Round(sRed))
+  Program.Delay(700)
+EndWhile
+Speaker.Note(30,"C#5",300)
+HSV1()
+BkDal1 = sRed
+HSV4()
+BkDal4 = sRed
+Program.Delay(600)
+
+
+
+
+
+
+
+
+LCD.Clear()
+LCD.Text(1,10,5,2,"MinDistRd")
+While Buttons.Current <> "E"
+  HSV1()
+  LCD.Text(1,10,40,1,"Left(1)")
+  LCD.Text(1,10,75,1,"H:" + Math.Round(H))
+
+  HSV4()
+  LCD.Text(1,110,40,1,"Right(4)")
+  LCD.Text(1,110,75,1,"H:" + Math.Round(H))
+  Program.Delay(700)
+EndWhile
+Speaker.Note(30,"C#5",300)
+HSV1()
+RdBlz1 = H
+HSV4()
+RdBlz4 = H
+Program.Delay(600)
+
+
+
+
+
+LCD.Clear()
+LCD.Text(1,10,5,2,"MinDistWt")
+While Buttons.Current <> "E"
+  HSV1()
+  LCD.Text(1,10,40,1,"Left(1)")
+  LCD.Text(1,10,75,1,"sRed:" + Math.Round(sRed))
+
+  HSV4()
+  LCD.Text(1,110,40,1,"Right(4)")
+  LCD.Text(1,110,75,1,"sRed:" + Math.Round(sRed))
+  Program.Delay(700)
+EndWhile
+Speaker.Note(30,"C#5",300)
+HSV1()
+WtBlz1 = sRed
+HSV4()
+WtBlz4 = sRed
+Program.Delay(600)
+
+
+
+
+
+LCD.Clear()
+LCD.Text(1,10,5,2,"MinDistBk")
+While Buttons.Current <> "E"
+  HSV1()
+  LCD.Text(1,10,40,1,"Left(1)")
+  LCD.Text(1,10,75,1,"sRed:" + Math.Round(sRed))
+
+  HSV4()
+  LCD.Text(1,110,40,1,"Right(4)")
+  LCD.Text(1,110,75,1,"sRed:" + Math.Round(sRed))
+  Program.Delay(700)
+EndWhile
+Speaker.Note(30,"C#5",300)
+HSV1()
+BkBlz1 = sRed
+HSV4()
+BkBlz4 = sRed
+Program.Delay(600)
+
+
+
+
+
+
+
+maxRed1 = Math.Max(RdBlz1,RdDal1)
+maxBlack1 = Math.Max(BkBlz1,BkDal1)
+maxWhite1 = Math.Max(WtBlz1,WtDal1)
+
+
+
+
+maxRed2 = Math.Max(RdBlz4,RdDal4)
+maxBlack2 = Math.Max(BkBlz4,BkDal4)
+maxWhite2 = Math.Max(WtBlz4,WtDal4)'
+
+
+
+
+
+minRed1 = Math.Min(RdBlz1,RdDal1)
+minBlack1 = Math.Min(BkBlz1,BkDal1)
+minWhite1 = Math.Min(WtBlz1,WtDal1)
+
+
+
+
+minRed2 = Math.Min(RdBlz4,RdDal4)
+minBlack2 = Math.Min(BkBlz4,BkDal4)
+minWhite2 = Math.Min(WtBlz4,WtDal4)'
+
+
+
+
+
+f = EV3File.OpenWrite("left.txt")
+EV3File.WriteLine(f,maxRed1)
+EV3File.WriteLine(f,maxBlack1)
+EV3File.WriteLine(f,maxWhite1)
+EV3File.WriteLine(f,minRed1)
+EV3File.WriteLine(f,minBlack1)
+EV3File.WriteLine(f,minWhite1)
+EV3File.Close(f)
+
+
+f = EV3File.OpenWrite("right.txt")
+EV3File.WriteLine(f,maxRed2)
+EV3File.WriteLine(f,maxBlack2)
+EV3File.WriteLine(f,maxWhite2)
+EV3File.WriteLine(f,minRed2)
+EV3File.WriteLine(f,minBlack2)
+EV3File.WriteLine(f,minWhite2)
+EV3File.Close(f)

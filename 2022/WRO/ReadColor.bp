@@ -1,0 +1,152 @@
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+col = 0
+Red = 0
+@I2CPORT = 1 'Порт
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+n = 0
+
+
+
+Sub HSV1
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+
+  'LCD.Text(1,20,20,2,H)
+  'LCD.Text(1,20,40,2,S) 
+  'LCD.Text(1,20,60,2,V) 
+  
+EndSub
+
+Sub HSV4
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(4,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed '/ 255
+  sGreen = sGreen
+  sBlue = sBlue 
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+  
+  'LCD.Text(1,20,20,2,H)
+  'LCD.Text(1,20,40,2,S) 
+  'LCD.Text(1,20,60,2,V) 
+EndSub
+
+
+
+
+While "true"
+  HSV1()
+  if (V < 25)Then
+    col = 0
+    
+  elseif (H < 230 or V > 200 or S > 0.65)Then
+    col = 5
+  Else
+    if (V < 100)Then
+      col = 1
+    Elseif ( V < 200)Then
+      col = 6
+    EndIf
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,20,60,2,col) 
+  Program.Delay(1000)
+EndWhile

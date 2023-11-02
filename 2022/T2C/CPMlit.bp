@@ -1,0 +1,243 @@
+Motor.Invert("B")
+
+
+
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+
+
+
+x1=3
+y1=1
+
+x2=4
+y2=5
+
+x3=1
+y3=4
+
+x4=7
+y4=2
+
+
+
+
+if x1 = 1 or x2 = 1 or x3 = 1 or x4 = 1 or Then
+  
+elseif x1 = 2 or x2 = 2 or x3 = 2 or x4 = 2 or Then
+
+elseif x1 = 3 or x2 = 3 or x3 = 3 or x4 = 3 or Then
+
+elseif x1 = 4 or x2 = 4 or x3 = 4 or x4 = 4 or Then
+
+elseif x1 = 5 or x2 = 5 or x3 = 5 or x4 = 5 or Then
+
+elseif x1 = 6 or x2 = 6 or x3 = 6 or x4 = 6 or Then
+
+elseif x1 = 7 or x2 = 7 or x3 = 7 or x4 = 7 or Then
+
+EndIf
+  
+min1=100
+max1=0
+min2=100
+max2=0
+
+k=0.3
+v=30
+x[1] = 5
+x[2] = 4
+x[3] = 1
+y[1] = 1
+y[2] = 5
+y[3] = 3
+
+'================================================
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)
+  
+EndSub
+
+'==============================================
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)
+  
+EndSub
+
+'================================================
+
+Sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v+U*k)
+  Motor.StartPower("B",v-U*k)
+EndSub
+
+Sub left
+  Motor.Move("BC",30,75,"true")
+  Motor.MoveSync("BC",-30,30,180,"true")
+  While Sensor.ReadPercent(3)>25
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",20,-20,10,"true")
+EndSub
+
+Sub right
+  Motor.Move("BC",30,70,"true")
+  Motor.MoveSync("BC",30,-30,180,"true")
+  While Sensor.ReadPercent(2)>25
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",-20,20,10,"true")
+EndSub
+
+Sub around
+  Motor.MoveSync("BC",-20,20,390,"true")
+  While Sensor.ReadPercent(3)>25
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  While Sensor.ReadPercent(3)<45
+    Motor.StartSync("BC",10,-10)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+'=======================================================
+'___****===*********======*======****======*********====
+'===*==========*=========*=*=====*===*=========*========
+'===*==========*========*===*====*====*========*========
+'===****=======*=======*=====*===******========*========
+'======*=======*=======*******===*===*=========*========
+'======*=======*=======*=====*===*====*========*========
+'===****=======*=======*=====*===*=====*=======*========
+'=======================================================
+
+
+
+LCD.Clear()
+LCD.Write(50,50,"START")
+Speaker.Note(100,"c#5",500)
+
+Motor.ResetCount("BC")
+While Sensor.ReadPercent(1)>20 Or Sensor.ReadPercent(4)>20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+
+
+right()
+For i = 1 To 2
+    Motor.Move("bc",40,60,"true")
+    While Sensor.ReadPercent(1)>15 Or Sensor.ReadPercent(4)>15
+      line()
+    EndWhile
+EndFor
+
+
+Motor.ResetCount("BC")
+  While (Motor.GetCount("B") + Motor.GetCount("C")) / 2 < 1650
+    line()
+ EndWhile
+  Motor.Stop("BC","true")
+  around()
+While Sensor.ReadPercent(1)>20 Or Sensor.ReadPercent(4)>20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+
+For f = 1 To 3
+  if x[f] <> 1 then
+    Motor.Move("bc",40,40,"true")
+     For i = 1 To x[f]-1
+        Motor.Move("bc",40,60,"true")
+        While Sensor.ReadPercent(1)>15 Or Sensor.ReadPercent(4)>15
+          line()
+        EndWhile
+      EndFor
+      Motor.Stop("BC","true")
+  else
+    While Sensor.ReadPercent(1)>15 Or Sensor.ReadPercent(4)>15
+      Motor.StartPower("BC",-20)
+    EndWhile
+    Motor.Stop("BC","true")
+  EndIf
+
+  If y[f]<3 Then
+    left()
+  ElseIf y[f]>3 Then
+    right()
+  Else
+    around()
+  EndIf
+  If y[f]=1 Then
+    q = 2
+  ElseIf y[f]=2 Then
+    q = 1
+  ElseIf y[f]=4 Then
+    q = 1
+  ElseIf y[f]=5 Then
+    q = 2
+  EndIf
+  If y[f]<>3 Then
+    For i = 1 To q
+      Motor.Move("bc",40,40,"true")
+      While Sensor.ReadPercent(1)>15 Or Sensor.ReadPercent(4)>15
+        line()
+      EndWhile
+      
+
+    EndFor
+    Motor.Stop("BC","true")
+    around()
+    Speaker.Note(100,"c#5",1000)
+    Program.Delay(1000)
+    For i = 1 To q
+      Motor.Move("bc",40,40,"true")
+      While Sensor.ReadPercent(1)>15 Or Sensor.ReadPercent(4)>15
+        line()
+      EndWhile
+      
+
+    EndFor
+    Motor.Stop("BC","true")
+    If y[f]<3 Then
+      right()
+    ElseIf y[f]>3 Then
+      left()
+    EndIf
+  Else
+    Speaker.Note(100,"c#5",1000)
+    Program.Delay(1000)
+  EndIf
+  
+  For i = 1 To x[f]-1
+    Motor.Move("bc",40,60,"true")
+    While Sensor.ReadPercent(1)>15 Or Sensor.ReadPercent(4)>15
+      line()
+    EndWhile
+  EndFor
+  Motor.Stop("BC","true")
+  If f <> 3 Then
+    around()
+  EndIf
+
+EndFor
+'if x[3] = 1 And y[3] = 3 Then
+'  Motor.MoveSync("BC",20,-20,35,"true")
+'EndIf
+Motor.Move("bc",40,60,"true")
+
+Motor.ResetCount("BC")
+While Sensor.ReadPercent(1) > 30 Or Sensor.ReadPercent(4) > 30
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("bc",40,400,"true")

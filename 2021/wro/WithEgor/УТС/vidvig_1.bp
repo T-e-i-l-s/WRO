@@ -1,0 +1,2 @@
+Motor.Start("a",-80)
+Program.Delay(350)

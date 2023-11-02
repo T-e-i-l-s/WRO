@@ -1,0 +1,59 @@
+F1_m = 0 ' global variable init 
+RD1_m = "" ' global variable init 
+BD1_m = "" ' global variable init 
+WD1_m = "" ' global variable init 
+RD2_m = "" ' global variable init 
+BD2_m = "" ' global variable init 
+WD2_m = "" ' global variable init 
+RB1_m = "" ' global variable init 
+BB1_m = "" ' global variable init 
+WB1_m = "" ' global variable init 
+RB2_m = "" ' global variable init 
+BB2_m = "" ' global variable init 
+WB2_m = "" ' global variable init 
+F1_m = EV3File.OpenRead ( "ld.txt" )
+RD1_m = EV3File.ReadLine ( F1_m )
+BD1_m = EV3File.ReadLine ( F1_m )
+WD1_m = EV3File.ReadLine ( F1_m )
+EV3File.Close ( F1_m )
+F1_m = EV3File.OpenRead ( "rd.txt" )
+RD2_m = EV3File.ReadLine ( F1_m )
+BD2_m = EV3File.ReadLine ( F1_m )
+WD2_m = EV3File.ReadLine ( F1_m )
+EV3File.Close ( F1_m )
+F1_m = EV3File.OpenRead ( "lb.txt" )
+RB1_m = EV3File.ReadLine ( F1_m )
+BB1_m = EV3File.ReadLine ( F1_m )
+WB1_m = EV3File.ReadLine ( F1_m )
+EV3File.Close ( F1_m )
+F1_m = EV3File.OpenRead ( "rb.txt" )
+RB2_m = EV3File.ReadLine ( F1_m )
+BB2_m = EV3File.ReadLine ( F1_m )
+WB2_m = EV3File.ReadLine ( F1_m )
+EV3File.Close ( F1_m )
+while "true"
+Speaker.Note ( 100 , "c#5" , 200 )
+LCD.Clear ()
+LCD.Text ( 1 , 120 , 10 , 1 , "<" )
+LCD.Text ( 1 , 20 , 10 , 1 , "rd=" + RD1_m )
+LCD.Text ( 1 , 20 , 20 , 1 , "bd=" + BD1_m )
+LCD.Text ( 1 , 20 , 30 , 1 , "wd=" + WD1_m )
+LCD.Text ( 1 , 20 , 40 , 1 , "rb=" + RB1_m )
+LCD.Text ( 1 , 20 , 50 , 1 , "bb=" + BB1_m )
+LCD.Text ( 1 , 20 , 60 , 1 , "wb=" + WB1_m )
+While Buttons.Current <> "E"
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+Speaker.Note ( 100 , "c#5" , 200 )
+LCD.Clear ()
+LCD.Text ( 1 , 120 , 10 , 1 , ">" )
+LCD.Text ( 1 , 20 , 10 , 1 , "rd=" + RD2_m )
+LCD.Text ( 1 , 20 , 20 , 1 , "bd=" + BD2_m )
+LCD.Text ( 1 , 20 , 30 , 1 , "wd=" + WD2_m )
+LCD.Text ( 1 , 20 , 40 , 1 , "rb=" + RB2_m )
+LCD.Text ( 1 , 20 , 50 , 1 , "bb=" + BB2_m )
+LCD.Text ( 1 , 20 , 60 , 1 , "wb=" + WB2_m )
+While Buttons.Current <> "E"
+EndWhile
+EndWhile

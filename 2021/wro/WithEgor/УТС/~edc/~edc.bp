@@ -1,0 +1,1182 @@
+G_m = 0 ' global variable init 
+R_m = 0 ' global variable init 
+Y_m = 0 ' global variable init 
+W_m = 0 ' global variable init 
+COLOR_m = 0 ' global variable init 
+X_m = 0 ' global variable init 
+C_m = 0 ' global variable init 
+S_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+MAX3_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MIN3_m = 0 ' global variable init 
+K1_m = 0 ' global variable init 
+K2_m = 0 ' global variable init 
+K3_m = 0 ' global variable init 
+S3_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+SPEED_m = 0 ' global variable init 
+SPEEDL_m = 0 ' global variable init 
+SPEEDR_m = 0 ' global variable init 
+EOLD_m = 0 ' global variable init 
+N_m = 0 ' global variable init 
+P_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+I2CPORT_m = 0 ' global variable init 
+I2CSLVADDR_m = 0 ' global variable init 
+L_m = 0 ' global variable init 
+J_m = 0 ' global variable init 
+SENDARRAY_m[0] = 0 ' global variable init 
+RECVARRAY_m[0] = 0 ' global variable init 
+SNUM_m = 0 ' global variable init 
+SRED_m = 0 ' global variable init 
+SGREEN_m = 0 ' global variable init 
+SBLUE_m = 0 ' global variable init 
+MAX_m = 0 ' global variable init 
+MIN_m = 0 ' global variable init 
+H_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+D_m = 0 ' global variable init 
+Z_m = 0 ' global variable init 
+E_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+A_m[0] = 0 ' global variable init 
+F_m = 0 ' global variable init 
+Motor.Invert ( "b" )
+G_m = 0
+R_m = 0
+Y_m = 0
+W_m = 0
+COLOR_m = 0
+X_m = 0
+C_m = 0
+S_m = 0
+MAX2_m = 0
+MAX3_m = 0
+MIN2_m = 0
+MIN3_m = 0
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+K1_m = 0.15
+K2_m = 8
+K3_m = 0.2
+S3_m = 0
+S2_m = 0
+SPEED_m = 0
+SPEEDL_m = 0
+SPEEDR_m = 0
+EOLD_m = 0
+N_m = 0
+P_m = 0
+I_m = 0
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+Sub US
+L_m = 3.14 * 80
+X_m = 0
+X_m = 360 / L_m * S_m
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < X_m
+A3 ()
+A2 ()
+SPEED_m = 80
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub PL
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m > 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub PR
+Motor.MoveSync ( "bc" , 30 , 30 , 80 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub NPL
+A2 ()
+A3 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m > 10 Or S3_m > 10 And S2_m < 10
+A2 ()
+A3 ()
+Motor.StartPower ( "bc" , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 90 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+A3 ()
+A2 ()
+While S2_m < 60
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub NPP
+A2 ()
+A3 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m > 10 Or S3_m > 10 And S2_m < 10
+A2 ()
+A3 ()
+Motor.StartPower ( "bc" , - 60 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 90 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 90 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+A3 ()
+A2 ()
+While S3_m < 60
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub REDL
+Thread.Run = ZADVIG
+A3 ()
+A2 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m > 10 Or S3_m > 10 And S2_m < 10
+A3 ()
+A2 ()
+SPEED_m = 80
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+A2 ()
+A3 ()
+While Motor.GetCount ( "b" ) < 400
+A2 ()
+A3 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+Motor.MoveSync ( "bc" , 40 , 40 , 150 , "true" )
+Motor.MoveSync ( "bc" , 0 , - 80 , 400 , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 100 , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+A2 ()
+A3 ()
+While Sensor.ReadPercent ( 3 ) > 9
+A2 ()
+A3 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub BELLAM
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While Motor.GetCount ( "b" ) < 200
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+For I_m = 1 To 1
+A3 ()
+A2 ()
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+EndFor
+Motor.MoveSync ( "bc" , 20 , 20 , 20 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+J_m = 80
+While S3_m > 15
+A3 ()
+A2 ()
+If J_m > 30 Then
+J_m = J_m - 0.1
+EndIf
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+J_m = 80
+While S3_m < 15
+A3 ()
+A2 ()
+If J_m > 30 Then
+J_m = J_m - 0.1
+EndIf
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 50
+A3 ()
+A2 ()
+SPEED_m = 30
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 150 , "true" )
+Motor.Start ( "d" , 50 )
+Program.Delay ( 500 )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 30 , - 30 , 100 , "true" )
+Motor.MoveSync ( "bc" , 20 , 0 , 350 , "true" )
+A2 ()
+A3 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m > 10 Or S3_m > 6 And S2_m < 6
+A2 ()
+A3 ()
+Motor.StartPower ( "bc" , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 5 , - 5 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 5 , - 5 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+ZAMOROZ ()
+Program.Delay ( 100 )
+EndSub
+Sub BELLAM2
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 180 , "true" )
+A2 ()
+A3 ()
+While Sensor.ReadPercent ( 2 ) > 60
+Motor.StartSync ( "bc" , 10 , - 10 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A2 ()
+A3 ()
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m < 10
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 70 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+For I_m = 1 To 2
+A3 ()
+A2 ()
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+EndFor
+Motor.MoveSync ( "bc" , 20 , 20 , 20 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+J_m = 80
+While S3_m > 10
+A3 ()
+A2 ()
+If J_m > 30 Then
+J_m = J_m - 0.1
+EndIf
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+J_m = 80
+While S3_m < 15
+A3 ()
+A2 ()
+If J_m > 30 Then
+J_m = J_m - 0.1
+EndIf
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 50
+A3 ()
+A2 ()
+SPEED_m = 30
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 50 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 > - 200
+Motor.StartPower ( "bc" , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 20 , - 20 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+A2 ()
+A3 ()
+While S3_m > 10 And S2_m > 10 Or S3_m > 10 And S2_m < 10 Or S3_m < 10 And S2_m > 10
+A2 ()
+A3 ()
+Motor.StartPower ( "bc" , 40 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 70 , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub BELLAM3
+Motor.MoveSync ( "bc" , 30 , 30 , 90 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 230 , "true" )
+A2 ()
+A3 ()
+While Sensor.ReadPercent ( 2 ) > 60
+Motor.StartSync ( "bc" , 10 , - 10 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A2 ()
+A3 ()
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m < 10
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 70 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+For I_m = 1 To 3
+A3 ()
+A2 ()
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+EndFor
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 20 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 100 , "true" )
+Motor.MoveSync ( "bc" , 50 , - 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , 0 , 50 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 30 , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 50
+A3 ()
+A2 ()
+SPEED_m = 30
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 150 , "true" )
+Motor.MoveSync ( "bc" , 30 , 0 , 400 , "true" )
+A2 ()
+A3 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m > 10 Or S3_m > 10 And S2_m < 10
+A2 ()
+A3 ()
+Motor.StartPower ( "bc" , 80 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 70 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 10 , - 10 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , 10 , - 10 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+For I_m = 1 To 1
+A3 ()
+A2 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m < 10
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+EndFor
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RED_1
+Motor.MoveSync ( "bc" , 20 , 20 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m > 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 270
+SPEED_m = 50
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Program.Delay ( 100 )
+Motor.Start ( "d" , 20 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+NPL ()
+S_m = 1470
+L_m = 3.14 * 80
+X_m = 0
+X_m = 360 / L_m * S_m
+Motor.ResetCount ( "bc" )
+While Motor.GetCount ( "b" ) < X_m
+SPEED_m = 80
+POLIN2DUS ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+REDL ()
+BELLAM ()
+S_m = 1400
+US ()
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 70 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m > 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 200
+A3 ()
+A2 ()
+SPEED_m = 80
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+Thread.Run = VIDVIG
+NPL ()
+A3 ()
+A2 ()
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+A3 ()
+A2 ()
+While S3_m > 15 And S2_m > 15 Or S3_m < 15 And S2_m < 15
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub SB1
+Motor.MoveSync ( "bc" , - 40 , - 40 , 200 , "true" )
+Motor.MoveSync ( "bc" , - 40 , 40 , 300 , "true" )
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m > 10
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S2_m < 15
+A3 ()
+A2 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Program.Delay ( 100 )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 200
+A3 ()
+A2 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+A3 ()
+A2 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m < 10
+A3 ()
+A2 ()
+SPEED_m = 60
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub HSV
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( I2CPORT_m , I2CSLVADDR_m , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m / 255
+SGREEN_m = SGREEN_m / 255
+SBLUE_m = SBLUE_m / 255
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) Then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) Then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) Then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) Then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+LCD.Clear ()
+LCD.Write ( 10 , 10 , H_m )
+LCD.Write ( 10 , 30 , S_m )
+LCD.Write ( 10 , 60 , V_m )
+EndSub
+Sub HSV_100
+P_m = 0
+X_m = 0
+D_m = 0
+Z_m = 0
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+For P_m = 1 To 100
+HSV ()
+X_m = X_m + H_m
+Z_m = Z_m + S_m
+D_m = D_m + V_m
+EndFor
+H_m = X_m / 100
+S_m = Z_m / 100
+V_m = D_m / 100
+LCD.Clear ()
+LCD.Write ( 10 , 10 , H_m )
+LCD.Write ( 10 , 30 , S_m )
+LCD.Write ( 10 , 60 , V_m )
+EndSub
+Sub HSV_B
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( I2CPORT_m , I2CSLVADDR_m , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m / 255
+SGREEN_m = SGREEN_m / 255
+SBLUE_m = SBLUE_m / 255
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) Then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) Then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) Then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) Then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+If ( H_m > 300 And H_m < 360 ) Or ( H_m >= 0 And H_m <= 20 ) And ( S_m > 0.3 And S_m <= 1 ) And ( V_m > 0.025 And V_m < 0.1 ) Then
+COLOR_m = 5
+ElseIf ( H_m >= 20 And H_m < 60 ) And S_m >= 0.4 And V_m > 0.030 Then
+COLOR_m = 4
+Else
+COLOR_m = 6
+EndIf
+EndSub
+Sub HSV_D
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( I2CPORT_m , I2CSLVADDR_m , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m / 255
+SGREEN_m = SGREEN_m / 255
+SBLUE_m = SBLUE_m / 255
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) Then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) Then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) Then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) Then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+If ( H_m > 200 And H_m < 360 ) Or ( H_m >= 0 And H_m <= 30 ) And ( S_m > 0.3 And S_m <= 1 ) And ( V_m >= 0 And V_m < 0.02 ) Then
+COLOR_m = 5
+ElseIf ( H_m >= 0 And H_m < 60 ) And ( S_m >= 0.4 And S_m <= 1 ) And V_m > 0.0030 Then
+COLOR_m = 4
+Else
+COLOR_m = 6
+EndIf
+EndSub
+Sub HSV_RGB_B
+P_m = 0
+X_m = 0
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+LCD.Clear ()
+HSV ()
+LCD.Write ( 10 , 10 , H_m )
+LCD.Write ( 10 , 30 , S_m )
+LCD.Write ( 10 , 60 , V_m )
+LCD.Write ( 10 , 80 , COLOR_m )
+Program.Delay ( 100 )
+For P_m = 1 To 100
+HSV_B ()
+X_m = X_m + H_m
+EndFor
+H_m = X_m / 100
+LCD.Clear ()
+LCD.Write ( 10 , 10 , H_m )
+Program.Delay ( 100 )
+If ( H_m > 100 And H_m < 360 ) Or ( H_m >= 0 And H_m <= 20 ) And ( S_m > 0.3 And S_m <= 1 ) And ( V_m > 0.025 And V_m < 0.1 ) Then
+COLOR_m = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Speaker.Wait ()
+ElseIf ( H_m >= 20 And H_m < 60 ) And S_m >= 0.4 And V_m > 0.030 Then
+COLOR_m = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+Speaker.Wait ()
+Else
+COLOR_m = 6
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Zero" )
+Speaker.Wait ()
+EndIf
+LCD.Clear ()
+LCD.Write ( 10 , 10 , COLOR_m )
+Program.Delay ( 1000 )
+EndSub
+Sub HSV_RGB_D
+P_m = 0
+X_m = 0
+Sensor.SetMode ( 1 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+LCD.Clear ()
+HSV_D ()
+LCD.Write ( 10 , 10 , H_m )
+LCD.Write ( 10 , 30 , S_m )
+LCD.Write ( 10 , 60 , V_m )
+LCD.Write ( 10 , 80 , COLOR_m )
+For P_m = 1 To 100
+HSV_D ()
+X_m = X_m + H_m
+EndFor
+H_m = X_m / 100
+LCD.Clear ()
+LCD.Write ( 10 , 10 , H_m )
+If ( H_m > 200 And H_m < 360 ) Or ( H_m >= 0 And H_m <= 40 ) And ( S_m > 0.3 And S_m <= 1 ) And ( V_m >= 0 And V_m < 0.02 ) Then
+COLOR_m = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Speaker.Wait ()
+ElseIf ( H_m >= 0 And H_m < 100 ) And ( S_m >= 0.4 And S_m <= 1 ) And V_m > 0.0030 Then
+COLOR_m = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+Speaker.Wait ()
+Else
+COLOR_m = 6
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Zero" )
+Speaker.Wait ()
+EndIf
+LCD.Clear ()
+LCD.Write ( 10 , 10 , COLOR_m )
+Program.Delay ( 1000 )
+EndSub
+Sub A3
+S3_m = 100 * ( Sensor.ReadPercent ( 3 ) - MIN3_m ) / ( MAX3_m - MIN3_m )
+EndSub
+Sub A2
+S2_m = 100 * ( Sensor.ReadPercent ( 2 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub POLIN2D
+A3 ()
+A2 ()
+E_m = S2_m - S3_m
+U_m = K1_m * E_m + K2_m * ( E_m - EOLD_m )
+EOLD_m = E_m
+SPEEDL_m = SPEED_m + U_m
+SPEEDR_m = SPEED_m - U_m
+Motor.StartPower ( "B" , SPEEDL_m )
+Motor.StartPower ( "C" , SPEEDR_m )
+EndSub
+Sub POLIN2DUS
+A3 ()
+A2 ()
+E_m = S2_m - S3_m
+U_m = K3_m * E_m + K2_m * ( E_m - EOLD_m )
+EOLD_m = E_m
+SPEEDL_m = SPEED_m + U_m
+SPEEDR_m = SPEED_m - U_m
+Motor.StartPower ( "B" , SPEEDL_m )
+Motor.StartPower ( "C" , SPEEDR_m )
+EndSub
+Sub ZAMOROZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Sub ZADVIG
+Motor.Start ( "a" , 20 )
+Program.Delay ( 100 )
+Motor.Stop ( "a" , "true" )
+EndSub
+Sub VIDVIG
+Motor.Start ( "a" , - 20 )
+Program.Delay ( 100 )
+Motor.Stop ( "a" , "true" )
+EndSub
+Sub VIRAV_NAZ
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+While Sensor.ReadPercent ( 2 ) > 10 And Sensor.ReadPercent ( 3 ) > 10
+Motor.StartSync ( "BC" , - 20 , - 20 )
+EndWhile
+Motor.Stop ( "BC" , "True" )
+While Sensor.ReadPercent ( 2 ) > 10
+Motor.Start ( "B" , - 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) > 10
+Motor.Start ( "C" , - 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+While Sensor.ReadPercent ( 2 ) < 10
+Motor.Start ( "B" , 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) < 10
+Motor.Start ( "C" , 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+EndSub
+Sub VIRAV
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+While Sensor.ReadPercent ( 2 ) > 7 And Sensor.ReadPercent ( 3 ) > 7
+Motor.StartSync ( "BC" , 20 , 20 )
+EndWhile
+Motor.Stop ( "BC" , "True" )
+While Sensor.ReadPercent ( 2 ) > 7
+Motor.Start ( "B" , 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) > 7
+Motor.Start ( "C" , 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+While Sensor.ReadPercent ( 2 ) < 7
+Motor.Start ( "B" , - 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) < 7
+Motor.Start ( "C" , - 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+EndSub
+Sub RGB
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( I2CPORT_m , I2CSLVADDR_m , 1 , 4 , SENDARRAY_m )
+A_m [ I_m ] = RECVARRAY_m [ 0 ]
+If A_m [ I_m ] = 5 Or A_m [ I_m ] = 14 Or A_m [ I_m ] = 6 Then
+Speaker.Note ( 100 , "C#1" , 500 )
+ElseIf A_m [ I_m ] = 1 Or A_m [ I_m ] = 10 Or A_m [ I_m ] = 7 Or A_m [ I_m ] = 8 Then
+Speaker.Note ( 100 , "C#5" , 500 )
+ElseIf A_m [ I_m ] = 3 Or A_m [ I_m ] = 2 Or A_m [ I_m ] = 4 Then
+Speaker.Note ( 50 , "C#9" , 1000 )
+EndIf
+EndSub
+F_m = EV3File.OpenRead ( "WRO2021/colib.dat" )
+MIN2_m = EV3File.ConvertToNumber ( EV3File.ReadLine ( F_m ) )
+MIN3_m = EV3File.ConvertToNumber ( EV3File.ReadLine ( F_m ) )
+MAX2_m = EV3File.ConvertToNumber ( EV3File.ReadLine ( F_m ) )
+MAX3_m = EV3File.ConvertToNumber ( EV3File.ReadLine ( F_m ) )
+EV3File.Close ( F_m )
+LCD.Clear ()
+LCD.Text ( 1 , 10 , 10 , 1 , MIN2_m )
+LCD.Text ( 1 , 20 , 20 , 1 , MIN3_m )
+LCD.Text ( 1 , 30 , 30 , 1 , MAX2_m )
+LCD.Text ( 1 , 40 , 40 , 1 , MAX3_m )
+Motor.MoveSync ( "bc" , 30 , 0 , 130 , "true" )
+Motor.MoveSync ( "bc" , 0 , 30 , 130 , "true" )
+Motor.ResetCount ( "bc" )
+Motor.Start ( "bc" , 40 )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 500
+If Sensor.ReadPercent ( 2 ) > MAX2_m Then
+MAX2_m = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 2 ) < MIN2_m Then
+MIN2_m = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 3 ) > MAX3_m Then
+MAX3_m = Sensor.ReadPercent ( 3 )
+EndIf
+If Sensor.ReadPercent ( 3 ) < MIN3_m Then
+MIN3_m = Sensor.ReadPercent ( 3 )
+EndIf
+EndWhile
+A2 ()
+A3 ()
+A2 ()
+A3 ()
+ZAMOROZ ()
+Thread.Run = ZADVIG
+A3 ()
+A2 ()
+While S3_m > 10 And S2_m > 10 Or S3_m < 10 And S2_m > 10 Or S3_m > 10 And S2_m < 10
+A3 ()
+A2 ()
+SPEED_m = 80
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+A2 ()
+A3 ()
+While Motor.GetCount ( "b" ) < 400
+A2 ()
+A3 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+Motor.MoveSync ( "bc" , 40 , 40 , 150 , "true" )
+Motor.MoveSync ( "bc" , 0 , - 80 , 400 , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 100 , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+A2 ()
+A3 ()
+While Sensor.ReadPercent ( 3 ) > 6
+A2 ()
+A3 ()
+SPEED_m = 20
+POLIN2D ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )

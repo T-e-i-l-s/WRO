@@ -1,0 +1,88 @@
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+BLACK_m = 0 ' global variable init 
+X_m = 0 ' global variable init 
+X2_m = 0 ' global variable init 
+X3_m = 0 ' global variable init 
+Y_m = 0 ' global variable init 
+COLOR_m = 0 ' global variable init 
+C_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+Sensor.SetMode ( 4 , 0 )
+Sensor.SetMode ( 1 , 0 )
+S1_m = 0
+S2_m = 0
+K_m = 0.3
+V_m = 35
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+BLACK_m = 13
+X_m = 2
+X2_m = 3
+X3_m = 1
+Y_m = 4
+COLOR_m = 0
+C_m = 0
+Motor.Stop ( "BC" , "true" )
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 1 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 4 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub GETCOL
+COLOR_m = Sensor.ReadRawValue ( 1 , 2 )
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 105 , 1 , COLOR_m )
+Program.Delay ( 2000 )
+EndSub
+Sub LEFT
+Motor.Move ( "BC" , 20 , 80 , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 100 , "true" )
+While Sensor.ReadPercent ( 4 ) > 25
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT
+Motor.Move ( "BC" , 20 , 80 , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 100 , "true" )
+While Sensor.ReadPercent ( 4 ) > 25
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub AROUND
+Motor.MoveSync ( "BC" , - 20 , 20 , 400 , "true" )
+While Sensor.ReadPercent ( 3 ) > BLACK_m
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "BC" )
+while ( Motor.GetCount ( "c" ) + Motor.GetCount ( "b" ) ) / 2 < 60
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+sub LINE
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m - U_m * K_m )
+EndSub
+for I_m = 1 to 3
+while Sensor.ReadPercent ( 1 ) > 20 or Sensor.ReadPercent ( 4 ) > 20
+LINE ()
+EndWhile
+Motor.Move ( "bc" , 20 , 30 , "true" )
+EndFor

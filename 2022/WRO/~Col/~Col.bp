@@ -1,0 +1,79 @@
+COL_m = 0 ' global variable init 
+RED_m = 0 ' global variable init 
+I2CPORT_m = 0 ' global variable init 
+I2CSLVADDR_m = 0 ' global variable init 
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+I2_1 = 0 ' local variable init 
+DAL_1 = 0 ' local variable init 
+SENDARRAY_1[0] = 0 ' local variable init 
+I2CPORT_1 = 0 ' local variable init 
+RECVARRAY_1[0] = 0 ' local variable init 
+C_1 = 0 ' local variable init 
+COL_1 = 0 ' local variable init 
+F1_1 = 0 ' local variable init 
+Sensor.SetMode ( 1 , 2 )
+COL_m = 0
+RED_m = 0
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+Sub COL_2
+SENDARRAY_1 [ 0 ] = 66
+I2CPORT_1 = I2_1
+RECVARRAY_1 = Sensor.CommunicateI2C ( I2CPORT_1 , 1 , 1 , 4 , SENDARRAY_1 )
+if ( I2CPORT_1 = 1 ) Then
+if ( DAL_1 = 1 ) Then
+C_1 = RECVARRAY_1 [ 3 ]
+If ( C_1 < 55 ) Then
+COL_1 = 5
+ElseIf ( C_1 < 121 ) Then
+COL_1 = 1
+ElseIf ( C_1 > 200 ) Then
+COL_1 = 6
+EndIf
+ElseIf ( DAL_1 = 2 ) Then
+C_1 = RECVARRAY_1 [ 1 ]
+If ( C_1 < 47 ) Then
+COL_1 = 1
+ElseIf ( C_1 < 140 ) Then
+COL_1 = 5
+ElseIf ( C_1 > 140 ) Then
+COL_1 = 6
+EndIf
+EndIf
+elseif ( I2CPORT_1 = 4 ) Then
+if ( DAL_1 = 1 ) Then
+C_1 = RECVARRAY_1 [ 2 ]
+If ( C_1 < 63 ) Then
+COL_1 = 1
+ElseIf ( C_1 < 80 ) Then
+COL_1 = 5
+ElseIf ( C_1 > 180 ) Then
+COL_1 = 6
+EndIf
+ElseIf ( DAL_1 = 2 ) Then
+C_1 = RECVARRAY_1 [ 1 ]
+If ( C_1 < 51 ) Then
+COL_1 = 1
+ElseIf ( C_1 < 30 ) Then
+COL_1 = 5
+ElseIf ( C_1 > 30 ) Then
+COL_1 = 6
+EndIf
+EndIf
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , COL_1 )
+LCD.Text ( 1 , 20 , 60 , 2 , C_1 )
+F1_1 = EV3File.OpenWrite ( "num.txt" )
+EV3File.WriteLine ( F1_1 , COL_1 )
+EV3File.WriteLine ( F1_1 , C_1 )
+EV3File.Close ( F1_1 )
+EndSub
+While "true"
+I2_1 = 1
+DAL_1 = 2
+COL_2()
+EndWhile

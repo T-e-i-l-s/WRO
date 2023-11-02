@@ -1,0 +1,307 @@
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+GRAD_m = 0 ' global variable init 
+MM_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+X_m[0] = 0 ' global variable init 
+Y_m[0] = 0 ' global variable init 
+I2CPORT_m = 0 ' global variable init 
+I2CSLVADDR_m = 0 ' global variable init 
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+COL_m = 0 ' global variable init 
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+L_m = 0 ' global variable init 
+I2_1 = 0 ' local variable init 
+DAL_1 = 0 ' local variable init 
+SENDARRAY_1[0] = 0 ' local variable init 
+I2CPORT_1 = 0 ' local variable init 
+RECVARRAY_1[0] = 0 ' local variable init 
+C_1 = 0 ' local variable init 
+COL_1 = 0 ' local variable init 
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 4 , 2 )
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+GRAD_m = 0
+MM_m = 0
+K_m = 0.7
+V_m = 45
+X_m [ 1 ] = 5
+X_m [ 2 ] = 4
+X_m [ 3 ] = 1
+Y_m [ 1 ] = 1
+Y_m [ 2 ] = 5
+Y_m [ 3 ] = 3
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 4 , 2 )
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+COL_m = 0
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 2 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 3 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LINE
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m - U_m * K_m )
+EndSub
+Sub TOMM
+L_m = MM_m / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+EndSub
+Sub LEFT
+L_m = 43 / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 170 , "true" )
+While Sensor.ReadPercent ( 3 ) > 25
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT
+L_m = 48 / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 170 , "true" )
+While Sensor.ReadPercent ( 2 ) > 25
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub LEFT1
+L_m = ( ( 2 * 3.14 * 186 * GRAD_m ) / 360 )
+L_m = L_m / ( 3.14 * 82 ) * 360
+Motor.MoveSync ( "BC" , 0 , 20 , L_m , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT1
+L_m = ( ( 2 * 3.14 * 186 * GRAD_m ) / 360 )
+L_m = L_m / ( 3.14 * 82 ) * 360
+Motor.MoveSync ( "BC" , 20 , 0 , L_m , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub LEFT2
+L_m = ( ( 2 * 3.14 * 186 * GRAD_m ) / 360 ) / 2
+L_m = L_m / ( 3.14 * 82 ) * 360
+Motor.MoveSync ( "BC" , - 20 , 20 , L_m , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT2
+L_m = ( ( 2 * 3.14 * 186 * GRAD_m ) / 360 ) / 2
+L_m = L_m / ( 3.14 * 82 ) * 360
+Motor.MoveSync ( "BC" , 20 , - 20 , L_m , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub FRZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Sub COL_2
+Program.Delay ( 500 )
+SENDARRAY_1 [ 0 ] = 66
+I2CPORT_1 = I2_1
+RECVARRAY_1 = Sensor.CommunicateI2C ( I2CPORT_1 , 1 , 1 , 4 , SENDARRAY_1 )
+if ( I2CPORT_1 = 1 ) Then
+if ( DAL_1 = 1 ) Then
+C_1 = RECVARRAY_1 [ 3 ]
+If ( C_1 < 55 ) Then
+COL_1 = 5
+ElseIf ( C_1 < 121 ) Then
+COL_1 = 1
+ElseIf ( C_1 > 200 ) Then
+COL_1 = 6
+EndIf
+ElseIf ( DAL_1 = 2 ) Then
+C_1 = RECVARRAY_1 [ 1 ]
+If ( C_1 < 80 ) Then
+COL_1 = 1
+ElseIf ( C_1 < 140 ) Then
+COL_1 = 5
+ElseIf ( C_1 > 140 ) Then
+COL_1 = 6
+EndIf
+EndIf
+elseif ( I2CPORT_1 = 4 ) Then
+if ( DAL_1 = 1 ) Then
+C_1 = RECVARRAY_1 [ 2 ]
+If ( C_1 < 55 ) Then
+COL_1 = 1
+ElseIf ( C_1 < 80 ) Then
+COL_1 = 5
+ElseIf ( C_1 > 80 ) Then
+COL_1 = 6
+EndIf
+ElseIf ( DAL_1 = 2 ) Then
+C_1 = RECVARRAY_1 [ 1 ]
+If ( C_1 < 15 ) Then
+COL_1 = 1
+ElseIf ( C_1 < 30 ) Then
+COL_1 = 5
+ElseIf ( C_1 > 30 ) Then
+COL_1 = 6
+EndIf
+EndIf
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , COL_1 )
+LCD.Text ( 1 , 20 , 60 , 2 , C_1 )
+EndSub
+Motor.Move ( "BC" , 20 , 20 , "true" )
+GRAD_m = 90
+RIGHT1 ()
+MM_m = 650
+L_m = MM_m / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 70 , L_m , "true" )
+While Sensor.ReadPercent ( 2 ) < 45 or Sensor.ReadPercent ( 3 ) < 45
+Motor.StartPower ( "BC" , 70 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+While Sensor.ReadPercent ( 2 ) > 15 And Sensor.ReadPercent ( 3 ) > 15
+Motor.StartPower ( "BC" , 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Motor.Move ( "BC" , - 20 , 200 , "true" )
+GRAD_m = 90
+LEFT2 ()
+Motor.StartPower ( "BC" , - 50 )
+Program.Delay ( 2000 )
+Motor.Stop ( "BC" , "true" )
+Motor.Move ( "BC" , 20 , 300 , "true" )
+GRAD_m = 90
+RIGHT2 ()
+While Sensor.ReadPercent ( 2 ) < 40 And Sensor.ReadPercent ( 3 ) < 40
+Motor.StartPower ( "BC" , 30 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+While Sensor.ReadPercent ( 2 ) > 25 And Sensor.ReadPercent ( 3 ) > 25
+Motor.StartPower ( "BC" , 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+RIGHT ()
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < 75
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+While Sensor.ReadPercent ( 2 ) > 15
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+LEFT ()
+While Sensor.ReadPercent ( 2 ) > 15 And Sensor.ReadPercent ( 3 ) > 15
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+V_m = 15
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "B" ) + Motor.GetCount ( "C" ) ) / 2 < 120
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+While Sensor.ReadPercent ( 2 ) > 20
+LINE ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+V_m = 45
+FRZ ()
+MM_m = 220
+TOMM ()
+I2_1 = 4
+DAL_1 = 1
+COL_2()
+FRZ ()
+MM_m = 380
+TOMM ()
+I2_1 = 4
+DAL_1 = 1
+COL_2()
+FRZ ()
+MM_m = 180
+TOMM ()
+GRAD_m = 93
+LEFT2 ()
+MM_m = 40
+L_m = MM_m / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , - 20 , L_m , "true" )
+I2_1 = 1
+DAL_1 = 2
+COL_2()
+FRZ ()
+I2_1 = 4
+DAL_1 = 2
+COL_2()
+FRZ ()
+MM_m = 400
+TOMM ()
+I2_1 = 4
+DAL_1 = 2
+COL_2()
+FRZ ()
+MM_m = 270
+TOMM ()
+I2_1 = 1
+DAL_1 = 2
+COL_2()
+FRZ ()
+MM_m = 110
+TOMM ()
+MM_m = 35
+TOMM ()
+GRAD_m = 96
+LEFT2 ()
+MM_m = 70
+L_m = MM_m / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , - 20 , L_m , "true" )
+I2_1 = 1
+DAL_1 = 1
+COL_2()
+FRZ ()
+I2_1 = 4
+DAL_1 = 1
+COL_2()
+FRZ ()
+MM_m = 518.5
+TOMM ()
+MM_m = 40
+TOMM ()
+GRAD_m = 93
+LEFT2 ()
+MM_m = 240
+TOMM ()
+I2_1 = 1
+DAL_1 = 2
+COL_2()
+FRZ ()
+I2_1 = 4
+DAL_1 = 2
+COL_2()
+FRZ ()
+MM_m = 115
+TOMM ()
+I2_1 = 1
+DAL_1 = 2
+COL_2()
+FRZ ()
+I2_1 = 4
+DAL_1 = 2
+COL_2()
+FRZ ()
+While "true"
+EndWhile

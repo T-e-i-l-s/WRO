@@ -1,0 +1,223 @@
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+POS_m = 0 ' global variable init 
+GRAD_m = 0 ' global variable init 
+MM_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+SP_m = 0 ' global variable init 
+D_m = 0 ' global variable init 
+B_m = 0 ' global variable init 
+GREY_m = 0 ' global variable init 
+BLACK_m = 0 ' global variable init 
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+SM_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+PORT_1 = 0 ' local variable init 
+U_1 = 0 ' local variable init 
+MM_2 = 0 ' local variable init 
+SP_2 = 0 ' local variable init 
+GRAD_2 = 0 ' local variable init 
+TURN_3 = 0 ' local variable init 
+GRAD_3 = 0 ' local variable init 
+TURN_4 = 0 ' local variable init 
+GRAD_4 = 0 ' local variable init 
+TURN_5 = 0 ' local variable init 
+GRAD_5 = 0 ' local variable init 
+TURN_6 = 0 ' local variable init 
+GRAD_6 = 0 ' local variable init 
+V1_7 = 0 ' local variable init 
+V2_7 = 0 ' local variable init 
+V1_8 = 0 ' local variable init 
+V2_8 = 0 ' local variable init 
+SP_9 = 0 ' local variable init 
+SP_10 = 0 ' local variable init 
+MM_11 = 0 ' local variable init 
+G_11 = 0 ' local variable init 
+TXT_12 = 0 ' local variable init 
+A_13 = 0 ' local variable init 
+B_13 = 0 ' local variable init 
+C_13 = 0 ' local variable init 
+MX_13 = 0 ' local variable init 
+MN_13 = 0 ' local variable init 
+Sensor.SetMode ( 1 , 0 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Sensor.SetMode ( 4 , 0 )
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+POS_m = 0
+GRAD_m = 0
+MM_m = 0
+K_m = 0.3
+V_m = 40
+SP_m = 0
+D_m = 56
+B_m = 103
+GREY_m = 10
+BLACK_m = 20
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 1 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 4 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LINE2
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m - U_m * K_m )
+EndSub
+Sub LINE1_1
+U_1 = Sensor.ReadPercent ( PORT_1 ) - GREY_m
+Motor.StartPower ( "C" , V_m + U_1 * K_m )
+Motor.StartPower ( "B" , V_m - U_1 * K_m )
+EndSub
+Sub LEFT
+Motor.Move ( "BC" , 20 , 47 , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 170 , "true" )
+While Sensor.ReadPercent ( 4 ) > BLACK_m
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT
+Motor.Move ( "BC" , 20 , 50 , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 170 , "true" )
+While Sensor.ReadPercent ( 1 ) > BLACK_m
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub VPERED_2
+GRAD_2 = MM_2 / ( Math.Pi * D_m ) * 360
+Motor.Move ( "BC" , SP_2 , GRAD_2 , "true" )
+EndSub
+Sub LEFT1_1
+GRAD_3 = ( 2 * Math.Pi * B_m * TURN_3 ) / 360
+GRAD_3 = GRAD_3 / ( Math.Pi * D_m ) * 360
+Motor.MoveSync ( "BC" , 0 , 10 , GRAD_3 , "true" )
+EndSub
+Sub RIGHT1_1
+GRAD_4 = ( 2 * Math.Pi * B_m * TURN_4 ) / 360
+GRAD_4 = GRAD_4 / ( Math.Pi * D_m ) * 360
+Motor.MoveSync ( "BC" , 10 , 0 , GRAD_4 , "true" )
+EndSub
+Sub LEFT2_1
+GRAD_5 = ( ( 2 * ( Math.Pi * B_m - 30 ) * TURN_5 ) / 360 ) / 2
+GRAD_5 = GRAD_5 / ( Math.Pi * D_m ) * 360
+Motor.MoveSync ( "BC" , - 10 , 10 , GRAD_5 , "true" )
+EndSub
+Sub RIGHT2_1
+GRAD_6 = ( ( 2 * ( Math.Pi * B_m - 30 ) * TURN_6 ) / 360 ) / 2
+GRAD_6 = GRAD_6 / ( Math.Pi * D_m ) * 360
+Motor.MoveSync ( "BC" , 10 , - 10 , GRAD_6 , "true" )
+EndSub
+Sub POOKRUZL_1
+V2_7 = V1_7 * ( D_m + B_m ) / D_m
+Motor.MoveSync ( "BC" , V1_7 , V2_7 , 360 , "true" )
+EndSub
+Sub POOKRUZR_1
+V2_8 = V1_8 * ( D_m + B_m ) / D_m
+Motor.MoveSync ( "BC" , V2_8 , V1_8 , 360 , "true" )
+EndSub
+Sub CLAWO_1
+Motor.StartPower ( "D" , SP_9 )
+Program.Delay ( 300 )
+While Motor.GetSpeed ( "D" ) < SP_9 / 2
+EndWhile
+Motor.StartPower ( "D" , - 10 )
+Program.Delay ( 300 )
+Motor.StartPower ( "D" , - 5 )
+EndSub
+Sub CLAWC_1
+Motor.StartPower ( "D" , SP_10 )
+Program.Delay ( 300 )
+While Motor.GetSpeed ( "D" ) > SP_10 / 2
+EndWhile
+Motor.StartPower ( "D" , 10 )
+Program.Delay ( 300 )
+Motor.StartPower ( "D" , 5 )
+EndSub
+Sub SONIC
+SM_m = Sensor.ReadRawValue ( 4 , 0 )
+EndSub
+Sub LEIGHT_1
+While Sensor.ReadRawValue ( 4 , 0 ) > MM_11
+LINE2 ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Speaker.Note ( 100 , "c#5" , 200 )
+Motor.ResetCount ( "B" )
+While Sensor.ReadRawValue ( 4 , 0 ) < MM_11
+LINE2 ()
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Speaker.Note ( 100 , "c#5" , 200 )
+G_11 = Motor.GetCount ( "B" )
+MM_m = G_11 / 360 * ( Math.Pi * D_m )
+EndSub
+Sub TEXT_1
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , TXT_12 )
+EndSub
+Sub FRZ
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "freeze" )
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+LCD.Clear ()
+EndSub
+Sub MXMDMN_3
+MX_13 = Math.Max ( A_13 , B_13 )
+MX_m = Math.Max ( MX_13 , C_13 )
+MN_13 = Math.Min ( A_13 , B_13 )
+MN_m = Math.Max ( MN_13 , C_13 )
+MD_m = A_13 + B_13 + C_13 - MX_13 - MN_13
+EndSub
+MM_2 = 100
+SP_2 = 20
+VPERED_2()
+MM_2 = 100
+SP_2 = - 20
+VPERED_2()
+TURN_5 = 180
+LEFT2_1()
+MM_2 = 100
+SP_2 = 20
+VPERED_2()
+Motor.Start ( "D" , 20 )
+Program.Delay ( 700 )
+Motor.Stop ( "D" , "true" )
+for I_m = 1 to 11
+TURN_5 = 30
+LEFT2_1()
+MM_2 = 310
+SP_2 = 20
+VPERED_2()
+TXT_12 = Sensor.ReadRawValue ( 1 , 0 )
+TEXT_1()
+if Sensor.ReadRawValue ( 1 , 0 ) < 170 Then
+else
+MM_2 = 150
+SP_2 = 20
+VPERED_2()
+MM_2 = 150
+SP_2 = - 20
+VPERED_2()
+EndIf
+MM_2 = 310
+SP_2 = - 20
+VPERED_2()
+EndFor
+MM_2 = 50
+SP_2 = - 20
+VPERED_2()

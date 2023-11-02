@@ -1,0 +1,37 @@
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0
+gv_v = 0
+gv_min1 = 0
+gv_max1 = 0
+gv_min2 = 0
+gv_max2 = 0
+gv_u = 0
+Motor.Invert ( "B" )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Sensor.SetMode ( 4 , 0 )
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0.5
+gv_v = 30
+gv_min1 = 100
+gv_max1 = 0
+gv_min2 = 100
+gv_max2 = 0
+While "true"
+f_line_0 ()
+EndWhile
+Sub f_sen1_0
+gv_s1 = 100 * ( Sensor.ReadPercent ( 2 ) - gv_min1 ) / ( gv_max1 - gv_min1 )
+EndSub
+Sub f_sen2_0
+gv_s2 = 100 * ( Sensor.ReadPercent ( 3 ) - gv_min2 ) / ( gv_max2 - gv_min2 )
+EndSub
+sub f_line_0
+f_sen1_0 ()
+f_sen2_0 ()
+gv_u = gv_s1 - gv_s2
+Motor.StartPower ( "C" , gv_v + gv_u * gv_k )
+Motor.StartPower ( "B" , gv_v - gv_u * gv_k )
+EndSub

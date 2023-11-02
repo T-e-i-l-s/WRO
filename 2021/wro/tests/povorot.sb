@@ -1,0 +1,7 @@
+Motor.Move("BC",30,85,"true")
+Motor.MoveSync("BC",30,-30,170,"false")
+  While Sensor.ReadPercent(2)>13
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",-20,20,40,"true")

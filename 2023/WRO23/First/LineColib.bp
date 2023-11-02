@@ -1,0 +1,54 @@
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Motor.Invert("B")
+
+Sub frz
+  
+  Buttons.Flush() 'обнуляем кнопки на блоке
+  
+  Motor.Stop("BC","true") 'остановка основных моторов
+  
+  Buttons.Wait() 'ожидание нажатия любой кнопки на блоке
+  
+EndSub
+
+
+max1=0
+max2=0
+min1=100
+min2=100
+
+
+Motor.ResetCount("bc")
+Motor.Start("bc",30)
+
+
+While (Motor.GetCount("b") + Motor.GetCount("c") )/2<500
+  
+  If Sensor.ReadPercent(2) > max1 Then
+    max1=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(2) < min1 Then
+    min1=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(3) > max2 Then
+    max2=Sensor.ReadPercent(3)
+  EndIf
+  If Sensor.ReadPercent(3) < min2 Then
+    min2=Sensor.ReadPercent(3)
+  EndIf
+  
+EndWhile
+
+Motor.Stop("bc","true")
+
+
+
+LCD.Clear()
+LCD.Text(2,20,20,2,max1)
+LCD.Text(2,20,70,2,min1)
+LCD.Text(2,80,20,2,max2)
+LCD.Text(2,80,70,2,min2)
+
+
+frz()

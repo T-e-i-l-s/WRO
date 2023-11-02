@@ -1,0 +1,32 @@
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+
+Function reg(in number sp)
+  U=Motor.GetCount("B") - Motor.GetCount("C")
+  Motor.StartPower("C",sp+U*0.5)
+  Motor.StartPower("B",sp-U*0.5)
+EndFunction
+
+Function toMM1 (in number mm ,in number sp)
+  l = mm/(82*3.14)*360
+  Motor.ResetCount("BC")
+  Motor.MoveSync("CB",sp,sp,l,"true")
+  sp = 0
+EndFunction
+
+Function toMM2 (in number mm ,in number sp)
+  l = mm/(82*3.14)*360
+  Motor.ResetCount("BC")
+  While (Motor.GetCount("C") + Motor.GetCount("B"))/2 < l
+    reg(20)
+  EndWhile  
+  sp = 0
+EndFunction
+
+
+toMM1(200,20)
+frz()
+toMM2(200,20)

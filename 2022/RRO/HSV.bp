@@ -1,0 +1,98 @@
+
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+  Speaker.Note(70, "B7", 200)
+EndSub
+
+
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+Sub HSV
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max 
+  max = 0
+  min = 100 
+EndSub
+
+Sub color4
+  HSV()
+  col = 0
+  'датчик1 близ
+    If (H > 8 And H < 25) or (  H > 360 and H < 370) Then    
+      col = 5
+    ElseIf (sRed >3 and sRED < 28) or(sRed > 50 And sRed < 90) or (sRed >150) Then
+      col = 1
+    ElseIf sRed > 90 And sRed < 320  Then
+      col = 6   
+    Else
+      col = 0
+    EndIf
+  LCD.Text(1,20,20,2, H)
+  LCD.Text(1,20,40,2, sRed)
+  LCD.Text(1,20,80,2, col)
+EndSub
+
+
+H = 0
+sRed = 0
+LCD.Clear()
+While "true"
+  color4()
+  frz()
+EndWhile

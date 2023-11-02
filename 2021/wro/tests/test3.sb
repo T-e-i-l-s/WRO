@@ -1,0 +1,13 @@
+  black=11
+  s=50
+  Sensor.SetMode(4,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(1,0)
+  While Sensor.ReadPercent(2)>black
+    If s>30 Then
+      s=s-0.4
+    EndIf
+    Motor.StartSync("BC",-s,s)
+  EndWhile
+  Motor.Stop("BC","true")

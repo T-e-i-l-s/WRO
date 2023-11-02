@@ -1,0 +1,226 @@
+MIN1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+MAXR_m = 0 ' global variable init 
+MINR_m = 0 ' global variable init 
+MAXW_m = 0 ' global variable init 
+MINW_m = 0 ' global variable init 
+MAXB_m = 0 ' global variable init 
+MINB_m = 0 ' global variable init 
+ZONE1_m = 0 ' global variable init 
+ZONE2_m = 0 ' global variable init 
+BLACK_m = 0 ' global variable init 
+GRAD_m = 0 ' global variable init 
+MM_m = 0 ' global variable init 
+SP_m = 0 ' global variable init 
+COLORS_m[0] = 0 ' global variable init 
+ID_m = 0 ' global variable init 
+RED_m = 0 ' global variable init 
+START_m = 0 ' global variable init 
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+L_m = 0 ' global variable init 
+F_m = 0 ' global variable init 
+A_m = 0 ' global variable init 
+N_m = 0 ' global variable init 
+NUM_m = 0 ' global variable init 
+ARRAY_m[0] = 0 ' global variable init 
+PM_m = 0 ' global variable init 
+ARR_m[0] = 0 ' global variable init 
+JJJ_m = 0 ' global variable init 
+G_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+IND_m = 0 ' global variable init 
+L_1 = 0 ' local variable init 
+NSP_1 = 0 ' local variable init 
+SP_1 = 0 ' local variable init 
+A_1 = 0 ' local variable init 
+U_1 = 0 ' local variable init 
+MM_2 = 0 ' local variable init 
+SP_2 = 0 ' local variable init 
+L_2 = 0 ' local variable init 
+EV3.SetLEDColor ( "OFF" , "NORMAL" )
+time.Reset1 ()
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+MIN1_m = 0
+MIN2_m = 0
+MAX1_m = 100
+MAX2_m = 100
+K_m = 1
+V_m = 70
+MAXR_m = 0
+MINR_m = 0
+MAXW_m = 0
+MINW_m = 0
+MAXB_m = 0
+MINB_m = 0
+LCD.Clear ()
+ZONE1_m = 0
+ZONE2_m = 0
+BLACK_m = 0
+GRAD_m = 0
+MM_m = 0
+SP_m = 0
+COLORS_m [ 1 ] = 0
+COLORS_m [ 2 ] = 0
+COLORS_m [ 3 ] = 0
+COLORS_m [ 4 ] = 0
+COLORS_m [ 5 ] = 0
+COLORS_m [ 6 ] = 0
+COLORS_m [ 7 ] = 0
+COLORS_m [ 8 ] = 0
+COLORS_m [ 9 ] = 0
+COLORS_m [ 10 ] = 0
+COLORS_m [ 11 ] = 0
+COLORS_m [ 12 ] = 0
+ID_m = 0
+RED_m = 0
+START_m = 0
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 2 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 3 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LINE1
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m - U_m * K_m )
+Motor.StartPower ( "B" , V_m + U_m * K_m )
+EndSub
+Sub LINE2
+SEN1 ()
+SEN2 ()
+U_m = S2_m - S1_m
+Motor.StartPower ( "C" , V_m - U_m * K_m )
+Motor.StartPower ( "B" , V_m + U_m * K_m )
+EndSub
+Sub MOVE_2
+Motor.ResetCount ( "BC" )
+SP_1 = 30
+While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= L_1
+A_1 = 90 / ( 82 * 3.14 ) * 360
+if L_1 - ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 < A_1 and SP_1 > 35 Then
+SP_1 = SP_1 - 0.9
+if NSP_1 < 0 Then
+SP_1 = 0 - SP_1
+endif
+EndIf
+if ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 < A_1 or SP_1 < NSP_1 Then
+SP_1 = Math.abs ( SP_1 ) + 0.2
+if NSP_1 < 0 Then
+SP_1 = 0 - SP_1
+endif
+EndIf
+U_1 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_1 + U_1 * 10 )
+Motor.StartPower ( "B" , SP_1 - U_1 * 10 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub TOMM_2
+L_2 = MM_2 / ( 82 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+L_1 = L_2
+NSP_1 = SP_2
+MOVE_2()
+SP_2 = 0
+EndSub
+Sub LEFT
+L_m = 60 / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 130 , "true" )
+While Sensor.ReadPercent ( 3 ) < 21
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+While Sensor.ReadPercent ( 3 ) > 10
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT
+L_m = 63 / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 130 , "true" )
+While Sensor.ReadPercent ( 2 ) < 21
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+While Sensor.ReadPercent ( 2 ) > 10
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub FRZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+Speaker.Note ( 70 , "B7" , 200 )
+EndSub
+F_m = EV3File.OpenWrite ( "cols.txt" )
+MM_m = 187
+Sensor.SetMode ( 4 , 2 )
+L_m = MM_m / ( 82 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+A_m = 0
+motor.Stop ( "bc" , "true" )
+N_m = A_m / 5
+NUM_m = N_m * 2 + 4
+NUM_m = N_m * 4 + 4
+ARRAY_m [ 1 ] = 2
+ARRAY_m [ 2 ] = 10
+ARRAY_m [ 3 ] = 4
+ARRAY_m [ 4 ] = 7
+ARRAY_m [ 5 ] = 2
+ARRAY_m [ 6 ] = 8
+ARRAY_m [ 7 ] = 6
+ARRAY_m [ 8 ] = 4
+ARRAY_m [ 9 ] = 14
+ARRAY_m [ 10 ] = 7
+PM_m = 1000
+ARR_m [ 1 ] = 1
+ARR_m [ 2 ] = 1
+ARR_m [ 3 ] = 1
+ARR_m [ 4 ] = 1
+ARR_m [ 5 ] = 1
+ARR_m [ 6 ] = 1
+ARR_m [ 7 ] = 1
+ARR_m [ 8 ] = 1
+ARR_m [ 9 ] = 1
+ARR_m [ 10 ] = 1
+JJJ_m = 1
+for G_m = 1 to 10
+PM_m = 900
+for I_m = 1 to 10
+NUM_m = ARRAY_m [ I_m ]
+if NUM_m < PM_m Then
+IND_m = I_m
+ARR_m [ JJJ_m ] = NUM_m
+PM_m = NUM_m
+endif
+EndFor
+ARRAY_m [ IND_m ] = 1000
+JJJ_m = JJJ_m + 1
+endfor
+LCD.Text ( 1 , 20 , 10 , 1 , ARR_m [ 1 ] )
+LCD.Text ( 1 , 20 , 20 , 1 , ARR_m [ 2 ] )
+LCD.Text ( 1 , 20 , 30 , 1 , ARR_m [ 3 ] )
+LCD.Text ( 1 , 20 , 40 , 1 , ARR_m [ 4 ] )
+LCD.Text ( 1 , 20 , 50 , 1 , ARR_m [ 5 ] )
+LCD.Text ( 1 , 20 , 60 , 1 , ARR_m [ 6 ] )
+LCD.Text ( 1 , 20 , 70 , 1 , ARR_m [ 7 ] )
+LCD.Text ( 1 , 20 , 80 , 1 , ARR_m [ 8 ] )
+LCD.Text ( 1 , 20 , 90 , 1 , ARR_m [ 9 ] )
+LCD.Text ( 1 , 20 , 100 , 1 , ARR_m [ 10 ] )
+FRZ ()

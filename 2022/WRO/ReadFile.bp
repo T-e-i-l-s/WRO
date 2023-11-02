@@ -1,0 +1,10 @@
+f1 = EV3File.OpenRead("num.txt")
+a = EV3File.ReadLine(f1)
+b = EV3File.ReadLine(f1)
+EV3File.Close(f1)
+LCD.Clear()
+LCD.Text(1,20,20,1,"color = " + a)
+LCD.Text(1,20,60,1,"r/g/b = " + b)
+While "true"
+  
+EndWhile

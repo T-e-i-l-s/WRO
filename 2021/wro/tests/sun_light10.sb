@@ -1,0 +1,474 @@
+k=0.23
+min1=100
+max1=0
+min2=100
+max2=0
+i=0
+sun=2
+num=0 
+a=0
+gray=0
+black=5
+col=0
+red=0
+go=0
+v=40
+Sensor.SetMode(4,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(1,0)
+'калибровка======================================
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<210
+  s1=Sensor.ReadPercent(2)
+  s2=Sensor.ReadPercent(3)
+  If s1<min1 Then
+    min1=s1
+    EndIf
+  If s1>max1 Then
+    max1=s1
+  EndIf
+  If s2<min2 Then
+    min2=s2
+    EndIf
+  If s2>max2 Then
+    max2=s2
+  EndIf
+  Motor.StartSync("BC",20,20)
+EndWhile
+Motor.Stop("BC","true")
+tosun=Sensor.ReadRawValue(1,0)
+If tosun<300 Then
+  sun=2
+Else
+  sun=1
+EndIf
+LCD.Clear()
+LCD.Text(1,20,20,2,sun)
+Motor.Move("BC",20,100,"true")
+'сабы============================================
+Sub left
+Motor.MoveSync("BC",-30,30,140,"false")
+  While Sensor.ReadPercent(3)>black
+    Motor.StartSync("BC",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",20,-20,40,"true")
+EndSub
+'================================================
+Sub right
+Motor.MoveSync("BC",30,-30,140,"false")
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",-20,20,40,"true")
+EndSub  
+'================================================
+Sub around
+  Motor.MoveSync("BC",40,-40,335,"false")
+  While Sensor.ReadPercent(2)<35
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.MoveSync("BC",-20,20,50,"true")
+EndSub 
+'================================================
+Sub open
+ Motor.Move("D",15,110,"true")
+EndSub
+'================================================
+Sub close
+ Motor.ResetCount("D")
+ Motor.StartPower("d",-15)
+ Program.Delay(300)
+  While Motor.GetSpeed("D")<-5
+    LCD.Clear()
+    LCD.Text(2,40,40,2,Motor.GetSpeed("D"))
+  EndWhile
+Motor.Stop("BCDA","false")
+EndSub
+'================================================
+Sub ToColor
+  While go<>1
+    Motor.StartPower("BC",15)
+    If Sensor.ReadRawValue(4,0)=4 Then
+      go=1
+      col=4
+    ElseIf Sensor.ReadRawValue(4,0)=5 then
+      go=1
+      col=5
+    EndIf
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.Move("BC",30,70,"true")
+  If Sensor.ReadRawValue(4,0)=4 Then
+      col=4
+  ElseIf Sensor.ReadRawValue(4,0)=5 then
+      col=5
+  EndIf
+  go=0
+EndSub
+'================================================
+Sub sen1
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)
+EndSub
+'================================================
+Sub sen2
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)
+EndSub
+'================================================
+gray=(((max1+min1)/2)+((max2+min2)/2))/2
+LCD.Clear()
+LCD.Text(2,40,40,2,gray)
+Program.Delay(50)
+'================================================
+sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v-U*k)
+  Motor.StartPower("B",v+U*k)
+EndSub
+'================================================
+Sub GoToLine
+For i=1 to num
+  sen1()
+  sen2()
+While (s1>10 Or s2>10) And (s1<60  Or s2>10) And (s1>10 Or s2<60)
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v-U*k)
+  Motor.StartPower("B",v+U*k)
+EndWhile
+If i<>num Then
+  Motor.Move("BC",30,25,"true")
+  Motor.ResetCount("BC")
+  While (Motor.GetCount("B")+Motor.GetCount("c"))/2<100
+      line()
+    EndWhile
+  Else
+    Motor.Move("BC",30,40,"true")
+    EndIf
+  EndFor
+  Motor.Stop("BC","false")
+EndSub
+'=====================================================
+'=====================================================
+'=====================START===========================
+'=====================================================
+'=====================================================
+'батарея===============================================
+If sun=1 Then
+  num=2
+  GoToLine()
+  Motor.Move("BC",30,40,"true")
+  left()
+Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<730
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+ElseIf sun=2 then
+  num=6
+  GoToLine()
+  Motor.Move("BC",30,40,"true")
+  right()
+ Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<730
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+EndIf
+open()
+Motor.Move("BC",20,50,"true")
+Motor.Move("BC",-20,150,"true")
+around()
+While Sensor.ReadPercent(3)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+If sun=1 Then
+  Motor.Move("BC",40,120,"true")
+  right()
+  Motor.MoveSync("BC",-20,20,23,"true")
+  num=1
+  GoToLine()
+ElseIf sun=2 then
+  Motor.Move("BC",40,90,"true")
+  left()
+  num=5
+  GoToLine()
+EndIf
+Motor.Move("BC",20,50,"true")
+left()
+'лампочки==================================================
+For a=1 To 6
+  If a=2 Or a=5 Or a=6 Then
+    Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<220
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+  Else
+    Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<150
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+  EndIf
+col=0
+ToColor()
+If col=5 Then'если ламочка красная=======================================
+  Motor.Move("BC",20,50,"true")
+  close()
+EndIf
+'к мусорке================================================
+Motor.Move("BC",-20,120,"true")
+around()
+While Sensor.ReadPercent(3)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",30,70,"true")
+If a=1 Or a=2 Or a=4 Or a=6 Then
+  right()
+ElseIf a=3 or a=5 then
+   left()
+EndIf
+If col=5 Then
+  red=red+1
+    If a=1 Then
+      num=9
+    ElseIf a=2 then
+      num=7
+    ElseIf a=3 then
+      num=6
+    ElseIf a=4 then
+      num=5
+    ElseIf a=5 then
+      num=3
+    ElseIf a=6 then
+      num=2
+    EndIf
+    GoToLine()
+    Motor.Move("BC",30,50,"true")
+    right()
+     Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<550
+  line()
+EndWhile
+Motor.Stop("BC","true")
+  open()
+'к белым кубикам================================================
+Motor.Move("BC",20,170,"true")
+Motor.Move("BC",-20,240,"true")
+  around()
+While Sensor.ReadPercent(2)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",40,85,"true")
+If red=1 then
+v=20
+Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<220
+   line()
+EndWhile
+Motor.Stop("BC","true")
+v=40
+Motor.Move("BC",15,85,"true")
+close()
+Motor.Move("BC",-20,130,"true")
+around()
+While Sensor.ReadPercent(3)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",40,70,"true")
+right()
+num=2
+GoToLine()
+open()
+Motor.Move("BC",-20,300,"true")
+Motor.MoveSync("BC",20,-20,70,"true")
+Motor.Move("BC",30,350,"true")
+Motor.Move("BC",-30,350,"true")
+Motor.MoveSync("BC",-20,20,140,"true")
+Motor.Move("BC",30,350,"true")
+Motor.Move("BC",-30,350,"true")
+Motor.MoveSync("BC",20,-20,70,"true")
+around()
+ While Sensor.ReadPercent(2)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",30,85,"true")
+left()
+Else
+  left()
+ While Sensor.ReadPercent(3)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",30,85,"true")
+right()
+EndIf
+If red=1 then
+  num=1
+  GoToLine()
+ElseIf red=2 then
+  num=2
+  GoToLine()
+elseif red=3 then
+  num=3
+  GoToLine()
+EndIf
+Motor.Stop("BC","true")
+Motor.Move("BC",30,30,"true")
+right()
+Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<80
+   line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",20,80,"true")
+close()
+Motor.Move("BC",-20,400,"true")
+While Sensor.ReadPercent(2)<25
+  Motor.StartPower("BC",20)
+EndWhile
+Motor.Stop("BC","true")
+While Sensor.ReadPercent(2)>black
+  Motor.StartPower("BC",20)
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",30,80,"true")
+'ставим белый на место красного================================================
+right()
+If red=1 then
+  num=1
+  GoToLine()
+ElseIf red=2 then
+  num=2
+  GoToLine()
+elseif red=3 then
+  num=3
+  GoToLine()
+EndIf
+Motor.Stop("BC","true")
+Motor.Move("BC",30,80,"true")
+right()
+    If a=1 Then
+      num=8
+    ElseIf a=2 then
+      num=6
+    ElseIf a=3 then
+      num=5
+    ElseIf a=4 then
+      num=4
+    ElseIf a=5 then
+      num=2
+    ElseIf a=6 then
+      num=1
+    EndIf
+    GoToLine()
+    Motor.Move("BC",20,30,"true")
+If a=1 or a=2 or a=4 Or a=6 Then
+  left()
+  Motor.MoveSync("BC",20,-20,15,"true")
+ElseIf a=3 or a=5 then
+   right()
+  Motor.MoveSync("BC",-20,20,15,"true")
+EndIf
+If a=1 or a=3 or a=4 then
+   Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<150
+      line()
+    EndWhile
+   Motor.Stop("BC","true")
+ElseIf a=2 then
+   Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<310
+      line()
+    EndWhile
+ElseIf a=5 then
+   Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<340
+      line()
+      EndWhile
+ElseIf a=6 then
+   Motor.ResetCount("BC")
+    While (Motor.GetCount("B")+Motor.GetCount("c"))/2<260
+      line()
+    EndWhile
+EndIf
+   Motor.Stop("BC","true")
+    Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<147
+  Motor.StartPower("BC",15)
+EndWhile
+Motor.Stop("BC","true")
+open()
+If a<>6 then
+Motor.Move("BC",-20,110,"true")
+around()
+While Sensor.ReadPercent(3)>14
+  line()
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",30,85,"true")
+If a=1 Or a=2 Or a=4 Or a=6 Then
+  right()
+ElseIf a=3 or a=5 then
+   left()
+EndIf
+If a=1 Then
+      num=2
+    ElseIf a=2 then
+      num=1
+    ElseIf a=3 then
+      num=1
+    ElseIf a=4 then
+      num=2
+    ElseIf a=5 then
+      num=1
+    ElseIf a=6 then
+      num=0
+    EndIf
+    GoToLine()
+    If a=1 or a=3 or a=5 Then
+  Motor.Move("BC",20,30,"true")
+  right()
+ElseIf a=2 or a=4 then
+  Motor.Move("BC",20,15,"true")
+  left()
+  EndIf
+  EndIf 
+  ElseIf col=4 then'если лампочка желтая==================================================
+    If a=1 Then
+      num=2
+    ElseIf a=2 then
+      num=1
+    ElseIf a=3 then
+      num=1
+    ElseIf a=4 then
+      num=2
+    ElseIf a=5 then
+      num=1
+    ElseIf a=6 then
+      num=0
+    EndIf
+    GoToLine()
+    If a=1 or a=3 or a=5 Then
+  Motor.Move("BC",20,35,"true")
+  right()
+ElseIf a=2 or a=4 then
+  Motor.Move("BC",20,23,"true")
+  left()
+EndIf
+EndIf
+EndFor

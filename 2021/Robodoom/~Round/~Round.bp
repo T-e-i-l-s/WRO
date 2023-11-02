@@ -1,0 +1,67 @@
+A_m = 0 ' global variable init 
+B_m = 0 ' global variable init 
+C_m = 0 ' global variable init 
+RAST_m = 0 ' global variable init 
+MIN1_m = 0 ' global variable init 
+MAX1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+GRAD_m = 0 ' global variable init 
+K_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+X_m[0] = 0 ' global variable init 
+Y_m[0] = 0 ' global variable init 
+S1_m = 0 ' global variable init 
+S2_m = 0 ' global variable init 
+U_m = 0 ' global variable init 
+L_m = 0 ' global variable init 
+Sensor.SetMode ( 4 , 2 )
+A_m = 103
+B_m = 3.14
+C_m = 56
+RAST_m = 0
+MIN1_m = 100
+MAX1_m = 0
+MIN2_m = 100
+MAX2_m = 0
+GRAD_m = 0
+K_m = 0.3
+V_m = 45
+X_m [ 1 ] = 5
+X_m [ 2 ] = 4
+X_m [ 3 ] = 1
+Y_m [ 1 ] = 1
+Y_m [ 2 ] = 5
+Y_m [ 3 ] = 3
+Sub SEN1
+S1_m = 100 * ( Sensor.ReadPercent ( 1 ) - MIN1_m ) / ( MAX1_m - MIN1_m )
+EndSub
+Sub SEN2
+S2_m = 100 * ( Sensor.ReadPercent ( 4 ) - MIN2_m ) / ( MAX2_m - MIN2_m )
+EndSub
+Sub LINE
+SEN1 ()
+SEN2 ()
+U_m = S1_m - S2_m
+Motor.StartPower ( "C" , V_m + U_m * K_m )
+Motor.StartPower ( "B" , V_m - U_m * K_m )
+EndSub
+Sub LEFT2
+L_m = GRAD_m * A_m / C_m
+Motor.MoveSync ( "BC" , - 40 , 40 , L_m , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT2
+L_m = GRAD_m * A_m / C_m
+Motor.MoveSync ( "BC" , 40 , - 40 , L_m , "true" )
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub TOGRAD
+GRAD_m = RAST_m / ( 3.14 * 112 ) * 360
+Motor.Move ( "BC" , 40 , GRAD_m , "true" )
+EndSub
+RAST_m = 50
+TOGRAD ()
+Program.Delay ( 2000 )
+RAST_m = 355
+TOGRAD ()

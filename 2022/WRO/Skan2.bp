@@ -1,0 +1,56 @@
+Sensor.SetMode(1,2)
+Sensor.SetMode(4,2)
+
+I2CPORT = 1 'Порт1
+I2CSLVADDR = 1 'Адрес(не менять)
+MSGSZEV3 = 0
+MSGSZSLV = 0
+
+
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+
+
+hiCol[0] = 60  'red-
+hiCol[1] = 180 'red+
+hiCol[2] = 180 'white-
+hiCol[3] = 300 'white+
+hiCol[4] = 10  'black-
+hiCol[5] = 60 'black+
+
+
+col = 0
+
+Function color (in number I2)
+  
+  sendarray[0] = 66
+  I2CPORT=I2
+  recvarray = Sensor.CommunicateI2C(I2CPORT,1,1,4,sendarray)
+  Red = recvarray[1]
+  
+  if Red > @hiCol[0] and Red < @hiCol[1] Then
+    @col = 5
+  ElseIf Red > @hiCol[2] And Red < @hiCol[3] Then
+    @col = 6
+  ElseIf Red > @hiCol[4] And Red < @hiCol[5] Then
+    @col = 1
+  Else
+    @col = 0
+  EndIf
+  
+EndFunction
+
+
+
+While "true"
+  color(1)
+  col1 = col
+  color(4)
+  col4 = col
+  LCD.Clear()
+  LCD.Text(1,20,20,2,col1)
+  LCD.Text(1,50,20,2,col4)
+  Program.Delay(2000)
+EndWhile

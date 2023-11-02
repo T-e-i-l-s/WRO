@@ -1,0 +1,526 @@
+
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,0)
+
+Motor.Invert("B")
+
+min1=100
+max1=0
+min2=100
+max2=0
+
+k=0.37
+v=60
+
+k2=0.5
+v2=40
+
+k3=0.5
+v3=90
+
+x[0] = 0
+y[0] = 0
+
+x[1] = 0
+y[1] = 0
+
+x[2] = 0
+y[2] = 0
+
+x[3] = 0
+y[3] = 0
+
+x[4] = 0
+y[4] = 0
+
+x[5] = 0
+y[5] = 0
+
+'Езда по линии================================================
+
+'================================================
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)
+  
+EndSub
+
+'================================================
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)
+  
+EndSub
+
+'================================================
+
+Sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v+U*k)
+  Motor.StartPower("B",v-U*k)
+EndSub
+
+Sub line2
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v2+U*k2)
+  Motor.StartPower("B",v2-U*k2)
+EndSub
+
+Sub line3
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v3+U*k3)
+  Motor.StartPower("B",v3-U*k3)
+EndSub
+
+'Повороты по датчикам================================================
+
+Sub left
+  tomm(70,40)
+  Motor.MoveSync ( "BC" , -20 , 20 , 140 , "true" )
+  While Sensor.ReadPercent ( 3 ) < 15
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 3 ) > 15
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  right2(10)
+EndSub
+
+Sub right
+  tomm(70,40)
+  Motor.MoveSync("BC",20,-20,130,"true")
+  While Sensor.ReadPercent ( 2 ) < 15
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 2 ) > 15
+    Motor.StartSync ("BC" , 20 , -20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  left2(10)
+EndSub
+
+Sub around
+  left2(90)
+  Motor.MoveSync ( "BC" , -20 , 20 , 140 , "true" )
+  While Sensor.ReadPercent ( 3 ) < 20
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  While Sensor.ReadPercent ( 3 ) > 10
+    Motor.StartSync ("BC" , -20 , 20)
+  EndWhile
+  Motor.Stop ("bc" , "true")
+  right2(10)
+EndSub
+
+'Повороты и езда по градусам================================================
+
+Function move (in number l , in number sp)
+  Motor.ResetCount ( "BC" )
+  While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= l
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+    Motor.StartPower ( "C" , sp + U * 0.8 )
+    Motor.StartPower ( "B" , sp - U * 0.8 )
+  EndWhile
+  Motor.Stop ( "BC" , "true" )
+EndFunction
+
+Function tomm (in number mm , in number sp)
+  l = mm / ( 62 * 3.14 ) * 360
+  Motor.ResetCount ( "BC" )
+  move(l,sp)
+  sp = 0
+EndFunction
+
+Function left2 (in number grad)
+  l = ( ( 2 * 3.14 * 178 * grad ) / 360 ) / 2
+  l = l / (3.14 * 62) * 360
+  Motor.ResetCount ("BC")
+  Motor.StartPower ("C",60)
+  Motor.StartPower ("B",-60)
+  While (Math.Abs(Motor.GetCount ("C")) + Math.Abs(Motor.GetCount("B"))) / 2 <= l
+  EndWhile
+  Motor.Stop ("BC","true")
+EndFunction
+
+Function right2 (in number grad)
+  l = ((2 * 3.14 * 178 * grad ) / 360 ) / 2
+  l = l / ( 3.14 * 62 ) * 360
+  Motor.ResetCount( "BC" )
+  Motor.StartPower("C",-60)
+  Motor.StartPower("B",60)
+  While (Math.Abs(Motor.GetCount ("C")) + Math.Abs(Motor.GetCount ("B"))) / 2 <= l
+  EndWhile
+  Motor.Stop("BC","true")
+EndFunction
+
+'Выравнивание=====================================================================================
+
+Sub vir
+  For i = 1 To 3
+    
+    tomm(5,20)
+    Motor.StartPower("BC",-20)
+    While Sensor.ReadPercent(2) > 15 Or Sensor.ReadPercent(3) > 15
+      If( Sensor.ReadPercent(2) < 15) Then
+        Motor.Stop("B","true")
+      EndIf
+      If( Sensor.ReadPercent(3) < 15) Then
+        Motor.Stop("C","true")
+      EndIf
+    EndWhile
+    
+  EndFor
+  
+EndSub
+
+'Заморозка=====================================================================================
+
+Sub frz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+
+'Клешня=====================================================================================
+
+Sub up
+  Motor.StartPower("A",-70)
+  Program.Delay(300)
+  While Math.Abs(Motor.GetSpeed("A")) > 15
+  EndWhile
+  Motor.Stop("A","true")
+EndSub
+
+Sub down
+  Motor.StartPower("A",70)
+  Program.Delay(300)
+  While Math.Abs(Motor.GetSpeed("A")) > 20
+  EndWhile
+  Motor.Stop("A","true")
+  Motor.Move("A",-30,20,"true")
+EndSub
+
+Sub down2
+  Motor.Move("A",20,60,"true")
+EndSub
+
+Sub open
+  Motor.Start("D",-70)
+  Motor.Stop("B","true")
+  Program.Delay(200)
+  While Math.Abs(Motor.GetSpeed("D")) < -15
+  EndWhile
+  Motor.Stop("D","true")
+  Motor.Start("D",-50)
+EndSub
+Sub close
+  Motor.Start("D",70)
+  Motor.Stop("B","true")
+  Program.Delay(200)
+  While Math.Abs(Motor.GetSpeed("D")) > 15
+  EndWhile
+  Motor.Stop("D","true")
+  Motor.Start("D",50)
+EndSub
+
+
+LCD.Clear()
+Sensor.SetMode(1,0)
+Sensor.SetMode(4,0)
+If Sensor.ReadRawValue(1, 0)/10 > 15 And Sensor.ReadRawValue(1, 0)/10 < 28 Then
+  pr1 = 0
+  pl1 = 1
+Else
+  pr1 = 1
+  pl1 = 0
+EndIf
+
+LCD.Write(90,20,pl1)
+LCD.Write(110,20,pr1)
+
+While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+  line()
+EndWhile
+n = 0
+tomm(60,50)
+For i=1 To 6
+  Motor.ResetCount("BC")
+  mm = 302
+  l = mm / ( 62 * 3.14 ) * 360
+  While Motor.GetCount("B")<l
+    line2()
+  EndWhile
+  
+  If Sensor.ReadRawValue(1,0)/10 < 56 Then
+    n++
+    x[n-1] = i
+  EndIf
+  
+  If Sensor.ReadRawValue(1,0)/10 < 20 Then
+    LCD.Write(20,20*i,1)
+    y[n-1] = 2
+  ElseIf Sensor.ReadRawValue(1,0)/10 < 33 Then
+    LCD.Write(20,20*i,2)
+    y[n-1] = 3
+  ElseIf Sensor.ReadRawValue(1,0)/10 < 56 Then
+    LCD.Write(20,20*i,3)
+    y[n-1] = 4
+  Else
+    LCD.Write(20,20*i,0)
+  EndIf
+  
+  If Sensor.ReadRawValue(4,0)/10 < 52 Then
+    n++
+    x[n-1] = i
+  EndIf
+  
+  If Sensor.ReadRawValue(4,0)/10 < 20 Then
+    LCD.Write(70,20*i,1)
+    y[n-1] = -2
+  ElseIf Sensor.ReadRawValue(4,0)/10 < 33 Then
+    LCD.Write(70,20*i,2)
+    y[n-1] = -3
+  ElseIf Sensor.ReadRawValue(4,0)/10 < 52 Then
+    LCD.Write(70,20*i,3)
+    y[n-1] = -4
+  Else
+    LCD.Write(70,20*i,0)
+  EndIf
+EndFor
+
+around()
+
+While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+
+tomm(20,70)
+
+While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+  line()
+EndWhile
+Motor.Stop("BC","true")
+For n = 0 To 5
+  LCD.Clear()
+  LCD.Write(20,20,x[n])
+  LCD.Write(70,20,y[n])
+  a=(x[n] + y[n])
+  LCD.Clear()
+  LCD.Write(40,20,pr1)
+  LCD.Write(70,20,pl1)
+  If  Math.Remainder(a,2)<>0 Then
+    Thread.Run = down
+    
+    If(pr1 = 0 Or pr1 = 2 Or pr1 = 4 Or pr1 = 6)Then
+      left()
+    Else
+      right()
+    EndIf
+    
+    While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+      line2()
+    EndWhile
+    Motor.Stop("BC","true")
+    
+    
+    Motor.ResetCount("BC")
+    If(pr1 = 0 Or pr1 = 2 Or pr1 = 4 Or pr1 = 6)Then
+      mm = 35 + 63*pr1
+    Else
+      mm = 35 + 63*pl1
+    EndIf
+    LCD.Clear()
+    LCD.Write(20,20,mm)
+    l = mm / ( 62 * 3.14 ) * 360
+    While Motor.GetCount("B")<l
+      line2()
+    EndWhile
+    Motor.Stop("BC","true")
+    close()
+    Thread.Run = up
+    tomm(50,30)
+    
+    If(pr1 = 0 Or pr1 = 2 Or pr1 = 4 Or pr1 = 6)Then
+      left2(80)
+    Else
+      right2(80)
+    EndIf
+    Motor.StartPower("BC",-60)
+    While Sensor.ReadPercent(2)>20 or Sensor.ReadPercent(3)>20
+    EndWhile
+    Motor.Stop("BC","true")
+    tomm(20,30)
+    
+    If(pr1 = 0 Or pr1 = 2 Or pr1 = 4 Or pr1 = 6)Then
+      left()
+      p = pr1
+    Else
+      right()
+      p = pl1
+    EndIf
+    
+    if(p = 0)Then
+      tomm(85,-40)
+    EndIf  
+    While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+    
+    tomm(30,40)
+    
+    While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+    
+    If(pr1 = 0 Or pr1 = 2 Or pr1 = 4 Or pr1 = 6)Then
+      right()
+      pr1 = pr1 + 2
+    Else
+      left()
+      pl1 = pl1 + 2
+    EndIf
+    
+  Else
+    
+    Thread.Run = down
+    
+    If(pr1 = 1 Or pr1 = 3 Or pr1 = 5 Or pr1 = 7)Then
+      left()
+    Else
+      right()
+    EndIf
+    While Sensor.ReadPercent(2)>20 or Sensor.ReadPercent(3)>20
+      line2()
+    EndWhile
+    Motor.Stop("BC","true")
+    Motor.ResetCount("BC")
+    If(pr1 = 1 Or pr1 = 3 Or pr1 = 5 Or pr1 = 7)Then
+      mm = 45 + 60*pr1
+    Else
+      mm = 45 + 60*pl1
+    EndIf
+    
+    l = mm / ( 62 * 3.14 ) * 360
+    While Motor.GetCount("B")<l
+      line2()
+    EndWhile
+    Motor.Stop("BC","true")
+    close()
+    Thread.Run = up
+    tomm(60,50)
+    If(pr1 = 1 Or pr1 = 3 Or pr1 = 5 Or pr1 = 7)Then
+      left2(80)
+    Else
+      right2(80)
+    EndIf
+    Motor.StartPower("BC",-60)
+    While Sensor.ReadPercent(2)>20 or Sensor.ReadPercent(3)>20
+    EndWhile
+    Motor.Stop("BC","true")
+    
+    If(pr1 = 1 Or pr1 = 3 Or pr1 = 5 Or pr1 = 7)Then
+      left()
+      p = pr1
+    Else
+      right()
+      p = pl1
+    EndIf
+    
+    
+    While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+    
+    tomm(30,40)
+    While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+    
+    If(pr1 = 1 Or pr1 = 3 Or pr1 = 5 Or pr1 = 7)Then
+      right()
+      pr1 = pr1 + 2
+    Else
+      left()
+      pl1 = pl1 + 2
+    EndIf
+    
+  EndIf
+  
+  While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  
+  For i = 1 To x[n]
+    Motor.ResetCount("BC")
+    mm = 307
+    l = mm / ( 62 * 3.14 ) * 360
+    While Motor.GetCount("B")<l
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+  EndFor
+  Motor.Stop("BC","true")
+  Program.Delay(200)
+  
+  tomm(40,60)
+    
+  If(y[n] < 0) Then
+    right2(86)
+  Else
+    left2(86)
+  EndIf
+  
+  b=(155 * Math.abs(y[n]) - 180)
+  tomm(b*0.6,50)
+  tomm(b*0.4,30)
+  tomm(25,-30)
+  down2()
+  Program.Delay(100)
+  open()
+  up()
+  Motor.Invert("B")
+  Motor.StartSync("BC",-40,-40)
+  While Sensor.ReadPercent(2)>20 And Sensor.ReadPercent(3)>20
+  EndWhile
+  Motor.Stop("BC","true")
+  
+  Motor.Invert("B")
+  tomm(15,30)
+  
+  If(y[n] < 0) Then
+    right()
+  Else
+    left()
+  EndIf
+  
+  While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+  
+  tomm(20,60)
+  
+  While Sensor.ReadPercent(2)>20 Or Sensor.ReadPercent(3)>20
+    line()
+  EndWhile
+  Motor.Stop("BC","true")
+EndFor

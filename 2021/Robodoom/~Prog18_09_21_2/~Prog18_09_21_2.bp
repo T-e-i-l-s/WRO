@@ -1,0 +1,55 @@
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0
+gv_v = 0
+gv_min1 = 0
+gv_max1 = 0
+gv_min2 = 0
+gv_max2 = 0
+gv_povorot = 0
+gv_u = 0
+Motor.Invert ( "B" )
+Sensor.SetMode ( 1 , 0 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Sensor.SetMode ( 4 , 0 )
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0.225
+gv_v = 20
+gv_min1 = 100
+gv_max1 = 0
+gv_min2 = 100
+gv_max2 = 0
+gv_povorot = 90 * 163 / 82
+while "true"
+While Sensor.ReadRawValue ( 4 , 0 ) > 300
+f_wall_0 ()
+EndWhile
+While Sensor.ReadRawValue ( 4 , 0 ) > 110
+Motor.StartPower ( "Bc" , 20 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+Program.Delay ( 500 )
+if Sensor.ReadRawValue ( 1 , 0 ) > 200 Then
+f_right_0 ()
+Else
+f_left_0 ()
+EndIf
+if Sensor.ReadRawValue ( 4 , 0 ) < 300 Then
+f_left_0 ()
+Else
+Motor.Move ( "BC" , 20 , 250 , "true" )
+EndIf
+EndWhile
+sub f_wall_0
+gv_u = Sensor.ReadRawValue ( 1 , 0 ) - 70
+Motor.StartPower ( "C" , gv_v - gv_u * gv_k )
+Motor.StartPower ( "B" , gv_v + gv_u * gv_k )
+EndSub
+sub f_right_0
+Motor.MoveSync ( "BC" , 20 , - 20 , gv_povorot , "true" )
+EndSub
+sub f_left_0
+Motor.MoveSync ( "BC" , - 20 , 20 , gv_povorot , "true" )
+EndSub

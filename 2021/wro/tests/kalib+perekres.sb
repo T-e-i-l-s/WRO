@@ -1,0 +1,37 @@
+k=1
+min1=100
+max1=0
+min2=100
+max2=0
+Sensor.SetMode(1,0)
+Sensor.SetMode(2,0)
+Motor.Invert("C")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<200
+  s1=Sensor.ReadPercent(1)
+  s2=Sensor.ReadPercent(2)
+  If s1<min1 Then
+    min1=s1
+    EndIf
+  If s1>max1 Then
+    max1=s1
+  EndIf
+  If s2<min2 Then
+    min2=s2
+    EndIf
+  If s2>max2 Then
+    max2=s2
+  EndIf
+  Motor.StartSync("BC",30,30)
+EndWhile
+Motor.Stop("BC","true")
+gray=(((max1+min1)/2)+((max2+min2)/2))/2
+LCD.Clear()
+LCD.Text(2,40,40,2,gray)
+Program.Delay(50)
+'=====================================================
+While "true"
+  U=(Sensor.ReadPercent(2)-Sensor.ReadPercent(3))
+  Motor.StartPower("B",gray-U*k)
+  Motor.StartPower("C",gray+U*k)
+EndWhile
+  Motor.Stop("BC","true")

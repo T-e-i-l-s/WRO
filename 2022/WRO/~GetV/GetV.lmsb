@@ -1,0 +1,532 @@
+DATA16 FD_NATIVECODECOMMAND
+DATA16 FD_NATIVECODERESPONSE
+DATA32 STOPLCDUPDATE
+DATA32 NUMMAILBOXES
+ARRAY8 MOTORISINVERTED 4     
+ARRAY8 FIRSTOF2  16
+ARRAY16 LOCKS 2           
+DATA32 s1out1
+DATA32 s1out2
+DATA32 s1out3
+DATA32 s2out1
+DATA32 s2out2
+DATA32 s2out3
+DATA32 s3out1
+DATA32 s3out2
+DATA32 s3out3
+DATA32 s4out1
+DATA32 s4out2
+DATA32 s4out3
+DATA32 getTachoA
+DATA32 tmpTachoA
+DATA8 getSpeedA
+DATA8 setSpeedA
+DATA8 setPowerA
+DATA32 getTachoB
+DATA32 tmpTachoB
+DATA8 getSpeedB
+DATA8 setSpeedB
+DATA8 setPowerB
+DATA32 getTachoC
+DATA32 tmpTachoC
+DATA8 getSpeedC
+DATA8 setSpeedC
+DATA8 setPowerC
+DATA32 getTachoD
+DATA32 tmpTachoD
+DATA8 getSpeedD
+DATA8 setSpeedD
+DATA8 setPowerD
+DATA16 newArray1d
+DATA32 newSize1d
+DATA32 newIndex1d
+DATA32 timeMC1
+DATA32 timeMC2
+DATA32 timeMC3
+DATA32 timeMC4
+DATA32 timeMC5
+DATA32 timeMC6
+DATA32 timeMC7
+DATA32 timeMC8
+DATA32 timeMC9
+DATA32 timeMC1tmp
+DATA32 timeMC2tmp
+DATA32 timeMC3tmp
+DATA32 timeMC4tmp
+DATA32 timeMC5tmp
+DATA32 timeMC6tmp
+DATA32 timeMC7tmp
+DATA32 timeMC8tmp
+DATA32 timeMC9tmp
+DATAF VI2CPORT_M
+DATAF VI2CSLVADDR_M
+DATAF VMSGSZEV3_M
+DATAF VMSGSZSLV_M
+DATAF VI2CPORT_1
+ARRAY16 VSENDARRAY_1 2
+ARRAY16 VRECVARRAY_1 2
+DATAF VSNUM_1
+DATAF VSRED_1
+DATAF VSGREEN_1
+DATAF VSBLUE_1
+DATAF VMAX_1
+DATAF VMIN_1
+DATAF VV_1
+DATAF VS_1
+DATAF VH_1
+
+vmthread MAIN
+{
+    MOVE32_32 0 STOPLCDUPDATE
+    MOVE32_32 0 NUMMAILBOXES
+    OUTPUT_RESET 0 15
+
+	WRITE8 0 0 MOTORISINVERTED
+	WRITE8 0 1 MOTORISINVERTED
+	WRITE8 0 2 MOTORISINVERTED
+	WRITE8 0 3 MOTORISINVERTED
+	WRITE8 0 0 FIRSTOF2
+	WRITE8 0 1 FIRSTOF2
+	WRITE8 0 2 FIRSTOF2
+	WRITE8 1 3 FIRSTOF2
+	WRITE8 0 4 FIRSTOF2
+	WRITE8 1 5 FIRSTOF2
+	WRITE8 2 6 FIRSTOF2
+	WRITE8 0 7 FIRSTOF2
+	WRITE8 0 8 FIRSTOF2
+	WRITE8 1 9 FIRSTOF2
+	WRITE8 2 10 FIRSTOF2
+	WRITE8 0 11 FIRSTOF2
+	WRITE8 4 12 FIRSTOF2
+	WRITE8 0 13 FIRSTOF2
+	WRITE8 0 14 FIRSTOF2
+	WRITE8 0 15 FIRSTOF2
+    INPUT_DEVICE CLR_ALL -1
+    ARRAY CREATE8 0 LOCKS
+    MOVE32_32 0 s1out1
+	MOVE32_32 0 s1out2
+	MOVE32_32 0 s1out3
+    MOVE32_32 0 s2out1
+	MOVE32_32 0 s2out2
+	MOVE32_32 0 s2out3
+    MOVE32_32 0 s3out1
+	MOVE32_32 0 s3out2
+	MOVE32_32 0 s3out3
+    MOVE32_32 0 s4out1
+	MOVE32_32 0 s4out2
+	MOVE32_32 0 s4out3
+    MOVE32_32 0 timeMC1
+	MOVE32_32 0 timeMC2
+	MOVE32_32 0 timeMC3
+	MOVE32_32 0 timeMC4
+	MOVE32_32 0 timeMC5
+	MOVE32_32 0 timeMC6
+	MOVE32_32 0 timeMC7
+	MOVE32_32 0 timeMC8
+	MOVE32_32 0 timeMC9
+    MOVEF_F 0.0 VI2CPORT_M
+    MOVEF_F 0.0 VI2CSLVADDR_M
+    MOVEF_F 0.0 VMSGSZEV3_M
+    MOVEF_F 0.0 VMSGSZSLV_M
+    MOVEF_F 0.0 VI2CPORT_1
+    CALL ARRAYCREATE_FLOAT VSENDARRAY_1
+    CALL ARRAYCREATE_FLOAT VRECVARRAY_1
+    MOVEF_F 0.0 VSNUM_1
+    MOVEF_F 0.0 VSRED_1
+    MOVEF_F 0.0 VSGREEN_1
+    MOVEF_F 0.0 VSBLUE_1
+    MOVEF_F 0.0 VMAX_1
+    MOVEF_F 0.0 VMIN_1
+    MOVEF_F 0.0 VV_1
+    MOVEF_F 0.0 VS_1
+    MOVEF_F 0.0 VH_1
+    ARRAY CREATE8 1 LOCKS
+    CALL PROGRAM_MAIN -1
+    PROGRAM_STOP -1
+}
+subcall PROGRAM_MAIN
+{
+    IN_32 SUBPROGRAM
+    DATA32 INDEX
+    ARRAY8 STACKPOINTER 4
+    DATAF F.0
+    DATAF F.1
+    DATAF F.2
+    ARRAY32 RETURNSTACK2 128
+    ARRAY32 RETURNSTACK 128
+    DATAS S.0 252
+    MOVE8_8 0 STACKPOINTER
+    MOVEF_F 0.0 VI2CPORT_M
+    MOVEF_F 0.0 VI2CSLVADDR_M
+    MOVEF_F 0.0 VMSGSZEV3_M
+    MOVEF_F 0.0 VMSGSZSLV_M
+    MOVEF_F 0.0 VI2CPORT_1
+    CALL ARRAYSTORE_FLOAT 0.0 0.0 VSENDARRAY_1
+    CALL ARRAYSTORE_FLOAT 0.0 0.0 VRECVARRAY_1
+    MOVEF_F 0.0 VSNUM_1
+    MOVEF_F 0.0 VSRED_1
+    MOVEF_F 0.0 VSGREEN_1
+    MOVEF_F 0.0 VSBLUE_1
+    MOVEF_F 0.0 VMAX_1
+    MOVEF_F 0.0 VMIN_1
+    MOVEF_F 0.0 VV_1
+    MOVEF_F 0.0 VS_1
+    MOVEF_F 0.0 VH_1
+    DATA8 layer2
+	DATA8 no2
+	DATA8 mode82
+	
+	MOVEF_8 4.0 no2
+	SUB8 no2 1 no2
+	DIV8 no2 4 layer2
+	MATH MOD8 no2 4 no2
+
+	MOVEF_8 2.0 mode82
+	
+	INPUT_DEVICE READY_RAW layer2 no2 0 mode82 0
+    DATA8 layer3
+	DATA8 no3
+	DATA8 mode83
+	
+	MOVEF_8 1.0 no3
+	SUB8 no3 1 no3
+	DIV8 no3 4 layer3
+	MATH MOD8 no3 4 no3
+
+	MOVEF_8 2.0 mode83
+	
+	INPUT_DEVICE READY_RAW layer3 no3 0 mode83 0
+    MOVEF_F 3.0 VI2CPORT_M
+    MOVEF_F 1.0 VI2CSLVADDR_M
+    MOVEF_F 0.0 VMSGSZEV3_M
+    MOVEF_F 0.0 VMSGSZSLV_M
+  while45:
+  whilebody45:
+    CALL LCD.CLEAR
+    MOVEF_F 4.0 VI2CPORT_1
+    WRITE32 ENDSUB_GETV_1:CALLSUB47 STACKPOINTER RETURNSTACK
+    ADD8 STACKPOINTER 1 STACKPOINTER
+    JR SUB_GETV_1
+CALLSUB47:
+    DATA32 milliseconds48
+	MOVEF_32 2000.0 milliseconds48
+	DATA32 timer48
+	TIMER_WAIT milliseconds48 timer48
+	TIMER_READY timer48
+    JR whilebody45
+  endwhile45:
+ENDTHREAD:
+    RETURN
+SUB_GETV_1:
+    CALL ARRAYSTORE_FLOAT 0.0 66.0 VSENDARRAY_1
+    CALL SENSOR.COMMUNICATEI2C VI2CPORT_1 VI2CSLVADDR_M 1.0 4.0 VSENDARRAY_1 VRECVARRAY_1
+    CALL ARRAYGET_FLOAT 0.0 VSNUM_1 VRECVARRAY_1
+    CALL ARRAYGET_FLOAT 1.0 VSRED_1 VRECVARRAY_1
+    CALL ARRAYGET_FLOAT 2.0 VSGREEN_1 VRECVARRAY_1
+    CALL ARRAYGET_FLOAT 3.0 VSBLUE_1 VRECVARRAY_1
+    DATAF tmpf10
+    DATA8 flag10
+    DIVF VSRED_1 255.0 tmpf10
+    CP_EQF 0.0 255.0 flag10
+    SELECTF flag10 0.0 tmpf10 VSRED_1
+
+    DATAF tmpf11
+    DATA8 flag11
+    DIVF VSGREEN_1 255.0 tmpf11
+    CP_EQF 0.0 255.0 flag11
+    SELECTF flag11 0.0 tmpf11 VSGREEN_1
+
+    DATAF tmpf12
+    DATA8 flag12
+    DIVF VSBLUE_1 255.0 tmpf12
+    CP_EQF 0.0 255.0 flag12
+    SELECTF flag12 0.0 tmpf12 VSBLUE_1
+
+    JR_LTEQF VSRED_1 VSGREEN_1 else13_1
+    JR_LTEQF VSRED_1 VSBLUE_1 else13_1
+    MOVEF_F VSRED_1 VMAX_1
+    JR endif13
+  else13_1:
+    JR_LTEQF VSGREEN_1 VSRED_1 else13_2
+    JR_LTEQF VSGREEN_1 VSBLUE_1 else13_2
+    MOVEF_F VSGREEN_1 VMAX_1
+    JR endif13
+  else13_2:
+    JR_LTEQF VSBLUE_1 VSRED_1 else13_3
+    JR_LTEQF VSBLUE_1 VSGREEN_1 else13_3
+    MOVEF_F VSBLUE_1 VMAX_1
+  else13_3:
+  endif13:
+    JR_GTEQF VSRED_1 VSGREEN_1 else14_1
+    JR_GTEQF VSRED_1 VSBLUE_1 else14_1
+    MOVEF_F VSRED_1 VMIN_1
+    JR endif14
+  else14_1:
+    JR_GTEQF VSGREEN_1 VSRED_1 else14_2
+    JR_GTEQF VSGREEN_1 VSBLUE_1 else14_2
+    MOVEF_F VSGREEN_1 VMIN_1
+    JR endif14
+  else14_2:
+    JR_GTEQF VSBLUE_1 VSRED_1 else14_3
+    JR_GTEQF VSBLUE_1 VSGREEN_1 else14_3
+    MOVEF_F VSBLUE_1 VMIN_1
+  else14_3:
+  endif14:
+    MOVEF_F VMAX_1 VV_1
+    JR_NEQF VMAX_1 0.0 else15_1
+    MOVEF_F 0.0 VS_1
+    JR endif15
+  else15_1:
+    DATAF tmpf16
+    DATA8 flag16
+    DIVF VMIN_1 VMAX_1 tmpf16
+    CP_EQF 0.0 VMAX_1 flag16
+    SELECTF flag16 0.0 tmpf16 F.0
+
+    SUBF 1.0 F.0 VS_1
+  else15_2:
+  endif15:
+    JR_NEQF VSRED_1 VMAX_1 else18_1
+    JR_LTF VSGREEN_1 VSBLUE_1 else19_1
+    SUBF VSGREEN_1 VSBLUE_1 F.1
+    MULF 60.0 F.1 F.0
+    SUBF VMAX_1 VMIN_1 F.1
+    DATAF tmpf23
+    DATA8 flag23
+    DIVF F.0 F.1 tmpf23
+    CP_EQF 0.0 F.1 flag23
+    SELECTF flag23 0.0 tmpf23 VH_1
+
+    JR endif19
+  else19_1:
+    SUBF VSGREEN_1 VSBLUE_1 F.2
+    MULF 60.0 F.2 F.1
+    SUBF VMAX_1 VMIN_1 F.2
+    DATAF tmpf27
+    DATA8 flag27
+    DIVF F.1 F.2 tmpf27
+    CP_EQF 0.0 F.2 flag27
+    SELECTF flag27 0.0 tmpf27 F.0
+
+    ADDF F.0 360.0 VH_1
+  else19_2:
+  endif19:
+    JR endif18
+  else18_1:
+    JR_NEQF VMAX_1 VSGREEN_1 else29_1
+    SUBF VSBLUE_1 VSRED_1 F.2
+    MULF 60.0 F.2 F.1
+    SUBF VMAX_1 VMIN_1 F.2
+    DATAF tmpf33
+    DATA8 flag33
+    DIVF F.1 F.2 tmpf33
+    CP_EQF 0.0 F.2 flag33
+    SELECTF flag33 0.0 tmpf33 F.0
+
+    ADDF F.0 120.0 VH_1
+    JR endif29
+  else29_1:
+    SUBF VSRED_1 VSGREEN_1 F.2
+    MULF 60.0 F.2 F.1
+    SUBF VMAX_1 VMIN_1 F.2
+    DATAF tmpf38
+    DATA8 flag38
+    DIVF F.1 F.2 tmpf38
+    CP_EQF 0.0 F.2 flag38
+    SELECTF flag38 0.0 tmpf38 F.0
+
+    ADDF F.0 240.0 VH_1
+  else29_2:
+  endif29:
+  else18_2:
+  endif18:
+    MULF VI2CPORT_1 10.0 F.0
+    ADDF VH_1 VS_1 F.2
+    ADDF F.2 VV_1 F.1
+    STRINGS VALUE_FORMATTED F.1 '%g' 99 S.0
+    CALL LCD.TEXT 1.0 20.0 F.0 2.0 S.0
+RETSUB_GETV_1:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_GETV_1:
+}
+subcall ARRAYSTORE_FLOAT   // FFFV
+{
+	IN_F index
+	IN_F value	
+	IN_16 handle
+	
+	DATA32 index32
+	DATA32 len	
+	MOVEF_32 index index32
+
+	ARRAY SIZE handle len
+	JR_LT32 index32 0 negativeindex
+	JR_LT32 index32 len arraybigenough
+
+increasesize:	
+	DATA32 doublelen
+	ADD32 len len doublelen
+	ARRAY RESIZE handle doublelen
+writeloop:	
+	ARRAY_WRITE handle len 0.0
+	ADD32 len 1 len
+	JR_LT32 len doublelen writeloop
+	JR_GTEQ32 index32 len increasesize
+	
+arraybigenough:
+	ARRAY_WRITE handle index32 value
+negativeindex:
+}
+subcall SENSOR.COMMUNICATEI2C     // FFFFAA
+{
+	IN_F port
+	IN_F address
+	IN_F writebytes
+	IN_F readbytes
+	IN_16 writedata
+	IN_16 resultarray
+
+	DATA8 layer
+	DATA8 no
+	DATA8 adr
+	DATA32 wrt
+	DATA32 rd
+	DATA32 writedatalength
+	ARRAY8 outdata 32
+	ARRAY8 indata 32
+
+	MOVEF_8 port no
+	SUB8 no 1 no
+	DIV8 no 4 layer
+	MATH MOD8 no 4 no
+	MOVEF_8 address adr
+	MOVEF_32 writebytes wrt
+	MOVEF_32 readbytes rd
+
+	JR_GTEQ32 wrt 0 wrtnottoless
+	MOVE32_32 0 wrt
+wrtnottoless:
+	JR_LTEQ32 wrt 32 wrtnottomuch
+	MOVE32_32 32 wrt
+wrtnottomuch:
+	JR_GTEQ32 rd 1 rdnottoless
+	MOVE32_32 1 rd
+rdnottoless:
+	JR_LTEQ32 rd 32 rdnottomuch
+	MOVE32_32 32 rd
+rdnottomuch:
+
+	ARRAY SIZE writedata writedatalength
+
+	WRITE8 adr 0 outdata		// put adress in first byte of output buffer
+
+	// decode float values from array and put in outdata buffer
+	DATA32 i
+	DATA8 i8
+	MOVE32_32 0 i
+	JR_GTEQ32 i wrt endwritecopy
+writecopyloop:
+	JR_GTEQ32 i writedatalength addzeroelements
+	DATAF v
+	DATA32 v32
+	DATA8 v8
+	ARRAY_READ writedata i v 
+	MOVEF_32 v v32
+	EXTRACTLOWBYTE v32 v8
+	ADD32 i 1 i
+	MOVE32_8 i i8
+	WRITE8 v8 i8 outdata
+	JR_LT32 i wrt writecopyloop
+	JR endwritecopy
+addzeroelements:
+	ADD32 i 1 i 
+	MOVE32_8 i i8
+	WRITE8 0 i8 outdata
+	JR_LT32 i wrt addzeroelements	
+endwritecopy:
+
+	// do the communciation
+	DATA8 wrt8
+	MOVE32_8 wrt wrt8
+	ADD8 wrt8 1 wrt8
+	DATA8 rd8
+	MOVE32_8 rd rd8
+	INPUT_DEVICE SETUP layer no 1 0 wrt8 outdata rd8 indata 
+
+	// decode response
+	ARRAY RESIZE resultarray rd
+	MOVE32_32 0 i
+readcopy:
+	DATA32 tmp32
+	SUB32 rd i tmp32
+	SUB32 tmp32 1 tmp32
+	MOVE32_8 tmp32 i8
+	READ8 indata i8 v8
+	MOVE8_32 0 tmp32
+	INJECTLOWBYTE v8 tmp32
+	MOVE32_F tmp32 v
+	ARRAY_WRITE resultarray i v
+	ADD32 i 1 i
+	JR_LT32 i rd readcopy
+}
+subcall ARRAYGET_FLOAT     // FFF
+{
+	IN_F index
+	OUT_F value
+	IN_16 handle
+	
+	DATA32 index32
+	DATA32 len
+	MOVEF_32 index index32
+	
+	ARRAY SIZE handle len
+	JR_LT32 index32 0 outofbounds
+	JR_GTEQ32 index32 len outofbounds
+	
+	ARRAY_READ handle index32 value
+	RETURN
+outofbounds:
+	MOVE8_F 0 value	
+}
+subcall LCD.TEXT     // FFFFSV
+{
+	IN_F col
+	IN_F x
+	IN_F y
+	IN_F font
+	IN_S text 252
+	
+	DATA8 col_8
+	DATA16 x_16
+	DATA16 y_16
+	DATA8 font_8	
+	MOVEF_8 col col_8
+	MOVEF_16 x x_16
+	MOVEF_16 y y_16
+	MOVEF_8 font font_8
+	
+	UI_DRAW SELECT_FONT font_8
+	UI_DRAW TEXT col_8 x_16 y_16 text
+
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall LCD.CLEAR   // V
+{
+	UI_DRAW(TOPLINE,0)
+	UI_DRAW(CLEAN)
+	
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall ARRAYCREATE_FLOAT   // F
+{
+	OUT_16 handle
+	
+	ARRAY CREATEF 8 handle			// create with 8 elements
+	ARRAY FILL handle 0.0
+}

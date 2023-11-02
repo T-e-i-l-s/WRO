@@ -1,0 +1,26 @@
+J_m = 0 ' global variable init 
+C_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+A_m[0] = 0 ' global variable init 
+B_m[0] = 0 ' global variable init 
+J_m = 0
+C_m = 0
+LCD.Clear ()
+for I_m = 1 to 8
+A_m [ I_m ] = Math.GetRandomNumber ( 11 ) + 1
+B_m [ I_m ] = Math.GetRandomNumber ( 11 ) + 1
+EndFor
+for I_m = 1 to 8
+if A_m [ I_m ] <> B_m [ I_m ] Then
+J_m = J_m + 1
+LCD.Write ( 50 , 10 * J_m , A_m [ I_m ] )
+LCD.Write ( 70 , 10 * J_m , B_m [ I_m ] )
+EndIf
+EndFor
+for I_m = 1 to 8
+LCD.Write ( 10 , 10 * I_m , A_m [ I_m ] )
+EndFor
+for I_m = 1 to 8
+LCD.Write ( 30 , 10 * I_m , B_m [ I_m ] )
+EndFor
+Program.Delay ( 10000000000 )

@@ -1,0 +1,547 @@
+
+Sensor.SetMode(1,0)'Устанавливаем режим 1ого датчика
+Sensor.SetMode(2,0)'Устанавливаем режим 2ого датчика
+Sensor.SetMode(3,0)'Устанавливаем режим 3его датчика
+
+
+Motor.Invert("B")'Меняем направление движения мотора
+
+
+'Значния калибровки(пока ее нет,но значения нужны для фильтра значений датчиков)
+min1=100
+max1=0
+min2=100
+max2=0
+
+
+'коэфиценты для езды по линии
+k1=0.3 
+v1=75
+
+k2=0.35
+v2=50
+
+k3=0.55
+v3=20
+
+
+'Положение маркеров
+b1=0
+w1=0
+b2=0
+w2=0
+
+
+
+
+
+
+
+
+'Езда по линии================================================
+
+
+
+
+'Фильтрация значений датчиков
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)'превращаем черный в 0, а белый в 100
+  
+EndSub
+
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)'превращаем черный в 0, а белый в 100
+  
+EndSub
+
+
+
+'П регулятор
+
+Sub line1 'скоростная езда(для длинных участков)
+  
+  sen1() 'получаем фильтрованое значение 2ого датчика
+  sen2() 'получаем фильтрованое значение 3его датчика
+  U=s1-s2 'вычисляем разницу в показания датчиков
+  Motor.StartPower("C",v1+U*k1) 'Запускаем мотор с указанной скоростью
+  Motor.StartPower("B",v1-U*k1) 'Запускаем мотор с указанной скоростью
+  
+EndSub
+
+
+Sub line2 'скоростная езда(для небольших участков)
+  
+  sen1() 'получаем фильтрованое значение 2ого датчика
+  sen2() 'получаем фильтрованое значение 3его датчика
+  U=s1-s2 'вычисляем разницу в показания датчиков
+  Motor.StartPower("C",v2+U*k2) 'Запускаем мотор с указанной скоростью
+  Motor.StartPower("B",v2-U*k2) 'Запускаем мотор с указанной скоростью
+  
+EndSub
+
+
+Sub line3 'плавная езда(для участков с частыми перекрестками)
+  
+  sen1() 'получаем фильтрованое значение 2ого датчика
+  sen2() 'получаем фильтрованое значение 3его датчика
+  U=s1-s2 'вычисляем разницу в показания датчиков
+  Motor.StartPower("C",v3+U*k3) 'Запускаем мотор с указанной скоростью
+  Motor.StartPower("B",v3-U*k3) 'Запускаем мотор с указанной скоростью
+  
+EndSub
+
+
+
+
+'Повороты по датчикам================================================
+
+
+
+
+
+Sub left 'налево
+  
+  tomm(30,20)
+  left2(60) 'поворот от линии
+  
+  Motor.StartPower("B",-50) 'Старт мотора B
+  Motor.StartPower("C",50) 'Старт мотора С
+  
+  While Sensor.ReadPercent(3)<30 'Цикл-ожидание белого
+  EndWhile
+  
+  While Sensor.ReadPercent(3)>25 'Цикл-ожидание черного
+  EndWhile 
+  
+  Motor.Stop("BC","true") 'торможение
+  
+  right2(20)'выравнивание
+  
+EndSub
+
+
+Sub right 'направо
+  
+  tomm(30,20)
+  right2(60) 'поворот от линии
+  
+  Motor.StartPower("B",50) 'Старт мотора B
+  Motor.StartPower("C",-50) 'Старт мотора С
+  
+  While Sensor.ReadPercent(2)<30 'Цикл-ожидание белого
+  EndWhile
+  
+  While Sensor.ReadPercent(2)>25 'Цикл-ожидание черного
+  EndWhile 
+  
+  Motor.Stop("BC","true") 'торможение
+  
+  left2(20)'выравнивание
+  
+EndSub
+
+
+Sub around'вокруг
+  
+  left2(170) 'поворот от линии
+  
+  Motor.StartPower("B",-50) 'Старт мотора B
+  Motor.StartPower("C",50) 'Старт мотора С
+  
+  While Sensor.ReadPercent(3)<30 'Цикл-ожидание белого
+  EndWhile
+  
+  While Sensor.ReadPercent(3)>25 'Цикл-ожидание черного
+  EndWhile 
+  
+  Motor.Stop("BC","true") 'торможение
+  
+  right2(30)'выравнивание
+  
+EndSub
+
+
+
+
+
+'Повороты и езда по градусам================================================
+
+
+
+
+Function move (in number l , in number sp)
+  
+  Motor.ResetCount ("BC")'Сброс энкодеров моторов B и C
+  
+  'езда вперед по П регулятору
+  While ( Math.Abs(Motor.GetCount ("C")) + Math.Abs(Motor.GetCount("B")) ) / 2 <= l 'Цикл-ожидание проезда
+    U = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" ) 'вычисляем разницу в показания датчиков
+    Motor.StartPower ( "C" , sp + U * 0.8 ) 'Старт мотора B
+    Motor.StartPower ( "B" , sp - U * 0.8 ) 'Старт мотора C
+  EndWhile
+  
+  Motor.Stop ("BC","true") 'торможение
+  
+EndFunction
+
+
+Function tomm (in number mm , in number sp)
+  
+  l = mm / ( 62 * 3.14 ) * 360 'Нахождение градус оборота мотора
+  
+  Motor.ResetCount ( "BC" ) 'Сброс энкодеров моторов B и C
+  
+  move(l,sp) 'передвижение
+  
+  sp = 0 'обнуление
+  
+EndFunction
+
+
+Function left2 (in number grad) 'поворот вправо на определенный градус
+  
+  l = ((2 * 3.14 * 174 * grad ) / 360 )  'Нахождение длины окружности
+  l = l / ( 3.14 * 64 ) * 360 'Перевод в градус оборота мотора
+  
+  Motor.ResetCount("BC") 'Сброс энкодеров моторов B и C
+  
+  Motor.StartPower("B",-50) 'Старт мотора B
+  Motor.StartPower("C",50) 'Старт мотора С
+  
+  While (Math.Abs(Motor.GetCount ("B")) + Math.Abs(Motor.GetCount ("C"))) / 2 <= l/2 'Цикл-ожидание проезда
+  EndWhile
+  
+  Motor.Stop("BC","true") 'торможение
+  
+EndFunction
+
+
+Function right2 (in number grad) 'поворот вправо на определенный градус
+  
+  l = ((2 * 3.14 * 174 * grad ) / 360 )  'Нахождение длины окружности
+  l = l / ( 3.14 * 64 ) * 360 'Перевод в градус оборота мотора
+  
+  Motor.ResetCount("BC") 'Сброс энкодеров моторов B и C
+  
+  Motor.StartPower("B",50) 'Старт мотора B
+  Motor.StartPower("C",-50) 'Старт мотора С
+  
+  While (Math.Abs(Motor.GetCount ("B")) + Math.Abs(Motor.GetCount ("C"))) / 2 <= l/2 'Цикл-ожидание проезда
+  EndWhile
+  
+  Motor.Stop("BC","true") 'торможение
+  
+EndFunction
+
+
+
+
+'Заморозка=====================================================================================
+
+
+
+
+Sub frz
+  
+  Buttons.Flush() 'обнуляем кнопки на блоке
+  
+  Motor.Stop("BC","true") 'остановка основных моторов
+  
+  Buttons.Wait() 'ожидание нажатия любой кнопки на блоке
+  
+EndSub
+
+
+
+
+'Клешня=====================================================================================
+
+
+
+
+Function up(in string motor, in number speed)'подъем обоих захватов
+  
+  Motor.Stop("BC","true")
+  
+  Motor.Move(motor,0 - speed,70,"true") 'движение моторов
+  
+  Motor.Stop("BC","true")
+  
+EndFunction
+
+
+Function down(in string motor, in number speed)'подъем обоих захватов
+  
+  Motor.Stop("BC","true")
+  
+  Motor.StartPower(motor,speed) 'движение моторов
+  
+    Motor.Stop("BC","true")
+  Program.Delay(300)
+    Motor.Stop("BC","true")
+  While Motor.GetSpeed(motor) > speed*0.7
+    Motor.Stop("BC","true")
+  EndWhile
+  
+  Motor.StartPower(motor,10)
+  
+  
+  Motor.Stop("BC","true")
+  
+EndFunction
+
+
+
+
+'ХайТехник=====================================================================================
+
+
+
+
+Sub HSV
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(1,1,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed
+  sGreen = sGreen
+  sBlue = sBlue
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  
+  V = max 
+  
+  
+  if(V > 25)Then
+    col = 6
+  ElseIf(V > 10)Then
+    col = 1
+  Else
+    col = 0
+  EndIf      
+  
+  max = 0
+  min = 100 
+  
+EndSub
+
+
+
+
+
+
+'=======********===***********=======*======*****=======***********===================
+'=======*===============*===========*=*=====*====*===========*========================
+'=======*===============*==========*===*====*=====*==========*========================
+'=======*===============*=========*=====*===*=====*==========*========================
+'=======********========*=========*=====*===******===========*========================
+'==============*========*=========*******===*=*==============*========================
+'==============*========*=========*=====*===*===*============*========================
+'==============*========*=========*=====*===*=====*==========*========================
+'=======********========*=========*=====*===*======*=========*========================
+
+
+'выезд из зоны старта
+'right2(25)
+'Motor.StartPower("BC",50)
+'While Sensor.ReadPercent(2)>30
+'EndWhile 
+'While Sensor.ReadPercent(2)<60
+'EndWhile 
+'While Sensor.ReadPercent(2)>25
+'EndWhile 
+
+
+
+'tomm(20,50)
+'Motor.StartPower("B",-50) 'Старт мотора B
+'Motor.StartPower("C",50) 'Старт мотора С
+  
+'While Sensor.ReadPercent(3)<30 'Цикл-ожидание белого
+'EndWhile
+  
+'While Sensor.ReadPercent(3)>15 'Цикл-ожидание черного
+'EndWhile 
+  
+'Motor.Stop("BC","true") 'торможение
+  
+'right2(20)'выравнивание
+
+'Motor.ResetCount("BC")
+'mm = 50
+'l = mm / ( 62 * 3.14 ) * 360
+'While Motor.GetCount("B")<l
+  'line3()
+'EndWhile
+
+'Motor.StartPower("BC",-30)
+'While Sensor.ReadPercent(2)>25 or Sensor.ReadPercent(3)>25
+'EndWhile 
+'frz()
+
+
+
+
+'скан тихоокеанской стороны
+
+For i=1 to 4
+  HSV()
+  if(col = 1)Then
+    b1 = i
+  ElseIf(col = 6)Then
+    w1 = i
+  EndIf    
+  
+  Motor.ResetCount("BC")
+  mm = 50
+  l = mm / ( 62 * 3.14 ) * 360
+  While Motor.GetCount("B")<l
+    line2()
+  EndWhile
+  
+EndFor  
+
+
+Motor.ResetCount("BC")
+mm = 70
+l = mm / ( 62 * 3.14 ) * 360
+While Motor.GetCount("B")<l
+  line2()
+EndWhile
+
+
+'скан карибской стороны
+
+For i=1 to 4
+  HSV()
+  if(col = 1)Then
+    b2 = i
+  ElseIf(col = 6)Then
+    w2 = i
+  EndIf    
+  
+  Motor.ResetCount("BC")
+  mm = 50
+  l = mm / ( 62 * 3.14 ) * 360
+  While Motor.GetCount("B")<l
+    line2()
+  EndWhile
+  
+EndFor  
+
+LCD.Clear()
+LCD.Text(2,20,20,2,b1)
+LCD.Text(2,20,70,2,w1)
+LCD.Text(2,70,20,2,b2)
+LCD.Text(2,70,70,2,w2)
+
+
+Sensor.SetMode(3,2)
+While Sensor.ReadRawValue(3, 0) <> 5
+    
+  Motor.StartPower("BC",30)
+  
+EndWhile 
+
+Sensor.SetMode(3,0)
+
+
+up("AD",20)
+tomm(50,-40)
+
+While Sensor.ReadPercent(3)>25
+  Motor.StartPower("BC",-40)
+EndWhile 
+
+tomm(10,30)
+
+right()
+
+Motor.ResetCount("BC")
+mm = 150
+l = mm / ( 62 * 3.14 ) * 360
+While Motor.GetCount("B")<l
+  line2()
+EndWhile
+
+Motor.ResetCount("BC")
+mm = 1600
+l = mm / ( 62 * 3.14 ) * 360
+While Motor.GetCount("B")<l
+  line1()
+EndWhile
+
+
+While Sensor.ReadPercent(3)>25
+  line2()
+EndWhile 
+right()
+
+Motor.ResetCount("BC")
+mm = 150
+l = mm / ( 62 * 3.14 ) * 360
+While Motor.GetCount("B")<l
+  line3()
+EndWhile
+
+While Sensor.ReadPercent(3)>25
+  line2()
+EndWhile 
+
+
+right()
+Motor.ResetCount("BC")
+mm = 150
+l = mm / ( 62 * 3.14 ) * 360
+While Motor.GetCount("B")<l
+  line3()
+EndWhile
+
+While Sensor.ReadPercent(2)>25
+  line2()
+EndWhile 
+
+

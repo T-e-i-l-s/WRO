@@ -1,0 +1,318 @@
+g=0
+r=0
+y=0
+w=0
+color=0
+x=0
+Motor.Invert("b")
+max2=0
+max3=0
+min2=0
+min3=0
+
+Sensor.SetMode(1,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+k1=0.2
+k2=8
+Speed=0
+Speedl=0
+Speedr=0
+eold=0
+n=0
+
+p=0
+i=0
+I2CPORT = 1 'Порт
+I2CSLVADDR = 1 'Адрес
+
+' ========= САБЫ ======================================
+'=======================================================
+
+'==================================================================
+' Саб вычисления среднего значения для 3-го датчика
+Sub a3
+  S3=100*(Sensor.ReadPercent(3)-min3)/(max3-min3)
+  
+EndSub
+'=========================
+
+' Саб вычисления среднего значения для 2-го датчика
+Sub a2
+  S2=100*(Sensor.ReadPercent(2)-min2)/(max2-min2)
+  
+EndSub
+'=======================
+
+' Саб езда по линии по 2-ум датчикам (для вайлов)
+Sub polin2d
+  a3()
+  a2()
+  e=S2-S3
+  u=k1*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  Motor.StartPower("C",Speedr)
+  
+EndSub
+'================================================
+
+'Саб заморозки
+Sub zamoroz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+'======================================================
+
+' Саб задвигания датчика
+Sub zadvig
+  Motor.Start("a",20)
+  Program.Delay(100)
+  While Motor.GetSpeed("a")>7
+    Motor.Start("a",20)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+'==================================================
+
+' Саб выдвигания датчика
+Sub vidvig
+  Motor.Start("a",-20)
+  Program.Delay(100)
+  While Motor.GetSpeed("a")<-7
+    Motor.Start("a",-20)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+
+
+'==========================================================================================================================================================================================================================================================================================================================================================Н А Ч А Л О ========================================
+' сначала вызываем значения переменных из файлов калибровки
+
+'переменные максимальных и минимальных значений датчиков освещ для езды по линии
+
+F=EV3File.OpenRead("WRO2021/colib.dat")
+min2=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+min3=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+max2=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+max3=EV3File.ConvertToNumber(EV3File.ReadLine(F))
+EV3File.Close(F)
+LCD.Clear()
+LCD.Text(1,10,10,1,min2)
+LCD.Text(1,20,20,1,min3)
+LCD.Text(1,30,30,1,max2)
+LCD.Text(1,40,40,1,max3)
+Motor.MoveSync("bc",30,0,130,"true")
+Motor.MoveSync("bc",0,30,130,"true")
+Motor.ResetCount("bc")
+Motor.Start("bc",40)
+
+While (Motor.GetCount("b") + Motor.GetCount("c") )/2<500
+  
+  If Sensor.ReadPercent(2) > max2 Then
+    max2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(2) < min2 Then
+    min2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(3) > max3 Then
+    max3=Sensor.ReadPercent(3)
+  EndIf
+  If Sensor.ReadPercent(3) < min3 Then
+    min3=Sensor.ReadPercent(3)
+  EndIf
+  
+EndWhile
+a2()
+a3()
+zamoroz()
+While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+    Motor.Stop("bc","true")
+    Motor.MoveSync("bc",30,30,50,"true")
+'zamoroz()
+
+a3()
+a2()
+While S3>15
+a3()
+a2()
+  Motor.StartSync("bc",30,-30)
+EndWhile
+Motor.Stop("bc","true")
+a3()
+a2()
+While S3<15
+a3()
+a2()
+  Motor.StartSync("bc",30,-30)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+
+  'a2()
+  'a3()
+  'While S2>10
+  'Motor.StartSync("bc",30,0)
+  'EndWhile
+  'Motor.Stop("bc","true")
+  'Program.Delay(100)
+  'zamoroz()
+  
+  'a2()
+  'a3()
+  'While Sensor.ReadPercent(2)>55
+  '  Motor.StartSync("bc",20,-20)
+ ' EndWhile
+  'Motor.Stop("bc","true")
+   
+  'a3()
+  'a2()
+  'While S3>10 And S2>10 Or S3<10 And S2<10
+   ' a3()
+   ' a2()
+   ' speed=50
+   ' polin2d()
+ ' EndWhile
+  'Motor.Stop("bc","true")
+  
+ 
+  'zamoroz()
+ Motor.ResetCount("bc")
+   While Motor.GetCount("b")<200 'от 1-ой базы до поворота на мусорку
+    Speed=20
+    polin2d()
+  EndWhile
+  Motor.Stop("bc","true")
+  a3()
+  a2()
+  For i=1 To 1
+    a3()
+    a2()
+    While S3>15 And S2>15 Or S3<15 And S2<15
+      a3()
+      a2()
+      speed=20
+      polin2d()
+    EndWhile
+    Motor.Stop("bc","true")
+    Motor.MoveSync("bc",30,30,50,"true")
+  EndFor
+  'zamoroz()
+  'Motor.MoveSync("bc",20,20,20,"true")
+Motor.Stop("bc","true")
+'zamoroz()
+a3()
+  a2()
+  j=80
+While S3>15
+a3()
+    a2()
+    If j>30 Then
+      j=j-0.1
+      EndIf
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+a3()
+  a2()
+  j=80
+While S3<25
+a3()
+    a2()
+    
+    If j>30 Then
+      j=j-0.1
+      EndIf
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+  'Motor.MoveSync("bc",30,30,20,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,-30,100,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",50,-30,70,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,0,50,"true")
+  'zamoroz()
+  
+  'Motor.MoveSync("bc",30,-30,30,"true")
+  'zamoroz()
+  
+  Motor.ResetCount("bc")
+  While (Motor.GetCount("b")+Motor.GetCount("c"))/2<50
+    a3()
+    a2()
+    speed=30
+   a3()
+  a2()
+  e=S3-((min3+max3)/2)
+  u=k1*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  EndWhile
+  Motor.Stop("bc","true")
+  'zamoroz()
+  
+  Motor.MoveSync("bc",30,30,50,"true")
+  
+  Motor.Start("d",50) ' ==== забрали 1-ую белую лампу и поехали на отвоз ее ===================
+  Program.Delay(500)
+  Motor.Stop("bc","true")
+    Motor.MoveSync("bc",-30,-30,50,"true")
+    Motor.MoveSync("bc",20,0,350,"true")
+   a2()
+  a3()
+  'отъезд назад до черной линии
+  While S3>10 And S2>10 Or S3<10 And S2>10 Or S3>6 And S2<6 'отъезд
+    a2()
+    a3()
+    Motor.StartPower("bc",20)
+  EndWhile
+  Motor.Stop("bc","true")
+
+
+  Motor.MoveSync("bc",30,30,70,"true")
+Motor.Stop("bc","true")
+'zamoroz()
+
+a3()
+a2()
+While S3>10
+a3()
+a2()
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+
+a3()
+a2()
+While S3<15
+a3()
+a2()
+  Motor.StartSync("bc",20,-20)
+EndWhile
+Motor.Stop("bc","true")
+'zamoroz()
+  Program.Delay(100)
+'Motor.MoveSync("bc",0,20,50,"true")
+

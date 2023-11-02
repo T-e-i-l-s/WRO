@@ -1,0 +1,578 @@
+DATA16 FD_NATIVECODECOMMAND
+DATA16 FD_NATIVECODERESPONSE
+DATA32 STOPLCDUPDATE
+DATA32 NUMMAILBOXES
+ARRAY8 MOTORISINVERTED 4     
+ARRAY8 FIRSTOF2  16
+ARRAY16 LOCKS 2           
+DATA32 s1out1
+DATA32 s1out2
+DATA32 s1out3
+DATA32 s2out1
+DATA32 s2out2
+DATA32 s2out3
+DATA32 s3out1
+DATA32 s3out2
+DATA32 s3out3
+DATA32 s4out1
+DATA32 s4out2
+DATA32 s4out3
+DATA32 getTachoA
+DATA32 tmpTachoA
+DATA8 getSpeedA
+DATA8 setSpeedA
+DATA8 setPowerA
+DATA32 getTachoB
+DATA32 tmpTachoB
+DATA8 getSpeedB
+DATA8 setSpeedB
+DATA8 setPowerB
+DATA32 getTachoC
+DATA32 tmpTachoC
+DATA8 getSpeedC
+DATA8 setSpeedC
+DATA8 setPowerC
+DATA32 getTachoD
+DATA32 tmpTachoD
+DATA8 getSpeedD
+DATA8 setSpeedD
+DATA8 setPowerD
+DATA16 newArray1d
+DATA32 newSize1d
+DATA32 newIndex1d
+DATA32 timeMC1
+DATA32 timeMC2
+DATA32 timeMC3
+DATA32 timeMC4
+DATA32 timeMC5
+DATA32 timeMC6
+DATA32 timeMC7
+DATA32 timeMC8
+DATA32 timeMC9
+DATA32 timeMC1tmp
+DATA32 timeMC2tmp
+DATA32 timeMC3tmp
+DATA32 timeMC4tmp
+DATA32 timeMC5tmp
+DATA32 timeMC6tmp
+DATA32 timeMC7tmp
+DATA32 timeMC8tmp
+DATA32 timeMC9tmp
+DATAF VNIGA_M
+DATAF VH_M
+DATAF VJ_M
+DATAF VPORT_M
+ARRAY16 VA_M 2
+DATAF VSRED_M
+DATAF VSGREEN_M
+DATAF VSBLUE_M
+DATAF VMAX_M
+DATAF VMIN_M
+DATAF VS_M
+DATAF VV_M
+DATAF VCOL_M
+
+vmthread MAIN
+{
+    MOVE32_32 0 STOPLCDUPDATE
+    MOVE32_32 0 NUMMAILBOXES
+    OUTPUT_RESET 0 15
+
+	WRITE8 0 0 MOTORISINVERTED
+	WRITE8 0 1 MOTORISINVERTED
+	WRITE8 0 2 MOTORISINVERTED
+	WRITE8 0 3 MOTORISINVERTED
+	WRITE8 0 0 FIRSTOF2
+	WRITE8 0 1 FIRSTOF2
+	WRITE8 0 2 FIRSTOF2
+	WRITE8 1 3 FIRSTOF2
+	WRITE8 0 4 FIRSTOF2
+	WRITE8 1 5 FIRSTOF2
+	WRITE8 2 6 FIRSTOF2
+	WRITE8 0 7 FIRSTOF2
+	WRITE8 0 8 FIRSTOF2
+	WRITE8 1 9 FIRSTOF2
+	WRITE8 2 10 FIRSTOF2
+	WRITE8 0 11 FIRSTOF2
+	WRITE8 4 12 FIRSTOF2
+	WRITE8 0 13 FIRSTOF2
+	WRITE8 0 14 FIRSTOF2
+	WRITE8 0 15 FIRSTOF2
+    INPUT_DEVICE CLR_ALL -1
+    ARRAY CREATE8 0 LOCKS
+    MOVE32_32 0 s1out1
+	MOVE32_32 0 s1out2
+	MOVE32_32 0 s1out3
+    MOVE32_32 0 s2out1
+	MOVE32_32 0 s2out2
+	MOVE32_32 0 s2out3
+    MOVE32_32 0 s3out1
+	MOVE32_32 0 s3out2
+	MOVE32_32 0 s3out3
+    MOVE32_32 0 s4out1
+	MOVE32_32 0 s4out2
+	MOVE32_32 0 s4out3
+    MOVE32_32 0 timeMC1
+	MOVE32_32 0 timeMC2
+	MOVE32_32 0 timeMC3
+	MOVE32_32 0 timeMC4
+	MOVE32_32 0 timeMC5
+	MOVE32_32 0 timeMC6
+	MOVE32_32 0 timeMC7
+	MOVE32_32 0 timeMC8
+	MOVE32_32 0 timeMC9
+    MOVEF_F 0.0 VNIGA_M
+    MOVEF_F 0.0 VH_M
+    MOVEF_F 0.0 VJ_M
+    MOVEF_F 0.0 VPORT_M
+    CALL ARRAYCREATE_FLOAT VA_M
+    MOVEF_F 0.0 VSRED_M
+    MOVEF_F 0.0 VSGREEN_M
+    MOVEF_F 0.0 VSBLUE_M
+    MOVEF_F 0.0 VMAX_M
+    MOVEF_F 0.0 VMIN_M
+    MOVEF_F 0.0 VS_M
+    MOVEF_F 0.0 VV_M
+    MOVEF_F 0.0 VCOL_M
+    ARRAY CREATE8 1 LOCKS
+    CALL PROGRAM_MAIN -1
+    PROGRAM_STOP -1
+}
+subcall PROGRAM_MAIN
+{
+    IN_32 SUBPROGRAM
+    DATA32 INDEX
+    ARRAY8 STACKPOINTER 4
+    DATAF F.0
+    DATAF F.1
+    DATAF F.2
+    ARRAY32 RETURNSTACK2 128
+    ARRAY32 RETURNSTACK 128
+    DATAS S.0 252
+    MOVE8_8 0 STACKPOINTER
+    MOVEF_F 0.0 VNIGA_M
+    MOVEF_F 0.0 VH_M
+    MOVEF_F 0.0 VJ_M
+    MOVEF_F 0.0 VPORT_M
+    CALL ARRAYSTORE_FLOAT 0.0 0.0 VA_M
+    MOVEF_F 0.0 VSRED_M
+    MOVEF_F 0.0 VSGREEN_M
+    MOVEF_F 0.0 VSBLUE_M
+    MOVEF_F 0.0 VMAX_M
+    MOVEF_F 0.0 VMIN_M
+    MOVEF_F 0.0 VS_M
+    MOVEF_F 0.0 VV_M
+    MOVEF_F 0.0 VCOL_M
+    DATA8 layer1
+	DATA8 no1
+	DATA8 mode81
+	
+	MOVEF_8 4.0 no1
+	SUB8 no1 1 no1
+	DIV8 no1 4 layer1
+	MATH MOD8 no1 4 no1
+
+	MOVEF_8 4.0 mode81
+	
+	INPUT_DEVICE READY_RAW layer1 no1 0 mode81 0
+    MOVEF_F -100000.0 VNIGA_M
+  while5:
+  whilebody5:
+    MOVEF_F 120.0 VH_M
+    MOVEF_F 0.0 VJ_M
+    MOVEF_F 4.0 VPORT_M
+  while6:
+    JR_NEQF VH_M 120.0 endwhile6
+    JR_GTEQF VJ_M 20.0 endwhile6
+  whilebody6:
+    CALL SENSOR.READRAW VPORT_M 2.0 VA_M
+    CALL ARRAYGET_FLOAT 0.0 VSRED_M VA_M
+    CALL ARRAYGET_FLOAT 1.0 VSGREEN_M VA_M
+    CALL ARRAYGET_FLOAT 2.0 VSBLUE_M VA_M
+    JR_LTEQF VSRED_M VSGREEN_M else11_1
+    JR_LTEQF VSRED_M VSBLUE_M else11_1
+    MOVEF_F VSRED_M VMAX_M
+    JR endif11
+  else11_1:
+    JR_LTEQF VSGREEN_M VSRED_M else11_2
+    JR_LTEQF VSGREEN_M VSBLUE_M else11_2
+    MOVEF_F VSGREEN_M VMAX_M
+    JR endif11
+  else11_2:
+    JR_LTEQF VSBLUE_M VSRED_M else11_3
+    JR_LTEQF VSBLUE_M VSGREEN_M else11_3
+    MOVEF_F VSBLUE_M VMAX_M
+  else11_3:
+  endif11:
+    JR_GTEQF VSRED_M VSGREEN_M else12_1
+    JR_GTEQF VSRED_M VSBLUE_M else12_1
+    MOVEF_F VSRED_M VMIN_M
+    JR endif12
+  else12_1:
+    JR_GTEQF VSGREEN_M VSRED_M else12_2
+    JR_GTEQF VSGREEN_M VSBLUE_M else12_2
+    MOVEF_F VSGREEN_M VMIN_M
+    JR endif12
+  else12_2:
+    JR_GTEQF VSBLUE_M VSRED_M else12_3
+    JR_GTEQF VSBLUE_M VSGREEN_M else12_3
+    MOVEF_F VSBLUE_M VMIN_M
+  else12_3:
+  endif12:
+    JR_NEQF VMAX_M VMIN_M else13_1
+    MOVEF_F 0.0 VH_M
+    JR endif13
+  else13_1:
+    JR_NEQF VSRED_M VMAX_M else14_1
+    JR_LTF VSGREEN_M VSBLUE_M else15_1
+    SUBF VSGREEN_M VSBLUE_M F.1
+    MULF 60.0 F.1 F.0
+    SUBF VMAX_M VMIN_M F.1
+    DATAF tmpf19
+    DATA8 flag19
+    DIVF F.0 F.1 tmpf19
+    CP_EQF 0.0 F.1 flag19
+    SELECTF flag19 0.0 tmpf19 VH_M
+
+    JR endif15
+  else15_1:
+    SUBF VSGREEN_M VSBLUE_M F.2
+    MULF 60.0 F.2 F.1
+    SUBF VMAX_M VMIN_M F.2
+    DATAF tmpf23
+    DATA8 flag23
+    DIVF F.1 F.2 tmpf23
+    CP_EQF 0.0 F.2 flag23
+    SELECTF flag23 0.0 tmpf23 F.0
+
+    ADDF F.0 360.0 VH_M
+  else15_2:
+  endif15:
+    JR endif14
+  else14_1:
+    JR_NEQF VMAX_M VSGREEN_M else25_1
+    SUBF VSBLUE_M VSRED_M F.2
+    MULF 60.0 F.2 F.1
+    SUBF VMAX_M VMIN_M F.2
+    DATAF tmpf29
+    DATA8 flag29
+    DIVF F.1 F.2 tmpf29
+    CP_EQF 0.0 F.2 flag29
+    SELECTF flag29 0.0 tmpf29 F.0
+
+    ADDF F.0 120.0 VH_M
+    JR endif25
+  else25_1:
+    SUBF VSRED_M VSGREEN_M F.2
+    MULF 60.0 F.2 F.1
+    SUBF VMAX_M VMIN_M F.2
+    DATAF tmpf34
+    DATA8 flag34
+    DIVF F.1 F.2 tmpf34
+    CP_EQF 0.0 F.2 flag34
+    SELECTF flag34 0.0 tmpf34 F.0
+
+    ADDF F.0 240.0 VH_M
+  else25_2:
+  endif25:
+  else14_2:
+  endif14:
+  else13_2:
+  endif13:
+    ADDF VJ_M 1.0 VJ_M
+    JR_NEQF VH_M 120.0 and37
+    JR_LTF VJ_M 20.0 whilebody6
+  and37:
+  endwhile6:
+    JR_NEQF VMAX_M 0.0 else38_1
+    MOVEF_F 0.0 VS_M
+    JR endif38
+  else38_1:
+    DATAF tmpf39
+    DATA8 flag39
+    DIVF VMIN_M VMAX_M tmpf39
+    CP_EQF 0.0 VMAX_M flag39
+    SELECTF flag39 0.0 tmpf39 F.0
+
+    SUBF 1.0 F.0 VS_M
+  else38_2:
+  endif38:
+    MOVEF_F VMAX_M VV_M
+    JR_LTEQF VH_M 85.0 else41_1
+    JR_GTEQF VH_M 110.0 else41_1
+    JR_LTEQF VV_M 13.0 else41_1
+    MOVEF_F 3.0 VCOL_M
+    JR endif41
+  else41_1:
+    JR_LTEQF VSGREEN_M 7.0 else41_2
+    JR_GTEQF VSRED_M 20.0 else41_2
+    JR_EQF VNIGA_M 1.0 else42_1
+    MOVEF_F 1.0 VCOL_M
+  else42_1:
+  endif42:
+    JR endif41
+  else41_2:
+    JR_LTEQF VH_M 10.0 else41_3
+    JR_GTEQF VH_M 35.0 else41_3
+    JR_LTEQF VV_M 10.0 else41_3
+    MOVEF_F 5.0 VCOL_M
+    JR endif41
+  else41_3:
+    JR_LTEQF VH_M 35.0 else41_4
+    JR_GTEQF VH_M 85.0 else41_4
+    JR_LTEQF VV_M 10.0 else41_4
+    MOVEF_F 6.0 VCOL_M
+    JR endif41
+  else41_4:
+    MOVEF_F 0.0 VCOL_M
+  else41_5:
+  endif41:
+    CALL LCD.CLEAR
+    STRINGS VALUE_FORMATTED VH_M '%g' 99 S.0
+    CALL LCD.TEXT 1.0 20.0 20.0 2.0 S.0
+    STRINGS VALUE_FORMATTED VV_M '%g' 99 S.0
+    CALL LCD.TEXT 1.0 20.0 60.0 2.0 S.0
+    STRINGS VALUE_FORMATTED VCOL_M '%g' 99 S.0
+    CALL LCD.TEXT 1.0 60.0 100.0 2.0 S.0
+    JR_NEQF VCOL_M 1.0 else50_1
+    CALL EV3.SETLEDCOLOR 'GREEN' 'NORMAL'
+    JR endif50
+  else50_1:
+    JR_NEQF VCOL_M 5.0 else50_2
+    CALL EV3.SETLEDCOLOR 'RED' 'NORMAL'
+    JR endif50
+  else50_2:
+    JR_NEQF VCOL_M 6.0 else50_3
+    CALL EV3.SETLEDCOLOR 'ORANGE' 'NORMAL'
+    JR endif50
+  else50_3:
+    JR_NEQF VCOL_M 4.0 else50_4
+    CALL SPEAKER.NOTE 70.0 'B7' 200.0
+    JR endif50
+  else50_4:
+    CALL EV3.SETLEDCOLOR 'OFF' 'NORMAL'
+  else50_5:
+  endif50:
+    WRITE32 ENDSUB_FRZ:CALLSUB56 STACKPOINTER RETURNSTACK
+    ADD8 STACKPOINTER 1 STACKPOINTER
+    JR SUB_FRZ
+CALLSUB56:
+    JR whilebody5
+  endwhile5:
+ENDTHREAD:
+    RETURN
+SUB_FRZ:
+    UI_BUTTON FLUSH
+    UI_BUTTON WAIT_FOR_PRESS
+    CALL SPEAKER.NOTE 70.0 'B7' 200.0
+RETSUB_FRZ:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_FRZ:
+}
+subcall ARRAYSTORE_FLOAT   // FFFV
+{
+	IN_F index
+	IN_F value	
+	IN_16 handle
+	
+	DATA32 index32
+	DATA32 len	
+	MOVEF_32 index index32
+
+	ARRAY SIZE handle len
+	JR_LT32 index32 0 negativeindex
+	JR_LT32 index32 len arraybigenough
+
+increasesize:	
+	DATA32 doublelen
+	ADD32 len len doublelen
+	ARRAY RESIZE handle doublelen
+writeloop:	
+	ARRAY_WRITE handle len 0.0
+	ADD32 len 1 len
+	JR_LT32 len doublelen writeloop
+	JR_GTEQ32 index32 len increasesize
+	
+arraybigenough:
+	ARRAY_WRITE handle index32 value
+negativeindex:
+}
+subcall SPEAKER.NOTE      // FSFV
+{
+	IN_F volume
+	IN_S note 8
+	IN_F duration
+	
+	DATA8 vol
+	DATA16 tne
+	DATA16 dur
+	MOVEF_8 volume vol
+	NOTE_TO_FREQ note tne
+	MOVEF_16 duration dur
+	
+	SOUND TONE vol tne dur
+}
+subcall SENSOR.READRAW            // FFA
+{
+	IN_F port
+	IN_F values
+	IN_16 resultarray
+	
+	DATA8 layer
+	DATA8 no
+	DATA32 values32
+		
+	MOVEF_8 port no
+	SUB8 no 1 no
+	DIV8 no 4 layer
+	MATH MOD8 no 4 no
+
+	MOVEF_32 values values32
+
+	JR_LTEQ32 values32 0 arrayempty
+	ARRAY RESIZE resultarray values32
+
+	DATA32 rawvalue0
+	DATA32 rawvalue1
+	DATA32 rawvalue2
+	DATA32 rawvalue3
+	DATA32 rawvalue4
+	DATA32 rawvalue5
+	DATA32 rawvalue6
+	DATA32 rawvalue7
+	INPUT_READEXT layer no 0 -1 18 8 rawvalue0 rawvalue1 rawvalue2 rawvalue3 rawvalue4 rawvalue5 rawvalue6 rawvalue7
+	
+	DATA32 i
+	DATA32 rawtmp
+	MOVE32_32 0 i
+loop:
+	DATA8 tmp8
+	DATAF tmpf
+
+	MOVEF_F 0.0 tmpf
+	JR_GTEQ32 i 8 nomoredata
+
+	MOVE32_8 i tmp8
+	READ32 rawvalue0 tmp8 rawtmp
+	JR_LT32 rawtmp -1000000000 nomoredata
+	MOVE32_F rawtmp tmpf
+
+nomoredata:	
+	ARRAY_WRITE resultarray i tmpf
+
+	ADD32 i 1 i
+	JR_LT32 i values32 loop
+	RETURN
+
+arrayempty:
+	ARRAY RESIZE resultarray 0
+}
+subcall ARRAYGET_FLOAT     // FFF
+{
+	IN_F index
+	OUT_F value
+	IN_16 handle
+	
+	DATA32 index32
+	DATA32 len
+	MOVEF_32 index index32
+	
+	ARRAY SIZE handle len
+	JR_LT32 index32 0 outofbounds
+	JR_GTEQ32 index32 len outofbounds
+	
+	ARRAY_READ handle index32 value
+	RETURN
+outofbounds:
+	MOVE8_F 0 value	
+}
+subcall LCD.CLEAR   // V
+{
+	UI_DRAW(TOPLINE,0)
+	UI_DRAW(CLEAN)
+	
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall LCD.TEXT     // FFFFSV
+{
+	IN_F col
+	IN_F x
+	IN_F y
+	IN_F font
+	IN_S text 252
+	
+	DATA8 col_8
+	DATA16 x_16
+	DATA16 y_16
+	DATA8 font_8	
+	MOVEF_8 col col_8
+	MOVEF_16 x x_16
+	MOVEF_16 y y_16
+	MOVEF_8 font font_8
+	
+	UI_DRAW SELECT_FONT font_8
+	UI_DRAW TEXT col_8 x_16 y_16 text
+
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall EV3.SETLEDCOLOR    // SSV
+{
+	IN_S color 8		// only receive first 7 characters
+	IN_S effect 8       // only receive first 7 characters
+	
+	ARRAY8 color_1 4	// split up to be able to do some operations with 4 bytes each
+	ARRAY8 color_2 4
+	ARRAY8 effect_1 4
+	ARRAY8 effect_2 4
+
+	STRINGS DUPLICATE color color_1
+	STRINGS DUPLICATE effect effect_1	
+	AND8888_32 color_1 -538976289 color_1        // AND 0xdfdfdfdf performs an upcase for 4 letters
+	AND8888_32 color_2 -538976289 color_2        // AND 0xdfdfdfdf performs an upcase for 4 letters
+	AND8888_32 effect_1 -538976289 effect_1      // AND 0xdfdfdfdf performs an upcase for 4 letters	
+	AND8888_32 effect_2 -538976289 effect_2      // AND 0xdfdfdfdf performs an upcase for 4 letters	
+	
+	DATA8 col
+	DATA8 flag
+	MOVE8_8 0 col
+	
+	STRINGS COMPARE color_1 'GREEN' flag
+	JR_EQ8 flag 0 notgreen
+	MOVE8_8 1 col
+	JR checkeffect
+notgreen:	
+	STRINGS COMPARE color_1 'RED' flag
+	JR_EQ8 flag 0 notred
+	MOVE8_8 2 col
+	JR checkeffect
+notred:	
+	STRINGS COMPARE color_1 'ORANGE' flag
+	JR_EQ8 flag 0 setcol
+	MOVE8_8 3 col
+checkeffect:
+	
+	STRINGS COMPARE effect_1 'FLASH' flag
+	JR_EQ8 flag 0 noflash
+	ADD8 col 3 col
+	JR setcol
+noflash:
+	STRINGS COMPARE effect_1 'PULSE' flag
+	JR_EQ8 flag 0 setcol
+	ADD8 col 6 col	
+	
+setcol:
+	UI_WRITE LED col
+}
+subcall ARRAYCREATE_FLOAT   // F
+{
+	OUT_16 handle
+	
+	ARRAY CREATEF 8 handle			// create with 8 elements
+	ARRAY FILL handle 0.0
+}

@@ -1,0 +1,163 @@
+k=0.25   
+min1=100
+max1=0
+min2=100
+max2=0
+i=0
+sun=2
+num=0 
+a=0
+gray=0
+black=10
+col=0
+red=0
+go=0
+Sensor.SetMode(4,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<300
+  s1=Sensor.ReadPercent(2)
+  s2=Sensor.ReadPercent(3)
+  If s1<min1 Then
+    min1=s1
+    EndIf
+  If s1>max1 Then
+    max1=s1
+  EndIf
+  If s2<min2 Then
+    min2=s2
+    EndIf
+  If s2>max2 Then
+    max2=s2
+  EndIf
+  Motor.StartSync("BC",40,40)
+EndWhile
+Motor.Stop("BC","true")
+Sub left
+Motor.MoveSync("BC",-30,30,170,"false")
+  While Sensor.ReadPercent(3)>black
+    Motor.StartSync("BC",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",20,-20,40,"true")
+EndSub
+Sub right
+Motor.MoveSync("BC",30,-30,170,"false")
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",-20,20,40,"true")
+  EndSub  
+Sub around
+  Motor.MoveSync("BC",40,-40,140,"false")
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.MoveSync("BC",-20,20,50,"true")
+EndSub 
+Sub open
+ Motor.Move("D",15,110,"true")
+EndSub
+Sub close
+ Motor.ResetCount("Bc")
+ Motor.StartPower("d",-15)
+ Program.Delay(300)
+  While Motor.GetSpeed("D")<-5
+    LCD.Clear()
+    LCD.Text(2,40,40,2,Motor.GetSpeed("D"))
+  EndWhile
+Motor.Stop("BCDA","false")
+EndSub
+Sub ToColor
+  While go<>1
+    Motor.StartPower("BC",15)
+    If Sensor.ReadRawValue(4,0)=4 Then
+      go=1
+      col=4
+    ElseIf Sensor.ReadRawValue(4,0)=5 then
+      go=1
+      col=5
+    EndIf
+  EndWhile
+  Motor.Stop("BC","true")
+  go=0
+EndSub
+  
+Sub sen1
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)
+EndSub
+Sub sen2
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)
+  EndSub
+gray=(((max1+min1)/2)+((max2+min2)/2))/2
+LCD.Clear()
+LCD.Text(2,40,40,2,gray)
+Program.Delay(50)
+  sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",gray-U*k)
+  Motor.StartPower("B",gray+U*k)
+  EndSub
+'=====================================================
+Sub GoToLine
+For i=1 to num
+  sen1()
+  sen2()
+While (s1>10 Or s2<80) And (s1<8 Or s2>10) And (s1>10 Or s2>10)
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",gray-U*k)
+  Motor.StartPower("B",gray+U*k)
+EndWhile
+Motor.Stop("BC","FALSE")
+If i<>num Then
+  Motor.Move("BC",30,25,"true")
+  Motor.ResetCount("BC")
+  While (Motor.GetCount("B")+Motor.GetCount("c"))/2<100
+      line()
+    EndWhile
+    Motor.Stop("BC","true")
+  Else
+    Motor.Move("BC",30,40,"true")
+    EndIf
+EndFor
+EndSub
+'================================================================
+'===================================================================
+'=================================================================
+'===================================================================
+'=====================================================================
+num=1
+    GoToLine()  
+    Motor.Move("BC",30,30,"true")
+    right()
+    If red=1 then
+    num=1
+    GoToLine()
+    ElseIf red=2 then
+    num=2
+    GoToLine()
+    ElseIf red=3 then
+    num=3
+    GoToLine()
+  EndIf
+  Motor.Move("BC",30,30,"true")
+  right()
+  Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<350
+  line()
+EndWhile
+Motor.Stop("BC","true")
+close()
+Motor.Move("BC",-40,600,"true")
+While Sensor.ReadPercent(3)>14
+  Motor.Start("BC,20)
+EndWhile
+Motor.Stop("BC","true")
+Motor.Move("BC",30,30,"true")
+right()

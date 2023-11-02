@@ -1,0 +1,32 @@
+Motor.Invert("b")
+max2=0
+max3=0
+min2=100
+min3=100
+Motor.ResetCount("bc")
+Motor.Start("bc",30)
+While (Motor.GetCount("b") + Motor.GetCount("c") )/2<500
+  
+  If Sensor.ReadPercent(2) > max2 Then
+    max2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(2) < min2 Then
+    min2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(3) > max3 Then
+    max3=Sensor.ReadPercent(3)
+  EndIf
+  If Sensor.ReadPercent(3) < min3 Then
+    min3=Sensor.ReadPercent(3)
+  EndIf
+  
+EndWhile
+
+Motor.Stop("bc","true")
+'Program.Delay(100)
+F=EV3File.OpenWrite("a123/colib.dat")
+EV3File.WriteLine(F,min2)
+EV3File.WriteLine(F,min3)
+EV3File.WriteLine(F,max2)
+EV3File.WriteLine(F,max3)
+EV3File.Close(F)

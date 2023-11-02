@@ -1,0 +1,120 @@
+L_m = 0 ' global variable init 
+GRAD_m = 0 ' global variable init 
+SP_1 = 0 ' local variable init 
+L_1 = 0 ' local variable init 
+U_1 = 0 ' local variable init 
+MM_2 = 0 ' local variable init 
+SP_2 = 0 ' local variable init 
+L_2 = 0 ' local variable init 
+GRAD_3 = 0 ' local variable init 
+L_3 = 0 ' local variable init 
+GRAD_4 = 0 ' local variable init 
+L_4 = 0 ' local variable init 
+GRAD_5 = 0 ' local variable init 
+L_5 = 0 ' local variable init 
+GRAD_6 = 0 ' local variable init 
+L_6 = 0 ' local variable init 
+SPEED_7 = 0 ' local variable init 
+Sub MOVE_2
+Motor.ResetCount ( "BC" )
+While ( Math.Abs ( Motor.GetCount ( "C" ) ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 <= L_1
+U_1 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_1 + U_1 * 0.8 )
+Motor.StartPower ( "B" , SP_1 - U_1 * 0.8 )
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub TOMM_2
+L_2 = MM_2 / ( 82 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+SP_1 = SP_2
+L_1 = L_2
+MOVE_2()
+SP_2 = 0
+EndSub
+Sub LEFT
+L_m = 65 / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+Motor.MoveSync ( "BC" , - 20 , 20 , 170 , "true" )
+While Sensor.ReadPercent ( 3 ) < 20
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+While Sensor.ReadPercent ( 3 ) > 15
+Motor.StartSync ( "BC" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub RIGHT
+L_m = 50 / ( 82 * 3.14 ) * 360
+Motor.Move ( "BC" , 20 , L_m , "true" )
+Motor.MoveSync ( "BC" , 20 , - 20 , 170 , "true" )
+While Sensor.ReadPercent ( 2 ) < 20
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+While Sensor.ReadPercent ( 2 ) > 15
+Motor.StartSync ( "BC" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub LEFT1_1
+L_3 = ( ( 2 * 3.14 * 186 * GRAD_3 ) / 360 )
+L_3 = L_3 / ( 3.14 * 82 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "C" , 35 )
+While Motor.GetCount ( "C" ) < L_3
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub RIGHT1_1
+L_4 = ( ( 2 * 3.14 * 186 * GRAD_4 ) / 360 )
+L_4 = L_4 / ( 3.14 * 82 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "B" , 35 )
+While Motor.GetCount ( "B" ) < L_4
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub LEFT2_1
+L_5 = ( ( 2 * 3.14 * 186 * GRAD_5 ) / 360 ) / 2
+L_5 = L_5 / ( 3.14 * 82 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "C" , 20 )
+Motor.StartPower ( "B" , - 20 )
+While ( Motor.GetCount ( "C" ) + Math.Abs ( Motor.GetCount ( "B" ) ) ) / 2 < L_5
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub RIGHT2_1
+L_6 = ( ( 2 * 3.14 * 186 * GRAD_6 ) / 360 ) / 2
+L_6 = L_6 / ( 3.14 * 82 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "C" , - 20 )
+Motor.StartPower ( "B" , 20 )
+While ( Motor.GetCount ( "B" ) + Math.Abs ( Motor.GetCount ( "C" ) ) ) / 2 < L_6
+EndWhile
+Motor.Stop ( "BC" , "true" )
+EndSub
+Sub CLOSE_1
+Motor.Start ( "D" , - 50 )
+Program.Delay ( 1000 )
+Motor.Stop ( "BC" , "true" )
+EndSub
+MM_2 = 50
+SP_2 = - 20
+TOMM_2()
+GRAD_5 = 150
+LEFT2_1()
+SPEED_7 = 50
+CLOSE_1()
+GRAD_m = 150
+L_m = ( ( 2 * 3.14 * 186 * GRAD_m ) / 360 )
+L_m = L_m / ( 3.14 * 82 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.StartPower ( "C" , - 35 )
+While Math.Abs ( Motor.GetCount ( "C" ) ) < L_m
+EndWhile
+Motor.StartPower ( "BC" , - 30 )
+Program.Delay ( 1500 )
+Motor.Stop ( "BC" , "true" )

@@ -1,0 +1,58 @@
+CODE_m[0] = 0 ' global variable init 
+COLOR_m = "" ' global variable init 
+ERR_m = 0 ' global variable init 
+I_m = 0 ' global variable init 
+A_m = 0 ' global variable init 
+LENGTH_m = 0 ' global variable init 
+X1_m = 0 ' global variable init 
+X2_m = 0 ' global variable init 
+X3_m = 0 ' global variable init 
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+CODE_m [ 1 ] = 0
+Sub READ_COLOR
+If ( ( Sensor.ReadPercent ( 3 ) + Sensor.ReadPercent ( 2 ) ) / 2 < 30 ) Then
+COLOR_m = "Black"
+Else
+COLOR_m = "White"
+EndIf
+EndSub
+Sub READ_CODE
+Sensor.SetMode ( 1 , 0 )
+Sensor.SetMode ( 2 , 0 )
+ERR_m = 0
+Motor.ResetCount ( "BC" )
+For I_m = 1 To 4
+READ_COLOR ()
+While ( COLOR_m = "White" )
+Program.Delay ( 3 )
+READ_COLOR ()
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , - 15 + ERR_m * 2 , 15 + ERR_m * 2 )
+EndWhile
+A_m = ( Math.Abs ( Motor.GetCount ( "B" ) ) + Math.Abs ( Motor.GetCount ( "C" ) ) ) / 2
+Motor.ResetCount ( "BC" )
+While ( ( Math.Abs ( Motor.GetCount ( "B" ) ) + Math.Abs ( Motor.GetCount ( "C" ) ) ) / 2 < 7 )
+Program.Delay ( 2 )
+EndWhile
+READ_COLOR ()
+While ( COLOR_m = "Black" )
+Program.Delay ( 3 )
+READ_COLOR ()
+ERR_m = Math.Abs ( Motor.GetCount ( "B" ) ) - Math.Abs ( Motor.GetCount ( "C" ) )
+Motor.StartSync ( "BC" , - 15 + ERR_m * 2 , 15 + ERR_m * 2 )
+EndWhile
+LENGTH_m = 62.4 * Math.Pi / 360 * ( ( Math.Abs ( Motor.GetCount ( "B" ) ) + Math.Abs ( Motor.GetCount ( "C" ) ) ) / 2 ) / 10
+CODE_m [ I_m ] = Math.Floor ( LENGTH_m )
+EndFor
+Motor.Stop ( "BC" , "True" )
+X1_m = CODE_m [ 1 ]
+X2_m = CODE_m [ 2 ]
+X3_m = CODE_m [ 3 ]
+EndSub
+READ_CODE ()
+LCD.Clear ()
+LCD.Text ( 1 , 1 , 20 , 20 , X1_m )
+LCD.Text ( 1 , 1 , 45 , 20 , X2_m )
+LCD.Text ( 1 , 1 , 70 , 20 , X3_m )
+Program.Delay ( 2000000000000 )

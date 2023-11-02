@@ -1,0 +1,133 @@
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+SENDARRAY_m[0] = 0 ' global variable init 
+RECVARRAY_m[0] = 0 ' global variable init 
+SNUM_m = 0 ' global variable init 
+SRED_m = 0 ' global variable init 
+SGREEN_m = 0 ' global variable init 
+SBLUE_m = 0 ' global variable init 
+MAX_m = 0 ' global variable init 
+MIN_m = 0 ' global variable init 
+H_m = 0 ' global variable init 
+S_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+BG_m = 0 ' global variable init 
+COLOR_m = 0 ' global variable init 
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 4 , 2 )
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+Sub GETHSVRGB
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( 4 , 1 , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m
+SGREEN_m = SGREEN_m
+SBLUE_m = SBLUE_m
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+BG_m = SBLUE_m + SGREEN_m
+If ( H_m > 0 and H_m < 30 ) or ( H_m > 330 and H_m < 370 ) Then
+COLOR_m = 5
+ElseIf SRED_m > 11 and SRED_m < 24 Then
+COLOR_m = 1
+ElseIf SRED_m > 24 Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf
+LCD.Text ( 1 , 20 , 30 , 1 , H_m )
+LCD.Text ( 1 , 20 , 60 , 1 , SRED_m )
+LCD.Text ( 1 , 20 , 90 , 1 , COLOR_m )
+If ( H_m > 0 and H_m < 32 ) or ( H_m > 330 and H_m < 370 ) Then
+COLOR_m = 5
+ElseIf SRED_m > 15 and SRED_m < 70 Then
+COLOR_m = 1
+ElseIf SRED_m > 69 Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf
+LCD.Text ( 1 , 110 , 30 , 1 , H_m )
+LCD.Text ( 1 , 110 , 60 , 1 , SRED_m )
+LCD.Text ( 1 , 110 , 90 , 1 , COLOR_m )
+EndSub
+LCD.Clear ()
+While "true"
+GETHSVRGB ()
+Program.Delay ( 500 )
+EndWhile
+If ( H_m > 0 And H_m < 60 ) or ( H_m > 356 and H_m < 370 ) Then
+COLOR_m = 5
+ElseIf ( SRED_m > 10 And SRED_m < 100 ) or ( SRED_m > 320 ) Then
+COLOR_m = 1
+ElseIf SRED_m > 100 And SRED_m < 320 Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf
+If ( H_m > 0 And H_m < 60 ) or ( H_m > 350 and H_m < 370 ) Then
+COLOR_m = 5
+ElseIf ( SRED_m > 35 And SRED_m < 180 ) or ( SRED_m > 350 ) Then
+COLOR_m = 1
+ElseIf SRED_m > 180 And SRED_m < 320 Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf
+If ( H_m > 1 and H_m < 100 ) or ( H_m > 330 and H_m < 370 ) Then
+COLOR_m = 5
+ElseIf SRED_m > 1 and SRED_m < 20 Then
+COLOR_m = 1
+ElseIf SRED_m > 20 Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf
+If ( H_m > 14 and H_m < 45 ) or ( H_m > 330 and H_m < 370 ) Then
+COLOR_m = 5
+ElseIf SRED_m > 1 and SRED_m < 37 Then
+COLOR_m = 1
+ElseIf SRED_m > 37 Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf

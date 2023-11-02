@@ -1,0 +1,266 @@
+'Ср.Мотор - D
+
+
+'режим 0 - свет
+'режим 4 - цвет
+
+'порт 1 - 
+'порт 2 - езда <-
+'порт 3 - езда ->
+'порт 4 - Цвет
+Sensor.SetMode(1,0)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,0)
+
+min1=100
+max1=0
+min2=100
+max2=0
+
+pos = 0
+grad = 0
+mm = 0
+
+k = 0.3 'Коофицент
+v = 40 'Скорость для езды по линии
+
+sp = 0 'Скорость перемещения
+
+d = 56 'диаметр колес
+b = 103 'колес. база робота
+
+grey = 10
+black = 20
+
+'================================================
+'================================================
+'================Дальше святое!!!================
+'===================(линия)======================
+'================================================
+'================================================
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(1)-min1)/(max1-min1)
+  
+EndSub
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(4)-min2)/(max2-min2)
+  
+EndSub
+
+Sub line2
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v+U*k)
+  Motor.StartPower("B",v-U*k)
+EndSub
+
+Function line1 ( in number port )
+  U=Sensor.ReadPercent(port)-@grey
+  Motor.StartPower("C",@v+U*@k)
+  Motor.StartPower("B",@v-U*@k)
+EndFunction
+
+'================================================
+'================================================
+'==================Движения======================
+'================================================
+'================================================
+
+'По линии======================================
+
+Sub left
+  Motor.Move("BC",20,47,"true")
+  Motor.MoveSync("BC",-20,20,170,"true")
+  While Sensor.ReadPercent(4)>black
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+Sub right
+  Motor.Move("BC",20,50,"true")
+  Motor.MoveSync("BC",20,-20,170,"true")
+  While Sensor.ReadPercent(1)>black
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+'По формуле======================================
+
+Function Vpered ( in number mm , in number sp)
+  grad = mm / ( Math.Pi * @d ) * 360 'находим количество гредусов для проезда
+  Motor.Move("BC",sp,grad,"true") 'проезжаем
+EndFunction
+
+Function Left1 ( in number turn )
+  grad = ( 2 * Math.Pi * @b * turn ) / 360
+  grad = grad / ( Math.Pi * @d ) * 360'находим количество гредусов для поворота на каждый из моторов
+  Motor.MoveSync("BC",0,10,grad,"true")
+EndFunction
+
+Function right1 ( in number turn )
+  grad = ( 2 * Math.Pi * @b * turn ) / 360
+  grad = grad / ( Math.Pi * @d ) * 360'находим количество гредусов для поворота на каждый из моторов
+  Motor.MoveSync("BC",10,0,grad,"true")
+EndFunction
+
+Function Left2 ( in number turn )
+  grad = ( ( 2 * ( Math.Pi * @b - 30 ) * turn ) / 360 ) / 2
+  grad = grad / ( Math.Pi * @d ) * 360'находим количество гредусов для поворота на каждый из моторов
+  Motor.MoveSync("BC",-10,10,grad,"true")
+EndFunction
+
+Function right2 ( in number turn )
+  grad = ( ( 2 * ( Math.Pi * @b - 30 ) * turn) / 360 ) / 2
+  grad = grad / ( Math.Pi * @d ) * 360'находим количество гредусов для поворота на каждый из моторов
+  Motor.MoveSync("BC",10,-10,grad,"true")
+EndFunction
+
+Function PoOkruzL ( in number v1 )
+  v2 = v1 * ( @d + @b ) / @d 'Вычисляем скорость второго мотора
+  Motor.MoveSync("BC",v1,v2,360,"true") 'поворачиваем
+EndFunction
+
+Function PoOkruzR ( in number v1 )
+  v2 = v1 * ( @d + @b ) / @d 'Вычисляем скорость второго мотора
+  Motor.MoveSync("BC",v2,v1,360,"true") 'поворачиваем
+EndFunction
+
+'================================================
+'================================================
+'==================Захват========================
+'================================================
+'================================================
+'================================================
+
+Function clawo (in number sp)
+  Motor.StartPower("D",sp)
+  Program.Delay(300)
+  While Motor.GetSpeed("D") < sp/2
+  EndWhile
+  Motor.StartPower("D",-10)
+  Program.Delay(300)
+  Motor.StartPower("D",-5)
+EndFunction
+
+Function clawc (in number sp)
+  Motor.StartPower("D",sp)
+  Program.Delay(300)
+  While Motor.GetSpeed("D") > sp/2
+  EndWhile
+  Motor.StartPower("D",10)
+  Program.Delay(300)
+  Motor.StartPower("D",5)
+EndFunction
+
+'================================================
+'================================================
+'==================Ultrasonic====================
+'================================================
+'================================================
+
+Sub sonic
+  sm = Sensor.ReadRawValue(4,0)
+EndSub
+
+Function leight (in number mm)
+  While Sensor.ReadRawValue(4,0) > mm
+    line2()
+  EndWhile
+  Motor.Stop("BC","true")
+  Speaker.Note(100,"c#5",200)
+  Motor.ResetCount("B")
+  While Sensor.ReadRawValue(4,0) < mm
+    line2()
+  EndWhile
+  Motor.Stop("BC","true")
+  Speaker.Note(100,"c#5",200)
+  g = Motor.GetCount("B")
+  @mm = g/360*(Math.Pi*@d)
+EndFunction
+
+'================================================
+'================================================
+'======================DOP=======================
+'================================================
+'================================================
+
+Function Text  (in number txt)
+  LCD.Clear()
+  LCD.Text(1,20,20,2,txt)
+EndFunction
+
+Sub frz
+  LCD.Clear()
+  LCD.Text(1,20,20,2,"freeze")
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+  LCD.Clear()
+EndSub
+
+Function MxMdMn ( in number a , in number b , in number c )
+  mx = Math.Max(a,b)
+  @mx = Math.Max(mx,c)
+  mn = Math.Min(a,b)
+  @mn = Math.Max(mn,c)
+  @md = a + b + c - mx - mn
+EndFunction
+
+'================================================
+'================================================
+'================Готовые строчки=================
+'================================================
+'================================================
+
+' Sensor.ReadPercent(2) > black And Sensor.ReadPercent(3) > black
+
+' Sensor.ReadPercent(2) > black Or Sensor.ReadPercent(3) > black
+
+' Sensor.ReadPercent(2) < black And Sensor.ReadPercent(3) < black
+
+' Sensor.ReadPercent(2) < black Or Sensor.ReadPercent(3) < black
+
+' Sensor.ReadPercent(2) > black
+
+' Sensor.ReadPercent(2) < black
+
+' Sensor.ReadPercent(3) > black
+
+' Sensor.ReadPercent(3) < black
+
+' Sensor.ReadRawValue(1) <> col
+
+' Sensor.ReadRawValue(1) = col
+
+' (Motor.GetCount("B") + Motor.GetCount("C")) / 2
+
+Vpered(100,20)
+Vpered(100,-20)
+left2(180)
+Vpered(100,20)
+Motor.Start("D",20)
+Program.Delay(700)
+Motor.Stop("D","true")
+for i = 1 to 11
+    left2 (30)
+  Vpered(310,20)
+  Text(Sensor.ReadRawValue(1,0))
+  if Sensor.ReadRawValue(1,0)<170 Then
+  else
+    Vpered(150,20)
+    Vpered(150,-20)
+  EndIf
+  Vpered(310,-20)
+EndFor
+Vpered(50,-20)
+
+
+

@@ -1,0 +1,24 @@
+
+
+
+j = 0
+c = 0
+LCD.Clear()
+for i = 1 to 8
+  a[i]=Math.GetRandomNumber(11)+1
+    b[i]=Math.GetRandomNumber(11)+1
+EndFor
+for i = 1 to 8
+    if a[i] <> b[i] Then
+      j =  j + 1
+      LCD.Write(50,10 * j,a[i])
+      LCD.Write(70,10 * j,b[i])
+    EndIf
+EndFor
+for i = 1 to 8
+    LCD.Write(10,10 * i,a[i])
+EndFor
+for i = 1 to 8
+    LCD.Write(30,10 * i,b[i])
+EndFor
+Program.Delay(10000000000)

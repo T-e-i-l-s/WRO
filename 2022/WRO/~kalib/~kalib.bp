@@ -1,0 +1,262 @@
+COL_m = 0 ' global variable init 
+RED_m = 0 ' global variable init 
+I2CPORT_m = 0 ' global variable init 
+I2CSLVADDR_m = 0 ' global variable init 
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+N_m = 0 ' global variable init 
+SENDARRAY_m[0] = 0 ' global variable init 
+RECVARRAY_m[0] = 0 ' global variable init 
+SNUM_m = 0 ' global variable init 
+SRED_m = 0 ' global variable init 
+SGREEN_m = 0 ' global variable init 
+SBLUE_m = 0 ' global variable init 
+MAX_m = 0 ' global variable init 
+MIN_m = 0 ' global variable init 
+H_m = 0 ' global variable init 
+S_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+COLOR_m = 0 ' global variable init 
+RD1_m = 0 ' global variable init 
+RD2_m = 0 ' global variable init 
+BD1_m = 0 ' global variable init 
+BD2_m = 0 ' global variable init 
+WD1_m = 0 ' global variable init 
+WD2_m = 0 ' global variable init 
+RB1_m = 0 ' global variable init 
+RB2_m = 0 ' global variable init 
+BB1_m = 0 ' global variable init 
+BB2_m = 0 ' global variable init 
+WB1_m = 0 ' global variable init 
+WB2_m = 0 ' global variable init 
+F1_m = 0 ' global variable init 
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 4 , 2 )
+COL_m = 0
+RED_m = 0
+I2CPORT_m = 1
+I2CSLVADDR_m = 1
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+N_m = 0
+Sub HSV1
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( 1 , I2CSLVADDR_m , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m / 255
+SGREEN_m = SGREEN_m / 255
+SBLUE_m = SBLUE_m / 255
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+If ( H_m > 0 And H_m < 20 ) And V_m > 0.4 Then
+COLOR_m = 5
+ElseIf ( H_m > 210 And H_m < 300 ) And ( V_m > 0.4 ) Then
+COLOR_m = 2
+ElseIf ( H_m > 20 And H_m < 100 ) And ( V_m > 0.6 ) Then
+COLOR_m = 4
+ElseIf H_m > 100 And H_m < 210 Then
+COLOR_m = 3
+Else
+COLOR_m = 0
+EndIf
+N_m = COLOR_m
+EndSub
+Sub HSV4
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( 4 , I2CSLVADDR_m , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m / 255
+SGREEN_m = SGREEN_m / 255
+SBLUE_m = SBLUE_m / 255
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+If ( H_m > 0 And H_m < 20 ) And V_m > 0.4 Then
+COLOR_m = 5
+ElseIf ( H_m > 210 And H_m < 300 ) And ( V_m > 0.4 ) Then
+COLOR_m = 2
+ElseIf ( H_m > 20 And H_m < 100 ) And ( V_m > 0.6 ) Then
+COLOR_m = 4
+ElseIf H_m > 100 And H_m < 210 Then
+COLOR_m = 3
+Else
+COLOR_m = 0
+EndIf
+N_m = COLOR_m
+EndSub
+While Buttons.Current <> "E"
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "Red_Dal" )
+HSV1 ()
+RD1_m = N_m
+HSV4 ()
+RD2_m = N_m
+LCD.Text ( 1 , 20 , 60 , 1 , RD1_m )
+LCD.Text ( 1 , 20 , 90 , 1 , RD2_m )
+Program.Delay ( 300 )
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+While Buttons.Current <> "E"
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "Black_Dal" )
+HSV1 ()
+BD1_m = N_m
+LCD.Text ( 1 , 20 , 60 , 1 , N_m )
+HSV4 ()
+BD2_m = N_m
+LCD.Text ( 1 , 20 , 90 , 1 , N_m )
+Program.Delay ( 300 )
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+While Buttons.Current <> "E"
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "White_Dal" )
+HSV1 ()
+WD1_m = N_m
+LCD.Text ( 1 , 20 , 60 , 1 , N_m )
+HSV4 ()
+WD2_m = N_m
+LCD.Text ( 1 , 20 , 90 , 1 , N_m )
+Program.Delay ( 300 )
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+While Buttons.Current <> "E"
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "Red_Bliz" )
+HSV1 ()
+RB1_m = N_m
+LCD.Text ( 1 , 20 , 60 , 1 , N_m )
+HSV4 ()
+RB2_m = N_m
+LCD.Text ( 1 , 20 , 90 , 1 , N_m )
+Program.Delay ( 300 )
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+While Buttons.Current <> "E"
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "Black_Bliz" )
+HSV1 ()
+BB1_m = N_m
+LCD.Text ( 1 , 20 , 60 , 1 , N_m )
+HSV4 ()
+BB2_m = N_m
+LCD.Text ( 1 , 20 , 90 , 1 , N_m )
+Program.Delay ( 300 )
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+While Buttons.Current <> "E"
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "White_Bliz" )
+HSV1 ()
+WB1_m = N_m
+LCD.Text ( 1 , 20 , 60 , 1 , N_m )
+HSV4 ()
+WB2_m = N_m
+LCD.Text ( 1 , 20 , 90 , 1 , N_m )
+Program.Delay ( 300 )
+EndWhile
+Speaker.Note ( 100 , "c#5" , 200 )
+Program.Delay ( 300 )
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , "Ready!" )
+Speaker.Note ( 100 , "c#3" , 500 )
+F1_m = EV3File.OpenWrite ( "ld.txt" )
+EV3File.WriteLine ( F1_m , RD1_m )
+EV3File.WriteLine ( F1_m , BD1_m )
+EV3File.WriteLine ( F1_m , WD1_m )
+EV3File.Close ( F1_m )
+F1_m = EV3File.OpenWrite ( "rd.txt" )
+EV3File.WriteLine ( F1_m , RD2_m )
+EV3File.WriteLine ( F1_m , BD2_m )
+EV3File.WriteLine ( F1_m , WD2_m )
+EV3File.Close ( F1_m )
+F1_m = EV3File.OpenWrite ( "lb.txt" )
+EV3File.WriteLine ( F1_m , RB1_m )
+EV3File.WriteLine ( F1_m , BB1_m )
+EV3File.WriteLine ( F1_m , WB1_m )
+EV3File.Close ( F1_m )
+F1_m = EV3File.OpenWrite ( "rb.txt" )
+EV3File.WriteLine ( F1_m , RB2_m )
+EV3File.WriteLine ( F1_m , BB2_m )
+EV3File.WriteLine ( F1_m , WB2_m )
+EV3File.Close ( F1_m )

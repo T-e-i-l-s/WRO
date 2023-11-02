@@ -1,0 +1,585 @@
+DATA16 FD_NATIVECODECOMMAND
+DATA16 FD_NATIVECODERESPONSE
+DATA32 STOPLCDUPDATE
+DATA32 NUMMAILBOXES
+ARRAY8 MOTORISINVERTED 4     
+ARRAY8 FIRSTOF2  16
+ARRAY16 LOCKS 2           
+DATA32 s1out1
+DATA32 s1out2
+DATA32 s1out3
+DATA32 s2out1
+DATA32 s2out2
+DATA32 s2out3
+DATA32 s3out1
+DATA32 s3out2
+DATA32 s3out3
+DATA32 s4out1
+DATA32 s4out2
+DATA32 s4out3
+DATA32 getTachoA
+DATA32 tmpTachoA
+DATA8 getSpeedA
+DATA8 setSpeedA
+DATA8 setPowerA
+DATA32 getTachoB
+DATA32 tmpTachoB
+DATA8 getSpeedB
+DATA8 setSpeedB
+DATA8 setPowerB
+DATA32 getTachoC
+DATA32 tmpTachoC
+DATA8 getSpeedC
+DATA8 setSpeedC
+DATA8 setPowerC
+DATA32 getTachoD
+DATA32 tmpTachoD
+DATA8 getSpeedD
+DATA8 setSpeedD
+DATA8 setPowerD
+DATA16 newArray1d
+DATA32 newSize1d
+DATA32 newIndex1d
+DATA32 timeMC1
+DATA32 timeMC2
+DATA32 timeMC3
+DATA32 timeMC4
+DATA32 timeMC5
+DATA32 timeMC6
+DATA32 timeMC7
+DATA32 timeMC8
+DATA32 timeMC9
+DATA32 timeMC1tmp
+DATA32 timeMC2tmp
+DATA32 timeMC3tmp
+DATA32 timeMC4tmp
+DATA32 timeMC5tmp
+DATA32 timeMC6tmp
+DATA32 timeMC7tmp
+DATA32 timeMC8tmp
+DATA32 timeMC9tmp
+DATAF VF1_M
+DATAS VRD1_M 252
+DATAS VBD1_M 252
+DATAS VWD1_M 252
+DATAS VRD2_M 252
+DATAS VBD2_M 252
+DATAS VWD2_M 252
+DATAS VRB1_M 252
+DATAS VBB1_M 252
+DATAS VWB1_M 252
+DATAS VRB2_M 252
+DATAS VBB2_M 252
+DATAS VWB2_M 252
+
+vmthread MAIN
+{
+    MOVE32_32 0 STOPLCDUPDATE
+    MOVE32_32 0 NUMMAILBOXES
+    OUTPUT_RESET 0 15
+
+	WRITE8 0 0 MOTORISINVERTED
+	WRITE8 0 1 MOTORISINVERTED
+	WRITE8 0 2 MOTORISINVERTED
+	WRITE8 0 3 MOTORISINVERTED
+	WRITE8 0 0 FIRSTOF2
+	WRITE8 0 1 FIRSTOF2
+	WRITE8 0 2 FIRSTOF2
+	WRITE8 1 3 FIRSTOF2
+	WRITE8 0 4 FIRSTOF2
+	WRITE8 1 5 FIRSTOF2
+	WRITE8 2 6 FIRSTOF2
+	WRITE8 0 7 FIRSTOF2
+	WRITE8 0 8 FIRSTOF2
+	WRITE8 1 9 FIRSTOF2
+	WRITE8 2 10 FIRSTOF2
+	WRITE8 0 11 FIRSTOF2
+	WRITE8 4 12 FIRSTOF2
+	WRITE8 0 13 FIRSTOF2
+	WRITE8 0 14 FIRSTOF2
+	WRITE8 0 15 FIRSTOF2
+    INPUT_DEVICE CLR_ALL -1
+    ARRAY CREATE8 0 LOCKS
+    MOVE32_32 0 s1out1
+	MOVE32_32 0 s1out2
+	MOVE32_32 0 s1out3
+    MOVE32_32 0 s2out1
+	MOVE32_32 0 s2out2
+	MOVE32_32 0 s2out3
+    MOVE32_32 0 s3out1
+	MOVE32_32 0 s3out2
+	MOVE32_32 0 s3out3
+    MOVE32_32 0 s4out1
+	MOVE32_32 0 s4out2
+	MOVE32_32 0 s4out3
+    MOVE32_32 0 timeMC1
+	MOVE32_32 0 timeMC2
+	MOVE32_32 0 timeMC3
+	MOVE32_32 0 timeMC4
+	MOVE32_32 0 timeMC5
+	MOVE32_32 0 timeMC6
+	MOVE32_32 0 timeMC7
+	MOVE32_32 0 timeMC8
+	MOVE32_32 0 timeMC9
+    MOVEF_F 0.0 VF1_M
+    STRINGS DUPLICATE '' VRD1_M
+    STRINGS DUPLICATE '' VBD1_M
+    STRINGS DUPLICATE '' VWD1_M
+    STRINGS DUPLICATE '' VRD2_M
+    STRINGS DUPLICATE '' VBD2_M
+    STRINGS DUPLICATE '' VWD2_M
+    STRINGS DUPLICATE '' VRB1_M
+    STRINGS DUPLICATE '' VBB1_M
+    STRINGS DUPLICATE '' VWB1_M
+    STRINGS DUPLICATE '' VRB2_M
+    STRINGS DUPLICATE '' VBB2_M
+    STRINGS DUPLICATE '' VWB2_M
+    ARRAY CREATE8 1 LOCKS
+    CALL PROGRAM_MAIN -1
+    PROGRAM_STOP -1
+}
+subcall PROGRAM_MAIN
+{
+    IN_32 SUBPROGRAM
+    DATA32 INDEX
+    ARRAY8 STACKPOINTER 4
+    ARRAY32 RETURNSTACK2 128
+    ARRAY32 RETURNSTACK 128
+    DATAS S.0 252
+    DATAS S.1 252
+    MOVE8_8 0 STACKPOINTER
+    MOVEF_F 0.0 VF1_M
+    STRINGS DUPLICATE '' VRD1_M
+    STRINGS DUPLICATE '' VBD1_M
+    STRINGS DUPLICATE '' VWD1_M
+    STRINGS DUPLICATE '' VRD2_M
+    STRINGS DUPLICATE '' VBD2_M
+    STRINGS DUPLICATE '' VWD2_M
+    STRINGS DUPLICATE '' VRB1_M
+    STRINGS DUPLICATE '' VBB1_M
+    STRINGS DUPLICATE '' VWB1_M
+    STRINGS DUPLICATE '' VRB2_M
+    STRINGS DUPLICATE '' VBB2_M
+    STRINGS DUPLICATE '' VWB2_M
+    CALL EV3FILE.OPENREAD 'ld.txt' VF1_M
+    CALL EV3FILE.READLINE VF1_M VRD1_M
+    CALL EV3FILE.READLINE VF1_M VBD1_M
+    CALL EV3FILE.READLINE VF1_M VWD1_M
+    CALL EV3FILE.CLOSE VF1_M
+    CALL EV3FILE.OPENREAD 'rd.txt' VF1_M
+    CALL EV3FILE.READLINE VF1_M VRD2_M
+    CALL EV3FILE.READLINE VF1_M VBD2_M
+    CALL EV3FILE.READLINE VF1_M VWD2_M
+    CALL EV3FILE.CLOSE VF1_M
+    CALL EV3FILE.OPENREAD 'lb.txt' VF1_M
+    CALL EV3FILE.READLINE VF1_M VRB1_M
+    CALL EV3FILE.READLINE VF1_M VBB1_M
+    CALL EV3FILE.READLINE VF1_M VWB1_M
+    CALL EV3FILE.CLOSE VF1_M
+    CALL EV3FILE.OPENREAD 'rb.txt' VF1_M
+    CALL EV3FILE.READLINE VF1_M VRB2_M
+    CALL EV3FILE.READLINE VF1_M VBB2_M
+    CALL EV3FILE.READLINE VF1_M VWB2_M
+    CALL EV3FILE.CLOSE VF1_M
+  while20:
+  whilebody20:
+    CALL SPEAKER.NOTE 100.0 'c#5' 200.0
+    CALL LCD.CLEAR
+    CALL LCD.TEXT 1.0 120.0 10.0 1.0 '<'
+    CALL TEXT.APPEND 'rd=' VRD1_M S.0
+    CALL LCD.TEXT 1.0 20.0 10.0 1.0 S.0
+    CALL TEXT.APPEND 'bd=' VBD1_M S.0
+    CALL LCD.TEXT 1.0 20.0 20.0 1.0 S.0
+    CALL TEXT.APPEND 'wd=' VWD1_M S.0
+    CALL LCD.TEXT 1.0 20.0 30.0 1.0 S.0
+    CALL TEXT.APPEND 'rb=' VRB1_M S.0
+    CALL LCD.TEXT 1.0 20.0 40.0 1.0 S.0
+    CALL TEXT.APPEND 'bb=' VBB1_M S.0
+    CALL LCD.TEXT 1.0 20.0 50.0 1.0 S.0
+    CALL TEXT.APPEND 'wb=' VWB1_M S.0
+    CALL LCD.TEXT 1.0 20.0 60.0 1.0 S.0
+  while36:
+    CALL BUTTONS.CURRENT S.1
+    CALL NE_STRING S.1 'E' S.0
+    AND8888_32 S.0 -538976289 S.0
+    STRINGS COMPARE S.0 'TRUE' S.0
+    JR_EQ8 S.0 0 endwhile36
+  whilebody36:
+    CALL BUTTONS.CURRENT S.1
+    CALL NE_STRING S.1 'E' S.0
+    AND8888_32 S.0 -538976289 S.0
+    STRINGS COMPARE S.0 'TRUE' S.0
+    JR_NEQ8 S.0 0 whilebody36
+  endwhile36:
+    CALL SPEAKER.NOTE 100.0 'c#5' 200.0
+    DATA32 milliseconds42
+	MOVEF_32 300.0 milliseconds42
+	DATA32 timer42
+	TIMER_WAIT milliseconds42 timer42
+	TIMER_READY timer42
+    CALL SPEAKER.NOTE 100.0 'c#5' 200.0
+    CALL LCD.CLEAR
+    CALL LCD.TEXT 1.0 120.0 10.0 1.0 '>'
+    CALL TEXT.APPEND 'rd=' VRD2_M S.0
+    CALL LCD.TEXT 1.0 20.0 10.0 1.0 S.0
+    CALL TEXT.APPEND 'bd=' VBD2_M S.0
+    CALL LCD.TEXT 1.0 20.0 20.0 1.0 S.0
+    CALL TEXT.APPEND 'wd=' VWD2_M S.0
+    CALL LCD.TEXT 1.0 20.0 30.0 1.0 S.0
+    CALL TEXT.APPEND 'rb=' VRB2_M S.0
+    CALL LCD.TEXT 1.0 20.0 40.0 1.0 S.0
+    CALL TEXT.APPEND 'bb=' VBB2_M S.0
+    CALL LCD.TEXT 1.0 20.0 50.0 1.0 S.0
+    CALL TEXT.APPEND 'wb=' VWB2_M S.0
+    CALL LCD.TEXT 1.0 20.0 60.0 1.0 S.0
+  while58:
+    CALL BUTTONS.CURRENT S.1
+    CALL NE_STRING S.1 'E' S.0
+    AND8888_32 S.0 -538976289 S.0
+    STRINGS COMPARE S.0 'TRUE' S.0
+    JR_EQ8 S.0 0 endwhile58
+  whilebody58:
+    CALL BUTTONS.CURRENT S.1
+    CALL NE_STRING S.1 'E' S.0
+    AND8888_32 S.0 -538976289 S.0
+    STRINGS COMPARE S.0 'TRUE' S.0
+    JR_NEQ8 S.0 0 whilebody58
+  endwhile58:
+    JR whilebody20
+  endwhile20:
+ENDTHREAD:
+    RETURN
+}
+subcall EV3FILE.OPENREAD       // SF
+{
+	IN_S filename 252
+	OUT_F handle
+
+	DATAS fullname 300
+	DATA16 handle16
+	DATA32 dummylength
+
+	STRINGS DUPLICATE filename fullname
+	JR_EQ8 filename 47 absolutepath               // filename begins with a '/'
+	STRINGS ADD '/home/root/lms2012/prjs/' filename fullname
+absolutepath:
+	FILE OPEN_READ fullname handle16 dummylength
+
+	MOVE16_F handle16 handle
+}
+subcall EV3FILE.READLINE     // FS
+{
+	IN_F handle
+	OUT_S text 252
+
+	JR_LTF handle 1.0 invalidhandle
+	JR_GTF handle 32767.0 invalidhandle
+	DATA16 handle16
+	MOVEF_16 handle handle16
+	FILE READ_TEXT handle16 6 127 text
+	RETURN
+
+invalidhandle:
+	STRINGS DUPLICATE '' text
+}
+subcall EV3FILE.CLOSE          // FV
+{
+	IN_F handle
+
+	JR_LTF handle 1.0 invalidhandle
+	JR_GTF handle 32767.0 invalidhandle
+	DATA16 handle16
+	MOVEF_16 handle handle16
+	FILE CLOSE handle16
+invalidhandle:
+}
+subcall SPEAKER.NOTE      // FSFV
+{
+	IN_F volume
+	IN_S note 8
+	IN_F duration
+	
+	DATA8 vol
+	DATA16 tne
+	DATA16 dur
+	MOVEF_8 volume vol
+	NOTE_TO_FREQ note tne
+	MOVEF_16 duration dur
+	
+	SOUND TONE vol tne dur
+}
+subcall LCD.CLEAR   // V
+{
+	UI_DRAW(TOPLINE,0)
+	UI_DRAW(CLEAN)
+	
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall LCD.TEXT     // FFFFSV
+{
+	IN_F col
+	IN_F x
+	IN_F y
+	IN_F font
+	IN_S text 252
+	
+	DATA8 col_8
+	DATA16 x_16
+	DATA16 y_16
+	DATA8 font_8	
+	MOVEF_8 col col_8
+	MOVEF_16 x x_16
+	MOVEF_16 y y_16
+	MOVEF_8 font font_8
+	
+	UI_DRAW SELECT_FONT font_8
+	UI_DRAW TEXT col_8 x_16 y_16 text
+
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall TEXT.APPEND     // SSS
+{
+	IN_S a 252
+	IN_S b 252
+    OUT_S result 252
+	
+	DATA16 len0
+	DATA16 len1
+	DATA16 sum
+
+	STRINGS GET_SIZE a len0
+	STRINGS GET_SIZE b len1
+	ADD16 len0,len1,sum
+	JR_GT16 sum,251,stringsizeexceeded
+
+	STRINGS ADD a b result
+	RETURN
+	
+stringsizeexceeded:	
+    STRINGS DUPLICATE a result
+}
+subcall BUTTONS.CURRENT    // S
+{
+	OUT_S result 8
+	DATA8 ispressed
+	
+// BIG CASE TREE TO GET ALL POSSIBILITIES
+
+	UI_BUTTON PRESSED 1 ispressed
+	JR_NEQ8 ispressed 0 is_1____
+is_X____:
+	UI_BUTTON PRESSED 2 ispressed
+	JR_NEQ8 ispressed 0 is_X2___
+is_XX___:
+	UI_BUTTON PRESSED 3 ispressed
+	JR_NEQ8 ispressed 0 is_XX3__
+is_XXX__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_XXX4_
+is_XXXX_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_XXXX5
+is_XXXXX:
+	STRINGS DUPLICATE '' result
+	RETURN
+is_XXXX5:
+	STRINGS DUPLICATE 'L' result
+	RETURN
+is_XXX4_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_XXX45
+is_XXX4X:
+	STRINGS DUPLICATE 'R' result
+	RETURN
+is_XXX45:
+	STRINGS DUPLICATE 'RL' result
+	RETURN
+is_XX3__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_XX34_
+is_XX3X_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_XX3X5
+is_XX3XX:
+	STRINGS DUPLICATE 'D' result
+	RETURN
+is_XX3X5:
+	STRINGS DUPLICATE 'DL' result
+	RETURN
+is_XX34_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_XX345
+is_XX34X:
+	STRINGS DUPLICATE 'DR' result
+	RETURN
+is_XX345:
+	STRINGS DUPLICATE 'DRL' result
+	RETURN
+is_X2___:
+	UI_BUTTON PRESSED 3 ispressed
+	JR_NEQ8 ispressed 0 is_X23__
+is_X2X__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_X2X4_
+is_X2XX_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_X2XX5
+is_X2XXX:
+	STRINGS DUPLICATE 'E' result
+	RETURN
+is_X2XX5:
+	STRINGS DUPLICATE 'EL' result
+	RETURN
+is_X2X4_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_X2X45
+is_X2X4X:
+	STRINGS DUPLICATE 'ER' result
+	RETURN
+is_X2X45:
+	STRINGS DUPLICATE 'ERL' result
+	RETURN
+is_X23__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_X234_
+is_X23X_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_X23X5
+is_X23XX:
+	STRINGS DUPLICATE 'ED' result
+	RETURN
+is_X23X5:
+	STRINGS DUPLICATE 'EDL' result
+	RETURN
+is_X234_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_X2345
+is_X234X:
+	STRINGS DUPLICATE 'EDR' result
+	RETURN
+is_X2345:
+	STRINGS DUPLICATE 'EDRL' result
+	RETURN
+is_1____:
+	UI_BUTTON PRESSED 2 ispressed
+	JR_NEQ8 ispressed 0 is_12___
+is_1X___:
+	UI_BUTTON PRESSED 3 ispressed
+	JR_NEQ8 ispressed 0 is_1X3__
+is_1XX__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_1XX4_
+is_1XXX_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_1XXX5
+is_1XXXX:
+	STRINGS DUPLICATE 'U' result
+	RETURN
+is_1XXX5:
+	STRINGS DUPLICATE 'UL' result
+	RETURN
+is_1XX4_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_1XX45
+is_1XX4X:
+	STRINGS DUPLICATE 'UR' result
+	RETURN
+is_1XX45:
+	STRINGS DUPLICATE 'URL' result
+	RETURN
+is_1X3__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_1X34_
+is_1X3X_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_1X3X5
+is_1X3XX:
+	STRINGS DUPLICATE 'UD' result
+	RETURN
+is_1X3X5:
+	STRINGS DUPLICATE 'UDL' result
+	RETURN
+is_1X34_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_1X345
+is_1X34X:
+	STRINGS DUPLICATE 'UDR' result
+	RETURN
+is_1X345:
+	STRINGS DUPLICATE 'UDRL' result
+	RETURN
+is_12___:
+	UI_BUTTON PRESSED 3 ispressed
+	JR_NEQ8 ispressed 0 is_123__
+is_12X__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_12X4_
+is_12XX_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_12XX5
+is_12XXX:
+	STRINGS DUPLICATE 'UE' result
+	RETURN
+is_12XX5:
+	STRINGS DUPLICATE 'UEL' result
+	RETURN
+is_12X4_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_12X45
+is_12X4X:
+	STRINGS DUPLICATE 'UER' result
+	RETURN
+is_12X45:
+	STRINGS DUPLICATE 'UERL' result
+	RETURN
+is_123__:
+	UI_BUTTON PRESSED 4 ispressed
+	JR_NEQ8 ispressed 0 is_1234_
+is_123X_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_123X5
+is_123XX:
+	STRINGS DUPLICATE 'UED' result
+	RETURN
+is_123X5:
+	STRINGS DUPLICATE 'UEDL' result
+	RETURN
+is_1234_:
+	UI_BUTTON PRESSED 5 ispressed
+	JR_NEQ8 ispressed 0 is_12345
+is_1234X:
+	STRINGS DUPLICATE 'UEDR' result
+	RETURN
+is_12345:
+	STRINGS DUPLICATE 'UEDRL' result
+	RETURN
+}
+subcall NE_STRING       // SSS
+{
+	IN_S  a 252
+	IN_S  b 252
+	OUT_S result 8
+	
+	DATA8 flag
+	
+	// check if completely equal
+	STRINGS COMPARE a b flag
+	JR_NEQ8 flag 0 isequal
+	// second chance: when both values are "True" in any casing, this also counts as equal
+	AND8888_32 a -538976289 a        // AND 0xdfdfdfdf performs an upcase for 4 letters
+    STRINGS COMPARE a 'TRUE' flag	
+	JR_EQ8 0 flag isnotequal
+	AND8888_32 b -538976289 b        // AND 0xdfdfdfdf performs an upcase for 4 letters
+    STRINGS COMPARE b 'TRUE' flag	
+	JR_EQ8 0 flag isnotequal
+isequal:
+	STRINGS DUPLICATE 'False' result
+	RETURN
+isnotequal:
+	STRINGS DUPLICATE 'True' result
+	RETURN
+}

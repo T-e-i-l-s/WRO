@@ -1,0 +1,40 @@
+SP_1 = 0 ' local variable init 
+U_1 = 0 ' local variable init 
+MM_2 = 0 ' local variable init 
+SP_2 = 0 ' local variable init 
+L_2 = 0 ' local variable init 
+MM_3 = 0 ' local variable init 
+SP_3 = 0 ' local variable init 
+L_3 = 0 ' local variable init 
+Sub FRZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Sub REG_1
+U_1 = Motor.GetCount ( "B" ) - Motor.GetCount ( "C" )
+Motor.StartPower ( "C" , SP_1 + U_1 * 0.5 )
+Motor.StartPower ( "B" , SP_1 - U_1 * 0.5 )
+EndSub
+Sub TOMM1_2
+L_2 = MM_2 / ( 82 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+Motor.MoveSync ( "CB" , SP_2 , SP_2 , L_2 , "true" )
+SP_2 = 0
+EndSub
+Sub TOMM2_2
+L_3 = MM_3 / ( 82 * 3.14 ) * 360
+Motor.ResetCount ( "BC" )
+While ( Motor.GetCount ( "C" ) + Motor.GetCount ( "B" ) ) / 2 < L_3
+SP_1 = 20
+REG_1()
+EndWhile
+SP_3 = 0
+EndSub
+MM_2 = 200
+SP_2 = 20
+TOMM1_2()
+FRZ ()
+MM_3 = 200
+SP_3 = 20
+TOMM2_2()

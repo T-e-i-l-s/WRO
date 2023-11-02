@@ -1,0 +1,3 @@
+f1=EV3File.OpenWrite("num.txt")
+EV3File.WriteLine(f1,"1000-7")
+EV3File.Close(f1)

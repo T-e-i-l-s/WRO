@@ -1,0 +1,4 @@
+F1_m = 0 ' global variable init 
+F1_m = EV3File.OpenWrite ( "num.txt" )
+EV3File.WriteLine ( F1_m , "1000-7" )
+EV3File.Close ( F1_m )

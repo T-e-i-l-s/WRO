@@ -1,0 +1,2047 @@
+gv_g = 0
+gv_r = 0
+gv_y = 0
+gv_w = 0
+gv_color = 0
+gv_x = 0
+gv_c = 0
+gv_s = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 0
+gv_min3 = 0
+gv_k1 = 0
+gv_k2 = 0
+gv_k3 = 0
+gv_s3 = 0
+gv_s2 = 0
+gv_speed = 0
+gv_speedl = 0
+gv_speedr = 0
+gv_eold = 0
+gv_n = 0
+gv_p = 0
+gv_i = 0
+gv_i2cport = 0
+gv_i2cslvaddr = 0
+gv_f = 0
+gv_sendarray [ 0 ] = 0
+gv_recvarray [ 0 ] = 0
+gv_snum = 0
+gv_sred = 0
+gv_sgreen = 0
+gv_sblue = 0
+gv_max = 0
+gv_min = 0
+gv_h = 0
+gv_v = 0
+gv_e = 0
+gv_u = 0
+gv_d = 0
+gv_z = 0
+gv_color1 = 0
+gv_l = 0
+gv_color2 = 0
+gv_j = 0
+gv_color3 = 0
+gv_color4 = 0
+gv_color5 = 0
+Motor.Invert ( "b" )
+gv_g = 0
+gv_r = 0
+gv_y = 0
+gv_w = 0
+gv_color = 0
+gv_x = 0
+gv_c = 0
+gv_s = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 0
+gv_min3 = 0
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+gv_k1 = 0.22
+gv_k2 = 4
+gv_k3 = 0.15
+gv_s3 = 0
+gv_s2 = 0
+gv_speed = 0
+gv_speedl = 0
+gv_speedr = 0
+gv_eold = 0
+gv_n = 0
+Motor.Stop ( "bc" , "true" )
+gv_p = 0
+gv_i = 0
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+Motor.Stop ( "bc" , "true" )
+gv_f = EV3File.OpenRead ( "a123/colib.dat" )
+gv_min2 = EV3File.ConvertToNumber ( EV3File.ReadLine ( gv_f ) )
+gv_min3 = EV3File.ConvertToNumber ( EV3File.ReadLine ( gv_f ) )
+gv_max2 = EV3File.ConvertToNumber ( EV3File.ReadLine ( gv_f ) )
+gv_max3 = EV3File.ConvertToNumber ( EV3File.ReadLine ( gv_f ) )
+EV3File.Close ( gv_f )
+LCD.Clear ()
+LCD.Text ( 1 , 10 , 10 , 1 , gv_min2 )
+LCD.Text ( 1 , 20 , 20 , 1 , gv_min3 )
+LCD.Text ( 1 , 30 , 30 , 1 , gv_max2 )
+LCD.Text ( 1 , 40 , 40 , 1 , gv_max3 )
+Program.Delay ( 100 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+f_hsv_0 ()
+If ( gv_h > 110 ) Then
+gv_color = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+ElseIf ( gv_h > 30 And gv_h < 120 ) Then
+gv_color = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+Else
+gv_color = 6
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Zero" )
+EndIf
+Thread.Run = f_vidvig_0
+Motor.MoveSync ( "bc" , 30 , 0 , 130 , "true" )
+Motor.MoveSync ( "bc" , 0 , 30 , 130 , "true" )
+Motor.ResetCount ( "bc" )
+Motor.Start ( "bcd" , 40 )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 100
+If Sensor.ReadPercent ( 2 ) > gv_max2 Then
+gv_max2 = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 2 ) < gv_min2 Then
+gv_min2 = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 3 ) > gv_max3 Then
+gv_max3 = Sensor.ReadPercent ( 3 )
+EndIf
+If Sensor.ReadPercent ( 3 ) < gv_min3 Then
+gv_min3 = Sensor.ReadPercent ( 3 )
+EndIf
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_hsv_100_0 ()
+If ( gv_h > 100 ) Or ( gv_h >= 0 And gv_h <= 27 ) Then
+gv_color1 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color1 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+If gv_color = 4 Then
+gv_s = 800
+f_us_0 ()
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Motor.ResetCount ( "bc" )
+While Motor.GetCount ( "b" ) < 625
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_sb1_0 ()
+Motor.MoveSync ( "bc" , 60 , 60 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 100
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_s = 650
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+If gv_color1 = 5 Then
+f_red_1_0 ()
+gv_c = gv_c + 1
+Else
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 300 , "true" )
+While Sensor.ReadPercent ( 3 ) < 55 And Sensor.ReadPercent ( 2 ) < 55 Or Sensor.ReadPercent ( 3 ) < 55 And Sensor.ReadPercent ( 2 ) > 55 Or Sensor.ReadPercent ( 3 ) > 55 And Sensor.ReadPercent ( 2 ) < 55
+Motor.StartSync ( "bc" , - 10 , 10 )
+EndWhile
+gv_k3 = 0.2
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.15
+gv_k2 = 8
+EndIf
+Else
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_zadvig_0 ()
+gv_speed = 60
+Motor.ResetCount ( "bc" )
+While Motor.GetCount ( "b" ) < 560
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+If gv_color1 = 5 Then
+f_sb1_0 ()
+Motor.MoveSync ( "bc" , 30 , 30 , 60 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 35
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_k1 = 0.2
+gv_k2 = 0
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+f_red_1_0 ()
+gv_c = gv_c + 1
+Else
+Thread.Run = f_vidvig_0
+f_sb1_0 ()
+Motor.MoveSync ( "bc" , 20 , 20 , 60 , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndIf
+EndIf
+f_hsv_100_0 ()
+If gv_h < 21 or gv_h > 100 then
+gv_color2 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color2 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+If gv_color2 = 4 Then
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_s = 250
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+Else
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While Motor.GetCount ( "b" ) < 210
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 100 )
+f_npl_0 ()
+gv_s = 1230
+gv_l = 3.14 * 80
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+Motor.ResetCount ( "bc" )
+gv_speed = 30
+gv_speed = 30
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 60 Then
+gv_speed = gv_speed + 0.5
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+If gv_c = 1 Then
+f_bellam2_0 ()
+ElseIf gv_c = 0 Then
+f_bellam_0 ()
+EndIf
+gv_s = 900
+f_us_0 ()
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_pl_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 160
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+Motor.MoveSync ( "bc" , - 30 , - 30 , 25 , "true" )
+Thread.Run = f_vidvig_0
+f_npl_0 ()
+gv_s = 250
+f_us_0 ()
+gv_c = gv_c + 1
+EndIf
+f_hsv_100_0 ()
+If ( gv_h > 100 ) And ( gv_h <> 240 ) Or ( gv_h >= 0 And gv_h <= 21 ) Then
+gv_color3 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+ElseIf ( gv_h < 120 ) Then
+gv_color3 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+Else
+gv_color3 = 6
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Zero" )
+EndIf
+If gv_color3 = 4 Then
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_s = 360
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+If gv_c = 0 Then
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 210
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 200
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+f_bellam_0 ()
+gv_s = 250
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pl_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 210
+gv_speed = 40
+gv_k1 = 0.2
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+f_sb2_0 ()
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 400
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+gv_s = 400
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+f_bellam2_0 ()
+gv_s = 250
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 160
+gv_speed = 60
+gv_k1 = 0.2
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 240 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 500
+f_us_0 ()
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+gv_s = 1050
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+f_redl_0 ()
+f_bellam3_0 ()
+gv_s = 950
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 50
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 120 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 600
+f_us_0 ()
+f_finish_0 ()
+EndIf
+EndIf
+If gv_color3 = 5 Then
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 180
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 300
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+If gv_c = 1 Then
+f_bellam2_0 ()
+ElseIf gv_c = 0 Then
+f_bellam_0 ()
+ElseIf gv_c = 2 Then
+f_bellam3_0 ()
+gv_s = 620
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+Program.Delay ( 100 )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 15 , 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 55
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 15 , 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 230
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+gv_s = 800
+f_us_0 ()
+gv_c = gv_c + 1
+f_finish_0 ()
+EndIf
+gv_s = 620
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 15 , 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 55
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 15 , 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 10
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+Thread.Run = f_vidvig_0
+gv_s = 350
+f_us_0 ()
+gv_c = gv_c + 1
+EndIf
+f_hsv_100_0 ()
+If ( gv_h < 21 ) or ( gv_h > 100 ) Then
+gv_color4 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color4 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+If gv_color4 = 4 Then
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+f_sb2_0 ()
+If gv_c = 1 Then
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 210
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+gv_s = 420
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+f_bellam2_0 ()
+gv_s = 0
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_s = 0
+f_us_0 ()
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 110
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 180 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 500
+f_us_0 ()
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+gv_s = 1050
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+f_redl_0 ()
+f_bellam3_0 ()
+gv_s = 900
+f_us_0 ()
+f_pr_0 ()
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 110
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 120 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 600
+f_us_0 ()
+f_finish_0 ()
+EndIf
+EndIf
+If gv_color4 = 5 Then
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 260
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 400
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+If gv_c = 1 Then
+f_bellam2_0 ()
+ElseIf gv_c = 0 Then
+f_bellam_0 ()
+ElseIf gv_c = 2 Then
+f_bellam3_0 ()
+gv_s = 140
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pl_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 210
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 100
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_s = 1250
+f_us_0 ()
+gv_c = gv_c + 1
+f_finish_0 ()
+EndIf
+gv_s = 0
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pl_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 210
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+Thread.Run = f_vidvig_0
+f_npl_0 ()
+f_sb2_0 ()
+gv_c = gv_c + 1
+EndIf
+f_hsv_100_0 ()
+If ( gv_h < 32 ) Or gv_h > 100 Then
+gv_color5 = 5
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Red" )
+Else
+gv_color5 = 4
+Speaker.Play ( 100 , "/home/root/lms2012/prjs/WRO2021/Yellow" )
+EndIf
+If gv_color5 = 4 Then
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+gv_s = 520
+f_us_0 ()
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 270
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+f_zadvig_0 ()
+gv_s = 1050
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+f_redl_0 ()
+f_bellam3_0 ()
+gv_s = 950
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 65 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.MoveSync ( "BC" , 30 , 30 , 120 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 500
+f_us_0 ()
+f_finish_0 ()
+EndIf
+If gv_color5 = 5 Then
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 210
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npp_0 ()
+gv_s = 420
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+If gv_c = 1 Then
+f_bellam2_0 ()
+gv_s = 250
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 160
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 520
+f_us_0 ()
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+While Sensor.ReadPercent ( 2 ) > 8 And Sensor.ReadPercent ( 3 ) > 8 Or Sensor.ReadPercent ( 2 ) < 8 And Sensor.ReadPercent ( 3 ) > 8 Or Sensor.ReadPercent ( 2 ) > 8 And Sensor.ReadPercent ( 3 ) < 8
+Motor.StartSync ( "BC" , - 20 , - 20 )
+EndWhile
+While Sensor.ReadPercent ( 2 ) < 10
+Motor.Start ( "B" , 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) < 10
+Motor.Start ( "C" , 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+Motor.MoveSync ( "bc" , 30 , 30 , 30 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 90 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 55
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_s = 1050
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+f_redl_0 ()
+f_bellam3_0 ()
+gv_s = 950
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 80
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 600
+f_us_0 ()
+f_finish_0 ()
+Else
+f_bellam3_0 ()
+gv_s = 330
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 160
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+gv_s = 1200
+f_us_0 ()
+f_finish_0 ()
+EndIf
+EndIf
+Program.End ()
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+gv_s = 1250
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_s = 320
+f_us_0 ()
+gv_c = gv_c + 1
+Thread.Run = f_vidvig_0
+Sub f_finish_0
+Motor.MoveSync ( "bc" , 0 , 30 , 146 , "true" )
+Motor.MoveSync ( "bc" , 30 , 0 , 146 , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 70 , "true" )
+Program.End ()
+EndSub
+Sub f_sb2_0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 50 , "true" )
+Motor.MoveSync ( "bc" , - 20 , - 20 , 150 , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 300 , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While Sensor.ReadPercent ( 3 ) > 10
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While gv_s3 < 55
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+While Sensor.ReadPercent ( 3 ) > 61 or Sensor.ReadPercent ( 2 ) > 61
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_zamoroz_0 ()
+gv_k3 = 0.2
+gv_k2 = 0
+gv_s = 15
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 30
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.2
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.15
+gv_k2 = 8
+gv_k1 = 0.15
+gv_k2 = 8
+Motor.MoveSync ( "bc" , 20 , 20 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 60
+Motor.StartSync ( "bc" , - 40 , 40 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_us_0
+gv_k2 = 8
+gv_k3 = 0.5
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+gv_speed = 20
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < gv_x
+f_a3_0 ()
+f_a2_0 ()
+If gv_speed < 80 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2dus_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.3
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+EndSub
+Sub f_pl_0
+Motor.MoveSync ( "bc" , 30 , 30 , 60 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 55
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_pr_0
+Motor.MoveSync ( "bc" , 20 , 20 , 60 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 15 , - 15 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 15 , - 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 15 , - 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_npl_0
+f_a2_0 ()
+f_a3_0 ()
+While gv_s2 > 9 And gv_s3 > 9 Or gv_s2 < 9 And gv_s3 > 9 Or gv_s2 > 9 And gv_s3 < 9
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartSync ( "BC" , - 20 , - 20 )
+EndWhile
+Motor.MoveSync ( "bc" , 20 , 20 , 40 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 90 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 10
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_npp_0
+f_virav_naz_0 ()
+Motor.MoveSync ( "bc" , 30 , 30 , 20 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 80 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 8
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 55
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_redl_0
+Thread.Run = f_zadvig_0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 > 15 Or gv_s3 > 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 90
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+f_a2_0 ()
+f_a3_0 ()
+While Motor.GetCount ( "b" ) < 400
+f_a2_0 ()
+f_a3_0 ()
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.Start ( "d" , - 60 )
+Program.Delay ( 250 )
+Motor.Stop ( "d" , "true" )
+Motor.MoveSync ( "bc" , 40 , 40 , 150 , "true" )
+Motor.startSync ( "bc" , - 20 , - 100 )
+Program.Delay ( 1400 )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 100 , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 70 , "true" )
+Motor.MoveSync ( "bc" , 30 , - 30 , 180 , "true" )
+f_virav_0 ()
+gv_k3 = 0.5
+gv_k2 = 4
+Motor.MoveSync ( "bc" , 30 , 30 , 45 , "true" )
+Motor.MoveSync ( "bc" , - 30 , 30 , 100 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 50
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.5
+gv_k2 = 4
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.15
+gv_k2 = 8
+EndSub
+Sub f_bellam_0
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 200
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+gv_k1 = 0.2
+gv_k2 = 0
+For gv_i = 1 To 1
+gv_k1 = 0.4
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+Motor.MoveSync ( "bc" , 20 , 20 , 30 , "true" )
+EndFor
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.2
+gv_k2 = 8
+Motor.MoveSync ( "bc" , - 30 , - 30 , 10 , "true" )
+Motor.MoveSync ( "bc" , 20 , - 20 , 190 , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 130 , "true" )
+Motor.Start ( "d" , 50 )
+Program.Delay ( 500 )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 30 , - 30 , 110 , "true" )
+Motor.MoveSync ( "bc" , 20 , 0 , 415 , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 > 10 Or gv_s3 > 6 And gv_s2 < 6
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartPower ( "bc" , 40 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 20 , - 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Program.Delay ( 100 )
+EndSub
+Sub f_bellam2_0
+f_pr_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 200
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+gv_k1 = 0.15
+gv_k2 = 0
+For gv_i = 1 To 2
+gv_k1 = 0.4
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+Motor.MoveSync ( "bc" , 20 , 20 , 30 , "true" )
+EndFor
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.2
+gv_k2 = 8
+Motor.MoveSync ( "bc" , 20 , 20 , 5 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+gv_j = 80
+While gv_s3 > 10
+f_a3_0 ()
+f_a2_0 ()
+If gv_j > 30 Then
+gv_j = gv_j - 0.1
+EndIf
+Motor.StartSync ( "bc" , 40 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+gv_j = 80
+While gv_s3 < 15
+f_a3_0 ()
+f_a2_0 ()
+If gv_j > 30 Then
+gv_j = gv_j - 0.1
+EndIf
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 50
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_a3_0 ()
+f_a2_0 ()
+gv_e = gv_s3 - ( ( gv_min3 + gv_max3 ) / 2 )
+gv_u = gv_k1 * gv_e + gv_k2 * ( gv_e - gv_eold )
+gv_eold = gv_e
+gv_speedl = gv_speed + gv_u
+gv_speedr = gv_speed - gv_u
+Motor.StartPower ( "B" , gv_speedl )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 18 , 18 , 95 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 > - 240
+Motor.StartPower ( "bc" , - 50 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 20 , - 20 , 180 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 > 10 And gv_s2 < 10 Or gv_s3 < 10 And gv_s2 > 10
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartSync ( "bc" , 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_bellam3_0
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 30 , - 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.4
+gv_k2 = 0
+Motor.ResetCount ( "bc" )
+While Motor.GetCount ( "b" ) < 270
+gv_speed = 20
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+gv_k1 = 0.2
+gv_k2 = 0
+For gv_i = 1 To 3
+gv_k1 = 0.4
+gv_k2 = 0
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 15 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+Motor.MoveSync ( "bc" , 20 , 20 , 30 , "true" )
+EndFor
+Motor.Stop ( "bc" , "true" )
+gv_k1 = 0.2
+gv_k2 = 8
+Motor.MoveSync ( "bc" , 20 , - 20 , 200 , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 130 , "true" )
+Motor.Start ( "d" , 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 60 , 60 , 100 , "true" )
+Motor.MoveSync ( "bc" , 30 , 0 , 375 , "true" )
+Motor.MoveSync ( "bc" , 20 , 20 , 199 , "true" )
+Motor.MoveSync ( "bc" , 20 , 0 , 300 , "true" )
+Motor.MoveSync ( "bc" , 0 , 20 , 300 , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 > 10 Or gv_s3 > 10 And gv_s2 < 10
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartPower ( "bc" , 80 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 15 , 15 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 15 , - 15 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 15 , - 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , 15 , - 15 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+For gv_i = 1 To 1
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 60
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+EndFor
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_red_1_0
+f_pl_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 30
+gv_speed = 30
+gv_k1 = 0.2
+gv_k2 = 0
+f_polin2d_0 ()
+EndWhile
+Motor.MoveSync ( "BC" , 30 , 30 , 210 , "true" )
+gv_k1 = 0.15
+gv_k2 = 8
+Motor.Stop ( "bc" , "true" )
+Program.Delay ( 100 )
+Motor.Start ( "d" , 20 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_a2_0 ()
+f_a3_0 ()
+While gv_s2 > 9 And gv_s3 > 9 Or gv_s2 < 9 And gv_s3 > 9 Or gv_s2 > 9 And gv_s3 < 9
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartSync ( "BC" , - 20 , - 20 )
+EndWhile
+Motor.MoveSync ( "bc" , 20 , 20 , 50 , "true" )
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , - 20 , 20 , 90 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 10
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 30 , 30 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_s = 850
+gv_l = 3.14 * 83
+gv_x = 0
+gv_x = 360 / gv_l * gv_s
+Motor.ResetCount ( "bc" )
+gv_speed = 20
+While Motor.GetCount ( "b" ) < gv_x
+If gv_speed < 60 Then
+gv_speed = gv_speed + 0.1
+EndIf
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_redl_0 ()
+f_bellam_0 ()
+gv_s = 1300
+f_us_0 ()
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "bc" , 30 , 30 , 50 , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 10 And gv_s2 > 10 Or gv_s3 < 10 And gv_s2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_pl_0 ()
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 10
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 80
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.MoveSync ( "BC" , 30 , 30 , 190 , "true" )
+Motor.Start ( "d" , - 30 )
+Program.Delay ( 500 )
+Motor.Stop ( "d" , "true" )
+f_npl_0 ()
+Thread.Run = f_vidvig_0
+gv_s = 200
+f_us_0 ()
+EndSub
+Sub f_sb1_0
+Program.Delay ( 400 )
+Motor.MoveSync ( "bc" , - 25 , - 20 , 150 , "true" )
+Program.Delay ( 400 )
+Motor.MoveSync ( "bc" , - 30 , 25 , 200 , "true" )
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 > 12
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 30 , 25 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+f_a3_0 ()
+f_a2_0 ()
+While gv_s2 < 60
+f_a3_0 ()
+f_a2_0 ()
+Motor.StartSync ( "bc" , - 20 , 20 )
+EndWhile
+Motor.Stop ( "bc" , "true" )
+Motor.ResetCount ( "bc" )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 300
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 30
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+gv_k3 = 0.2
+gv_k2 = 0.15
+f_a3_0 ()
+f_a2_0 ()
+While gv_s3 > 15 And gv_s2 > 15 Or gv_s3 < 10 And gv_s2 < 15
+f_a3_0 ()
+f_a2_0 ()
+gv_speed = 40
+f_polin2d_0 ()
+EndWhile
+Motor.Stop ( "bc" , "true" )
+EndSub
+Sub f_hsv_0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_sendarray [ 0 ] = 66
+gv_recvarray = Sensor.CommunicateI2C ( gv_i2cport , gv_i2cslvaddr , 1 , 4 , gv_sendarray )
+gv_snum = gv_recvarray [ 0 ]
+gv_sred = gv_recvarray [ 1 ]
+gv_sgreen = gv_recvarray [ 2 ]
+gv_sblue = gv_recvarray [ 3 ]
+gv_sred = gv_sred / 255
+gv_sgreen = gv_sgreen / 255
+gv_sblue = gv_sblue / 255
+If ( gv_sred > gv_sgreen ) And ( gv_sred > gv_sblue ) Then
+gv_max = gv_sred
+ElseIf ( gv_sgreen > gv_sred ) And ( gv_sgreen > gv_sblue ) Then
+gv_max = gv_sgreen
+ElseIf ( gv_sblue > gv_sred ) And ( gv_sblue > gv_sgreen ) Then
+gv_max = gv_sblue
+EndIf
+If ( gv_sred < gv_sgreen ) And ( gv_sred < gv_sblue ) Then
+gv_min = gv_sred
+ElseIf ( gv_sgreen < gv_sred ) And ( gv_sgreen < gv_sblue ) Then
+gv_min = gv_sgreen
+ElseIf ( gv_sblue < gv_sred ) And ( gv_sblue < gv_sgreen ) Then
+gv_min = gv_sblue
+EndIf
+If ( gv_max = gv_min ) Then
+gv_h = 0
+Else
+If ( gv_sred = gv_max ) Then
+If ( gv_sgreen >= gv_sblue ) Then
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min )
+Else
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min ) + 360
+EndIf
+Else
+If ( gv_max = gv_sgreen ) Then
+gv_h = 60 * ( gv_sblue - gv_sred ) / ( gv_max - gv_min ) + 120
+Else
+gv_h = 60 * ( gv_sred - gv_sgreen ) / ( gv_max - gv_min ) + 240
+EndIf
+EndIf
+EndIf
+If ( gv_max = 0 ) Then
+gv_s = 0
+Else
+gv_s = 1 - gv_min / gv_max
+EndIf
+gv_v = gv_max
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h )
+LCD.Write ( 10 , 30 , gv_s )
+LCD.Write ( 10 , 60 , gv_v )
+EndSub
+Sub f_hsv_100_0
+gv_p = 0
+gv_x = 0
+gv_d = 0
+gv_z = 0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+For gv_p = 1 To 100
+f_hsv_0 ()
+gv_x = gv_x + gv_h
+gv_z = gv_z + gv_s
+gv_d = gv_d + gv_v
+EndFor
+gv_h = gv_x / 100
+gv_s = gv_z / 100
+gv_v = gv_d / 100
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h )
+LCD.Write ( 10 , 30 , gv_s )
+LCD.Write ( 10 , 60 , gv_v )
+EndSub
+Sub f_hsv_b_0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_sendarray [ 0 ] = 66
+gv_recvarray = Sensor.CommunicateI2C ( gv_i2cport , gv_i2cslvaddr , 1 , 4 , gv_sendarray )
+gv_snum = gv_recvarray [ 0 ]
+gv_sred = gv_recvarray [ 1 ]
+gv_sgreen = gv_recvarray [ 2 ]
+gv_sblue = gv_recvarray [ 3 ]
+gv_sred = gv_sred / 255
+gv_sgreen = gv_sgreen / 255
+gv_sblue = gv_sblue / 255
+If ( gv_sred > gv_sgreen ) And ( gv_sred > gv_sblue ) Then
+gv_max = gv_sred
+ElseIf ( gv_sgreen > gv_sred ) And ( gv_sgreen > gv_sblue ) Then
+gv_max = gv_sgreen
+ElseIf ( gv_sblue > gv_sred ) And ( gv_sblue > gv_sgreen ) Then
+gv_max = gv_sblue
+EndIf
+If ( gv_sred < gv_sgreen ) And ( gv_sred < gv_sblue ) Then
+gv_min = gv_sred
+ElseIf ( gv_sgreen < gv_sred ) And ( gv_sgreen < gv_sblue ) Then
+gv_min = gv_sgreen
+ElseIf ( gv_sblue < gv_sred ) And ( gv_sblue < gv_sgreen ) Then
+gv_min = gv_sblue
+EndIf
+If ( gv_max = gv_min ) Then
+gv_h = 0
+Else
+If ( gv_sred = gv_max ) Then
+If ( gv_sgreen >= gv_sblue ) Then
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min )
+Else
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min ) + 360
+EndIf
+Else
+If ( gv_max = gv_sgreen ) Then
+gv_h = 60 * ( gv_sblue - gv_sred ) / ( gv_max - gv_min ) + 120
+Else
+gv_h = 60 * ( gv_sred - gv_sgreen ) / ( gv_max - gv_min ) + 240
+EndIf
+EndIf
+EndIf
+If ( gv_max = 0 ) Then
+gv_s = 0
+Else
+gv_s = 1 - gv_min / gv_max
+EndIf
+gv_v = gv_max
+If ( gv_h > 300 And gv_h < 360 ) Or ( gv_h >= 0 And gv_h <= 20 ) And ( gv_s > 0.3 And gv_s <= 1 ) And ( gv_v > 0.025 And gv_v < 0.1 ) Then
+gv_color = 5
+ElseIf ( gv_h >= 20 And gv_h < 60 ) And gv_s >= 0.4 And gv_v > 0.030 Then
+gv_color = 4
+Else
+gv_color = 6
+EndIf
+EndSub
+Sub f_hsv_d_0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_sendarray [ 0 ] = 66
+gv_recvarray = Sensor.CommunicateI2C ( gv_i2cport , gv_i2cslvaddr , 1 , 4 , gv_sendarray )
+gv_snum = gv_recvarray [ 0 ]
+gv_sred = gv_recvarray [ 1 ]
+gv_sgreen = gv_recvarray [ 2 ]
+gv_sblue = gv_recvarray [ 3 ]
+gv_sred = gv_sred / 255
+gv_sgreen = gv_sgreen / 255
+gv_sblue = gv_sblue / 255
+If ( gv_sred > gv_sgreen ) And ( gv_sred > gv_sblue ) Then
+gv_max = gv_sred
+ElseIf ( gv_sgreen > gv_sred ) And ( gv_sgreen > gv_sblue ) Then
+gv_max = gv_sgreen
+ElseIf ( gv_sblue > gv_sred ) And ( gv_sblue > gv_sgreen ) Then
+gv_max = gv_sblue
+EndIf
+If ( gv_sred < gv_sgreen ) And ( gv_sred < gv_sblue ) Then
+gv_min = gv_sred
+ElseIf ( gv_sgreen < gv_sred ) And ( gv_sgreen < gv_sblue ) Then
+gv_min = gv_sgreen
+ElseIf ( gv_sblue < gv_sred ) And ( gv_sblue < gv_sgreen ) Then
+gv_min = gv_sblue
+EndIf
+If ( gv_max = gv_min ) Then
+gv_h = 0
+Else
+If ( gv_sred = gv_max ) Then
+If ( gv_sgreen >= gv_sblue ) Then
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min )
+Else
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min ) + 360
+EndIf
+Else
+If ( gv_max = gv_sgreen ) Then
+gv_h = 60 * ( gv_sblue - gv_sred ) / ( gv_max - gv_min ) + 120
+Else
+gv_h = 60 * ( gv_sred - gv_sgreen ) / ( gv_max - gv_min ) + 240
+EndIf
+EndIf
+EndIf
+If ( gv_max = 0 ) Then
+gv_s = 0
+Else
+gv_s = 1 - gv_min / gv_max
+EndIf
+gv_v = gv_max
+If ( gv_h > 200 And gv_h < 360 ) Or ( gv_h >= 0 And gv_h <= 30 ) And ( gv_s > 0.3 And gv_s <= 1 ) And ( gv_v >= 0 And gv_v < 0.02 ) Then
+gv_color = 5
+ElseIf ( gv_h >= 0 And gv_h < 60 ) And ( gv_s >= 0.4 And gv_s <= 1 ) And gv_v > 0.0030 Then
+gv_color = 4
+Else
+gv_color = 6
+EndIf
+EndSub
+Sub f_a3_0
+gv_s3 = 100 * ( Sensor.ReadPercent ( 3 ) - gv_min3 ) / ( gv_max3 - gv_min3 )
+EndSub
+Sub f_a2_0
+gv_s2 = 100 * ( Sensor.ReadPercent ( 2 ) - gv_min2 ) / ( gv_max2 - gv_min2 )
+EndSub
+Sub f_polin2d_0
+f_a3_0 ()
+f_a2_0 ()
+gv_e = gv_s2 - gv_s3
+gv_u = 0.2 * gv_e + 0 * ( gv_e - gv_eold )
+gv_eold = gv_e
+gv_speedl = gv_speed + gv_u
+gv_speedr = gv_speed - gv_u
+Motor.StartPower ( "B" , gv_speedl )
+Motor.StartPower ( "C" , gv_speedr )
+EndSub
+Sub f_polin2dus_0
+f_a3_0 ()
+f_a2_0 ()
+gv_e = gv_s2 - gv_s3
+gv_u = 0.15 * gv_e + 8 * ( gv_e - gv_eold )
+gv_eold = gv_e
+gv_speedl = gv_speed + gv_u
+gv_speedr = gv_speed - gv_u
+Motor.StartPower ( "B" , gv_speedl )
+Motor.StartPower ( "C" , gv_speedr )
+EndSub
+Sub f_zamoroz_0
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Sub f_zadvig_0
+Motor.Start ( "a" , 80 )
+Program.Delay ( 100 )
+While Motor.GetSpeed ( "a" ) > 20
+Motor.Start ( "a" , 80 )
+EndWhile
+Motor.Stop ( "a" , "true" )
+EndSub
+Sub f_vidvig_0
+Motor.Start ( "a" , - 80 )
+Program.Delay ( 250 )
+Motor.Stop ( "a" , "true" )
+EndSub
+Sub f_virav_naz_0
+f_a2_0 ()
+f_a3_0 ()
+While gv_s2 > 9 And gv_s3 > 9 Or gv_s2 < 9 And gv_s3 > 9 Or gv_s2 > 9 And gv_s3 < 9
+f_a2_0 ()
+f_a3_0 ()
+Motor.StartSync ( "BC" , - 20 , - 20 )
+EndWhile
+While Sensor.ReadPercent ( 2 ) < 10
+Motor.Start ( "B" , 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) < 10
+Motor.Start ( "C" , 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+EndSub
+Sub f_virav_0
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+While Sensor.ReadPercent ( 2 ) > 6 And Sensor.ReadPercent ( 3 ) > 6
+Motor.StartSync ( "BC" , 20 , 20 )
+EndWhile
+Motor.Stop ( "BC" , "True" )
+While Sensor.ReadPercent ( 2 ) > 6
+Motor.Start ( "B" , 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) > 6
+Motor.Start ( "C" , 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+While Sensor.ReadPercent ( 2 ) < 6
+Motor.Start ( "B" , - 20 )
+EndWhile
+Motor.Stop ( "B" , "True" )
+While Sensor.ReadPercent ( 3 ) < 6
+Motor.Start ( "C" , - 20 )
+EndWhile
+Motor.Stop ( "C" , "True" )
+EndSub

@@ -1,0 +1,28 @@
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0
+gv_v = 0
+gv_min1 = 0
+gv_max1 = 0
+gv_min2 = 0
+gv_max2 = 0
+gv_a = 0
+gv_b = 0
+Motor.Invert ( "B" )
+Sensor.SetMode ( 1 , 0 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Sensor.SetMode ( 4 , 0 )
+gv_s1 = 0
+gv_s2 = 0
+gv_k = 0.225
+gv_v = 20
+gv_min1 = 100
+gv_max1 = 0
+gv_min2 = 100
+gv_max2 = 0
+gv_a = 750 * 3.14
+gv_b = 35 * 3.14
+Motor.MoveSync ( "BC" , 16 , 100 , gv_a , "true" )
+Program.Delay ( 3000 )
+Motor.MoveSync ( "BC" , 16 , 100 , gv_b , "true" )

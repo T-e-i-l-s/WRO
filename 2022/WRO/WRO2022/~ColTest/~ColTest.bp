@@ -1,0 +1,95 @@
+MSGSZEV3_m = 0 ' global variable init 
+MSGSZSLV_m = 0 ' global variable init 
+SENDARRAY_m[0] = 0 ' global variable init 
+RECVARRAY_m[0] = 0 ' global variable init 
+SNUM_m = 0 ' global variable init 
+SRED_m = 0 ' global variable init 
+SGREEN_m = 0 ' global variable init 
+SBLUE_m = 0 ' global variable init 
+MAX_m = 0 ' global variable init 
+MIN_m = 0 ' global variable init 
+H_m = 0 ' global variable init 
+S_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+F_m = 0 ' global variable init 
+MXRED1_m = 0 ' global variable init 
+MXBLACK1_m = 0 ' global variable init 
+MXWHITE1_m = 0 ' global variable init 
+MNRED1_m = 0 ' global variable init 
+MNBLACK1_m = 0 ' global variable init 
+MNWHITE1_m = 0 ' global variable init 
+COLOR_m = 0 ' global variable init 
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 4 , 2 )
+MSGSZEV3_m = 0
+MSGSZSLV_m = 0
+Sub HSV1
+SENDARRAY_m [ 0 ] = 66
+RECVARRAY_m = Sensor.CommunicateI2C ( 1 , 1 , 1 , 4 , SENDARRAY_m )
+SNUM_m = RECVARRAY_m [ 0 ]
+SRED_m = RECVARRAY_m [ 1 ]
+SGREEN_m = RECVARRAY_m [ 2 ]
+SBLUE_m = RECVARRAY_m [ 3 ]
+SRED_m = SRED_m
+SGREEN_m = SGREEN_m
+SBLUE_m = SBLUE_m
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+F_m = EV3File.OpenRead ( "left.txt" )
+MXRED1_m = EV3File.ConvertToNumber ( F_m ) + 15
+MXBLACK1_m = EV3File.ConvertToNumber ( F_m ) + 3
+MXWHITE1_m = EV3File.ConvertToNumber ( F_m ) + 3
+MNRED1_m = EV3File.ConvertToNumber ( F_m ) - 7
+MNBLACK1_m = EV3File.ConvertToNumber ( F_m ) - 2
+MNWHITE1_m = EV3File.ConvertToNumber ( F_m ) - 2
+EV3File.close ( F_m )
+If ( H_m > MNRED1_m And H_m < MXRED1_m ) or ( H_m > 360 ) Then
+COLOR_m = 5
+ElseIf SRED_m > MNBLACK1_m and SRED_m < MXBLACK1_m Then
+COLOR_m = 1
+ElseIf SRED_m > MNWHITE1_m or SRED_m < MXWHITE1_m Then
+COLOR_m = 6
+Else
+COLOR_m = 0
+EndIf
+LCD.Text ( 1 , 20 , 20 , 2 , COLOR_m )
+EndSub
+LCD.Clear ()
+While "true"
+HSV1 ()
+EndWhile

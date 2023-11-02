@@ -1,0 +1,93 @@
+Sensor.SetMode(4,4)
+Sub frz
+  Buttons.Flush()
+  Buttons.Wait()
+  Speaker.Note(70, "B7", 200)
+EndSub
+niga = -100000
+While "true"
+  h = 120
+  j = 0
+  port = 4
+  while h = 120 and j < 20
+    A = Sensor.ReadRaw(port,2)
+    sRed = A[0]
+    sGreen = A[1]
+    sBlue = A[2]
+    If (sRed > sGreen) And (sRed > sBlue) Then
+      max = sRed
+    ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+      max = sGreen
+    ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+      max = sBlue
+    EndIf  
+    If (sRed < sGreen) And (sRed < sBlue) Then
+      min = sRed
+    ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+      min = sGreen
+    ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+      min = sBlue
+    EndIf
+    If (max = min) Then
+      H = 0
+    Else     
+      If (sRed = max) Then
+        If (sGreen >= sBlue) Then
+          H = 60 * (sGreen - sBlue) / (max - min)
+        Else
+          H = 60 * (sGreen - sBlue) / (max - min) + 360
+        EndIf
+      Else
+        If (max = sGreen) Then
+          H = 60 * (sBlue - sRed) / (max - min) + 120
+        Else
+          H = 60 * (sRed - sGreen) / (max - min) + 240
+        EndIf
+      EndIf
+    EndIf
+    j = j + 1
+  EndWhile
+  
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+    V = max
+  If H >85 and H < 110  and V > 13 Then
+    if H > 95 Then
+      col = 3
+    Else
+      col = 2
+    EndIf
+    dop = col
+  elseif (sGreen > 7 and sRed < 20) Then
+    if @niga <> 1 Then
+      col = 1
+    EndIf
+  elseIf (H > 10 and H < 35) and V > 10 Then
+    col = 5
+  ElseIf H >35 and H < 85 and V > 10 Then
+    col = 6
+  Else
+    col = 0
+  EndIf
+  
+  
+  LCD.Clear()
+  LCD.Text(1,20,20,2, H)
+  LCD.Text(1,20,60,2, V)  
+  LCD.Text(1,60,100,2, col) 
+  if col = 1 Then
+    EV3.SetLEDColor("GREEN","NORMAL")
+  ElseIf col = 5 Then
+    EV3.SetLEDColor("RED","NORMAL")    
+  ElseIf col = 6 Then
+    EV3.SetLEDColor("ORANGE","NORMAL") 
+  elseif col = 4 Then
+    Speaker.Note(70, "B7", 200)
+  Else
+    EV3.SetLEDColor("OFF","NORMAL")    
+  EndIf
+  frz()
+EndWhile

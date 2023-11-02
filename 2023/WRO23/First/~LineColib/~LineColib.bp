@@ -1,0 +1,39 @@
+MAX1_m = 0 ' global variable init 
+MAX2_m = 0 ' global variable init 
+MIN1_m = 0 ' global variable init 
+MIN2_m = 0 ' global variable init 
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+Motor.Invert ( "B" )
+Sub FRZ
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+MAX1_m = 0
+MAX2_m = 0
+MIN1_m = 100
+MIN2_m = 100
+Motor.ResetCount ( "bc" )
+Motor.Start ( "bc" , 30 )
+While ( Motor.GetCount ( "b" ) + Motor.GetCount ( "c" ) ) / 2 < 500
+If Sensor.ReadPercent ( 2 ) > MAX1_m Then
+MAX1_m = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 2 ) < MIN1_m Then
+MIN1_m = Sensor.ReadPercent ( 2 )
+EndIf
+If Sensor.ReadPercent ( 3 ) > MAX2_m Then
+MAX2_m = Sensor.ReadPercent ( 3 )
+EndIf
+If Sensor.ReadPercent ( 3 ) < MIN2_m Then
+MIN2_m = Sensor.ReadPercent ( 3 )
+EndIf
+EndWhile
+Motor.Stop ( "bc" , "true" )
+LCD.Clear ()
+LCD.Text ( 2 , 20 , 20 , 2 , MAX1_m )
+LCD.Text ( 2 , 20 , 70 , 2 , MIN1_m )
+LCD.Text ( 2 , 80 , 20 , 2 , MAX2_m )
+LCD.Text ( 2 , 80 , 70 , 2 , MIN2_m )
+FRZ ()

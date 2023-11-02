@@ -1,0 +1,161 @@
+
+Sensor.SetMode(1,0)
+Sensor.SetMode(4,0)
+s1=0
+s2=0
+k=0.3
+v=35
+min1=100
+max1=0
+min2=100
+max2=0
+black = 13  
+x = 5
+x2 = 3
+x3 = 1
+y = 4
+color = 0
+
+'================================================
+
+Sub sen1
+  
+  s1=100*(Sensor.ReadPercent(1)-min1)/(max1-min1)
+  
+EndSub
+
+'================================================
+
+Sub sen2
+  
+  s2=100*(Sensor.ReadPercent(4)-min2)/(max2-min2)
+  
+EndSub
+
+
+'================================================
+Sub left
+  Motor.Move("BC",20,7,"true")
+  Motor.MoveSync("BC",-20,20,120,"false")
+  While Sensor.ReadPercent(4)>black
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+'================================================
+
+Sub right
+  Motor.Move("BC",20,7,"true")
+  Motor.MoveSync("BC",20,-20,120,"false")
+  While Sensor.ReadPercent(1)>black
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub  
+
+'================================================
+
+Sub around
+  Motor.MoveSync("BC",-60,60,240,"false")
+  While Sensor.ReadPercent(4)<50
+    Motor.StartSync("BC",-30,30)
+  EndWhile
+  While Sensor.ReadPercent(3)>13
+    Motor.StartSync("BC",-30,30)
+  EndWhile
+  Motor.Stop("BC","true")
+EndSub
+
+'================================================
+  
+sub line
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",v+U*k)
+  Motor.StartPower("B",v+U*k)
+EndSub
+
+'=================================================
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", 13 + err * 2, 9 + err * 2)
+While Sensor.ReadPercent(4)>25
+EndWhile
+Program.Delay(20)
+Motor.ResetCount("BC")
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", 13 + err * 2, 9 + err * 2)
+Speaker.Note(100,"c#5",100)
+While Sensor.ReadPercent(4)<30
+EndWhile
+Motor.Stop("BC","true")
+Speaker.Note(100,"c#5",100)
+grad = Motor.GetCount("c")
+
+mm = grad*Math.pi*8.2/360
+mm = mm + 0.8
+line1 =mm
+line1 =Math.Floor(line1)
+If line1 = 0 Then
+  line1 = 1
+EndIf
+LCD.Clear()
+LCD.Text(1,1,20,20,line1)
+Program.Delay(3000)
+
+
+
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", 13 + err * 2, 9 + err * 2)
+While Sensor.ReadPercent(4)>25
+EndWhile
+Program.Delay(20)
+Motor.ResetCount("BC")
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", 13 + err * 2, 9 + err * 2)
+Speaker.Note(100,"c#5",100)
+While Sensor.ReadPercent(4)<30
+EndWhile
+Motor.Stop("BC","true")
+Speaker.Note(100,"c#5",100)
+grad = Motor.GetCount("c")
+
+mm = grad*Math.pi*8.2/360
+mm = mm + 0.8
+line1 =mm
+line1 =Math.Floor(line1)
+If line1 = 0 Then
+  line1 = 1
+EndIf
+LCD.Clear()
+LCD.Text(1,1,20,20,line1)
+Program.Delay(3000)
+
+
+
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", 13 + err * 2, 9 + err * 2)
+While Sensor.ReadPercent(4)>25
+EndWhile
+Program.Delay(20)
+Motor.ResetCount("BC")
+      err = Math.Abs(Motor.GetCount("B")) - Math.Abs(Motor.GetCount("C"))
+      Motor.StartSync("BC", 13 + err * 2, 9 + err * 2)
+Speaker.Note(100,"c#5",100)
+While Sensor.ReadPercent(4)<30
+EndWhile
+Motor.Stop("BC","true")
+Speaker.Note(100,"c#5",100)
+grad = Motor.GetCount("c")
+
+mm = grad*Math.pi*8.2/360
+mm = mm + 0.8
+line1 =mm
+line1 =Math.Floor(line1)
+If line1 = 0 Then
+  line1 = 1
+EndIf
+LCD.Clear()
+LCD.Text(1,1,20,20,line1)
+Program.Delay(1000000)

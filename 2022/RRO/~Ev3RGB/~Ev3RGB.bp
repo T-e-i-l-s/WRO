@@ -1,0 +1,98 @@
+NIGA_m = 0 ' global variable init 
+H_m = 0 ' global variable init 
+J_m = 0 ' global variable init 
+PORT_m = 0 ' global variable init 
+A_m[0] = 0 ' global variable init 
+SRED_m = 0 ' global variable init 
+SGREEN_m = 0 ' global variable init 
+SBLUE_m = 0 ' global variable init 
+MAX_m = 0 ' global variable init 
+MIN_m = 0 ' global variable init 
+S_m = 0 ' global variable init 
+V_m = 0 ' global variable init 
+COL_m = 0 ' global variable init 
+Sensor.SetMode ( 4 , 4 )
+Sub FRZ
+Buttons.Flush ()
+Buttons.Wait ()
+Speaker.Note ( 70 , "B7" , 200 )
+EndSub
+NIGA_m = - 100000
+While "true"
+H_m = 120
+J_m = 0
+PORT_m = 4
+while H_m = 120 and J_m < 20
+A_m = Sensor.ReadRaw ( PORT_m , 2 )
+SRED_m = A_m [ 0 ]
+SGREEN_m = A_m [ 1 ]
+SBLUE_m = A_m [ 2 ]
+If ( SRED_m > SGREEN_m ) And ( SRED_m > SBLUE_m ) Then
+MAX_m = SRED_m
+ElseIf ( SGREEN_m > SRED_m ) And ( SGREEN_m > SBLUE_m ) then
+MAX_m = SGREEN_m
+ElseIf ( SBLUE_m > SRED_m ) And ( SBLUE_m > SGREEN_m ) then
+MAX_m = SBLUE_m
+EndIf
+If ( SRED_m < SGREEN_m ) And ( SRED_m < SBLUE_m ) Then
+MIN_m = SRED_m
+ElseIf ( SGREEN_m < SRED_m ) And ( SGREEN_m < SBLUE_m ) then
+MIN_m = SGREEN_m
+ElseIf ( SBLUE_m < SRED_m ) And ( SBLUE_m < SGREEN_m ) then
+MIN_m = SBLUE_m
+EndIf
+If ( MAX_m = MIN_m ) Then
+H_m = 0
+Else
+If ( SRED_m = MAX_m ) Then
+If ( SGREEN_m >= SBLUE_m ) Then
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m )
+Else
+H_m = 60 * ( SGREEN_m - SBLUE_m ) / ( MAX_m - MIN_m ) + 360
+EndIf
+Else
+If ( MAX_m = SGREEN_m ) Then
+H_m = 60 * ( SBLUE_m - SRED_m ) / ( MAX_m - MIN_m ) + 120
+Else
+H_m = 60 * ( SRED_m - SGREEN_m ) / ( MAX_m - MIN_m ) + 240
+EndIf
+EndIf
+EndIf
+J_m = J_m + 1
+EndWhile
+If ( MAX_m = 0 ) Then
+S_m = 0
+Else
+S_m = 1 - MIN_m / MAX_m
+EndIf
+V_m = MAX_m
+If H_m > 85 and H_m < 110 and V_m > 13 Then
+COL_m = 3
+elseif ( SGREEN_m > 7 and SRED_m < 20 ) Then
+if NIGA_m <> 1 Then
+COL_m = 1
+EndIf
+elseIf ( H_m > 10 and H_m < 35 ) and V_m > 10 Then
+COL_m = 5
+ElseIf H_m > 35 and H_m < 85 and V_m > 10 Then
+COL_m = 6
+Else
+COL_m = 0
+EndIf
+LCD.Clear ()
+LCD.Text ( 1 , 20 , 20 , 2 , H_m )
+LCD.Text ( 1 , 20 , 60 , 2 , V_m )
+LCD.Text ( 1 , 60 , 100 , 2 , COL_m )
+if COL_m = 1 Then
+EV3.SetLEDColor ( "GREEN" , "NORMAL" )
+ElseIf COL_m = 5 Then
+EV3.SetLEDColor ( "RED" , "NORMAL" )
+ElseIf COL_m = 6 Then
+EV3.SetLEDColor ( "ORANGE" , "NORMAL" )
+elseif COL_m = 4 Then
+Speaker.Note ( 70 , "B7" , 200 )
+Else
+EV3.SetLEDColor ( "OFF" , "NORMAL" )
+EndIf
+FRZ ()
+EndWhile

@@ -1,0 +1,1070 @@
+DATA16 FD_NATIVECODECOMMAND
+DATA16 FD_NATIVECODERESPONSE
+DATA32 STOPLCDUPDATE
+DATA32 NUMMAILBOXES
+ARRAY8 MOTORISINVERTED 4     
+ARRAY8 FIRSTOF2  16
+ARRAY16 LOCKS 2           
+DATA32 s1out1
+DATA32 s1out2
+DATA32 s1out3
+DATA32 s2out1
+DATA32 s2out2
+DATA32 s2out3
+DATA32 s3out1
+DATA32 s3out2
+DATA32 s3out3
+DATA32 s4out1
+DATA32 s4out2
+DATA32 s4out3
+DATA32 getTachoA
+DATA32 tmpTachoA
+DATA8 getSpeedA
+DATA8 setSpeedA
+DATA8 setPowerA
+DATA32 getTachoB
+DATA32 tmpTachoB
+DATA8 getSpeedB
+DATA8 setSpeedB
+DATA8 setPowerB
+DATA32 getTachoC
+DATA32 tmpTachoC
+DATA8 getSpeedC
+DATA8 setSpeedC
+DATA8 setPowerC
+DATA32 getTachoD
+DATA32 tmpTachoD
+DATA8 getSpeedD
+DATA8 setSpeedD
+DATA8 setPowerD
+DATA16 newArray1d
+DATA32 newSize1d
+DATA32 newIndex1d
+DATA32 timeMC1
+DATA32 timeMC2
+DATA32 timeMC3
+DATA32 timeMC4
+DATA32 timeMC5
+DATA32 timeMC6
+DATA32 timeMC7
+DATA32 timeMC8
+DATA32 timeMC9
+DATA32 timeMC1tmp
+DATA32 timeMC2tmp
+DATA32 timeMC3tmp
+DATA32 timeMC4tmp
+DATA32 timeMC5tmp
+DATA32 timeMC6tmp
+DATA32 timeMC7tmp
+DATA32 timeMC8tmp
+DATA32 timeMC9tmp
+DATAF VS1_M
+DATAF VS2_M
+DATAF VK_M
+DATAF VV_M
+DATAF VMIN1_M
+DATAF VMAX1_M
+DATAF VMIN2_M
+DATAF VMAX2_M
+DATAF VBLACK_M
+DATAF VX_M
+DATAF VX2_M
+DATAF VX3_M
+DATAF VY_M
+DATAF VCOLOR_M
+DATAF VU_M
+DATAF VERR_M
+DATAF VGRAD_M
+DATAF VMM_M
+DATAF VLINE1_M
+
+vmthread MAIN
+{
+    MOVE32_32 0 STOPLCDUPDATE
+    MOVE32_32 0 NUMMAILBOXES
+    OUTPUT_RESET 0 15
+
+	WRITE8 0 0 MOTORISINVERTED
+	WRITE8 0 1 MOTORISINVERTED
+	WRITE8 0 2 MOTORISINVERTED
+	WRITE8 0 3 MOTORISINVERTED
+	WRITE8 0 0 FIRSTOF2
+	WRITE8 0 1 FIRSTOF2
+	WRITE8 0 2 FIRSTOF2
+	WRITE8 1 3 FIRSTOF2
+	WRITE8 0 4 FIRSTOF2
+	WRITE8 1 5 FIRSTOF2
+	WRITE8 2 6 FIRSTOF2
+	WRITE8 0 7 FIRSTOF2
+	WRITE8 0 8 FIRSTOF2
+	WRITE8 1 9 FIRSTOF2
+	WRITE8 2 10 FIRSTOF2
+	WRITE8 0 11 FIRSTOF2
+	WRITE8 4 12 FIRSTOF2
+	WRITE8 0 13 FIRSTOF2
+	WRITE8 0 14 FIRSTOF2
+	WRITE8 0 15 FIRSTOF2
+    INPUT_DEVICE CLR_ALL -1
+    ARRAY CREATE8 0 LOCKS
+    MOVE32_32 0 s1out1
+	MOVE32_32 0 s1out2
+	MOVE32_32 0 s1out3
+    MOVE32_32 0 s2out1
+	MOVE32_32 0 s2out2
+	MOVE32_32 0 s2out3
+    MOVE32_32 0 s3out1
+	MOVE32_32 0 s3out2
+	MOVE32_32 0 s3out3
+    MOVE32_32 0 s4out1
+	MOVE32_32 0 s4out2
+	MOVE32_32 0 s4out3
+    MOVE32_32 0 timeMC1
+	MOVE32_32 0 timeMC2
+	MOVE32_32 0 timeMC3
+	MOVE32_32 0 timeMC4
+	MOVE32_32 0 timeMC5
+	MOVE32_32 0 timeMC6
+	MOVE32_32 0 timeMC7
+	MOVE32_32 0 timeMC8
+	MOVE32_32 0 timeMC9
+    MOVEF_F 0.0 VS1_M
+    MOVEF_F 0.0 VS2_M
+    MOVEF_F 0.0 VK_M
+    MOVEF_F 0.0 VV_M
+    MOVEF_F 0.0 VMIN1_M
+    MOVEF_F 0.0 VMAX1_M
+    MOVEF_F 0.0 VMIN2_M
+    MOVEF_F 0.0 VMAX2_M
+    MOVEF_F 0.0 VBLACK_M
+    MOVEF_F 0.0 VX_M
+    MOVEF_F 0.0 VX2_M
+    MOVEF_F 0.0 VX3_M
+    MOVEF_F 0.0 VY_M
+    MOVEF_F 0.0 VCOLOR_M
+    MOVEF_F 0.0 VU_M
+    MOVEF_F 0.0 VERR_M
+    MOVEF_F 0.0 VGRAD_M
+    MOVEF_F 0.0 VMM_M
+    MOVEF_F 0.0 VLINE1_M
+    ARRAY CREATE8 1 LOCKS
+    CALL PROGRAM_MAIN -1
+    PROGRAM_STOP -1
+}
+subcall PROGRAM_MAIN
+{
+    IN_32 SUBPROGRAM
+    DATA32 INDEX
+    ARRAY8 STACKPOINTER 4
+    DATAF F.0
+    DATAF F.1
+    DATAF F.2
+    ARRAY32 RETURNSTACK2 128
+    ARRAY32 RETURNSTACK 128
+    DATAS S.0 252
+    MOVE8_8 0 STACKPOINTER
+    MOVEF_F 0.0 VS1_M
+    MOVEF_F 0.0 VS2_M
+    MOVEF_F 0.0 VK_M
+    MOVEF_F 0.0 VV_M
+    MOVEF_F 0.0 VMIN1_M
+    MOVEF_F 0.0 VMAX1_M
+    MOVEF_F 0.0 VMIN2_M
+    MOVEF_F 0.0 VMAX2_M
+    MOVEF_F 0.0 VBLACK_M
+    MOVEF_F 0.0 VX_M
+    MOVEF_F 0.0 VX2_M
+    MOVEF_F 0.0 VX3_M
+    MOVEF_F 0.0 VY_M
+    MOVEF_F 0.0 VCOLOR_M
+    MOVEF_F 0.0 VU_M
+    MOVEF_F 0.0 VERR_M
+    MOVEF_F 0.0 VGRAD_M
+    MOVEF_F 0.0 VMM_M
+    MOVEF_F 0.0 VLINE1_M
+    DATA8 layer0
+	DATA8 no0
+	DATA8 mode80
+	
+	MOVEF_8 1.0 no0
+	SUB8 no0 1 no0
+	DIV8 no0 4 layer0
+	MATH MOD8 no0 4 no0
+
+	MOVEF_8 0.0 mode80
+	
+	INPUT_DEVICE READY_RAW layer0 no0 0 mode80 0
+    DATA8 layer1
+	DATA8 no1
+	DATA8 mode81
+	
+	MOVEF_8 4.0 no1
+	SUB8 no1 1 no1
+	DIV8 no1 4 layer1
+	MATH MOD8 no1 4 no1
+
+	MOVEF_8 0.0 mode81
+	
+	INPUT_DEVICE READY_RAW layer1 no1 0 mode81 0
+    MOVEF_F 0.0 VS1_M
+    MOVEF_F 0.0 VS2_M
+    MOVEF_F 0.3 VK_M
+    MOVEF_F 35.0 VV_M
+    MOVEF_F 100.0 VMIN1_M
+    MOVEF_F 0.0 VMAX1_M
+    MOVEF_F 100.0 VMIN2_M
+    MOVEF_F 0.0 VMAX2_M
+    MOVEF_F 13.0 VBLACK_M
+    MOVEF_F 5.0 VX_M
+    MOVEF_F 3.0 VX2_M
+    MOVEF_F 1.0 VX3_M
+    MOVEF_F 4.0 VY_M
+    MOVEF_F 0.0 VCOLOR_M
+    CALL MOTOR.GETCOUNT 'B' F.1
+    MATH ABS F.1 F.0
+    CALL MOTOR.GETCOUNT 'C' F.2
+    MATH ABS F.2 F.1
+    SUBF F.0 F.1 VERR_M
+    MULF VERR_M 2.0 F.1
+    ADDF 13.0 F.1 F.0
+    MULF VERR_M 2.0 F.2
+    ADDF 9.0 F.2 F.1
+    CALL MOTOR.STARTSYNC 'BC' F.0 F.1
+  while55:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTEQF F.0 25.0 endwhile55
+  whilebody55:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTF F.0 25.0 whilebody55
+  endwhile55:
+    DATA32 milliseconds58
+	MOVEF_32 20.0 milliseconds58
+	DATA32 timer58
+	TIMER_WAIT milliseconds58 timer58
+	TIMER_READY timer58
+    CALL MOTOR.RESETCOUNT 'BC'
+    CALL MOTOR.GETCOUNT 'B' F.1
+    MATH ABS F.1 F.0
+    CALL MOTOR.GETCOUNT 'C' F.2
+    MATH ABS F.2 F.1
+    SUBF F.0 F.1 VERR_M
+    MULF VERR_M 2.0 F.1
+    ADDF 13.0 F.1 F.0
+    MULF VERR_M 2.0 F.2
+    ADDF 9.0 F.2 F.1
+    CALL MOTOR.STARTSYNC 'BC' F.0 F.1
+    CALL SPEAKER.NOTE 100.0 'c#5' 100.0
+  while71:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTEQF F.0 30.0 endwhile71
+  whilebody71:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTF F.0 30.0 whilebody71
+  endwhile71:
+    CALL MOTOR.STOP 'BC' 'true'
+    CALL SPEAKER.NOTE 100.0 'c#5' 100.0
+    CALL MOTOR.GETCOUNT 'c' VGRAD_M
+    MOVEF_F 3.1415926535897932384 F.2
+    MULF VGRAD_M F.2 F.1
+    MULF F.1 8.2 F.0
+    DATAF tmpf80
+    DATA8 flag80
+    DIVF F.0 360.0 tmpf80
+    CP_EQF 0.0 360.0 flag80
+    SELECTF flag80 0.0 tmpf80 VMM_M
+
+    ADDF VMM_M 0.8 VMM_M
+    MOVEF_F VMM_M VLINE1_M
+    MATH FLOOR VLINE1_M VLINE1_M
+    JR_NEQF VLINE1_M 0.0 else83_1
+    MOVEF_F 1.0 VLINE1_M
+  else83_1:
+  endif83:
+    CALL LCD.CLEAR
+    STRINGS VALUE_FORMATTED VLINE1_M '%g' 99 S.0
+    CALL LCD.TEXT 1.0 1.0 20.0 20.0 S.0
+    DATA32 milliseconds87
+	MOVEF_32 3000.0 milliseconds87
+	DATA32 timer87
+	TIMER_WAIT milliseconds87 timer87
+	TIMER_READY timer87
+    CALL MOTOR.GETCOUNT 'B' F.1
+    MATH ABS F.1 F.0
+    CALL MOTOR.GETCOUNT 'C' F.2
+    MATH ABS F.2 F.1
+    SUBF F.0 F.1 VERR_M
+    MULF VERR_M 2.0 F.1
+    ADDF 13.0 F.1 F.0
+    MULF VERR_M 2.0 F.2
+    ADDF 9.0 F.2 F.1
+    CALL MOTOR.STARTSYNC 'BC' F.0 F.1
+  while98:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTEQF F.0 25.0 endwhile98
+  whilebody98:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTF F.0 25.0 whilebody98
+  endwhile98:
+    DATA32 milliseconds101
+	MOVEF_32 20.0 milliseconds101
+	DATA32 timer101
+	TIMER_WAIT milliseconds101 timer101
+	TIMER_READY timer101
+    CALL MOTOR.RESETCOUNT 'BC'
+    CALL MOTOR.GETCOUNT 'B' F.1
+    MATH ABS F.1 F.0
+    CALL MOTOR.GETCOUNT 'C' F.2
+    MATH ABS F.2 F.1
+    SUBF F.0 F.1 VERR_M
+    MULF VERR_M 2.0 F.1
+    ADDF 13.0 F.1 F.0
+    MULF VERR_M 2.0 F.2
+    ADDF 9.0 F.2 F.1
+    CALL MOTOR.STARTSYNC 'BC' F.0 F.1
+    CALL SPEAKER.NOTE 100.0 'c#5' 100.0
+  while114:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTEQF F.0 30.0 endwhile114
+  whilebody114:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTF F.0 30.0 whilebody114
+  endwhile114:
+    CALL MOTOR.STOP 'BC' 'true'
+    CALL SPEAKER.NOTE 100.0 'c#5' 100.0
+    CALL MOTOR.GETCOUNT 'c' VGRAD_M
+    MOVEF_F 3.1415926535897932384 F.2
+    MULF VGRAD_M F.2 F.1
+    MULF F.1 8.2 F.0
+    DATAF tmpf123
+    DATA8 flag123
+    DIVF F.0 360.0 tmpf123
+    CP_EQF 0.0 360.0 flag123
+    SELECTF flag123 0.0 tmpf123 VMM_M
+
+    ADDF VMM_M 0.8 VMM_M
+    MOVEF_F VMM_M VLINE1_M
+    MATH FLOOR VLINE1_M VLINE1_M
+    JR_NEQF VLINE1_M 0.0 else126_1
+    MOVEF_F 1.0 VLINE1_M
+  else126_1:
+  endif126:
+    CALL LCD.CLEAR
+    STRINGS VALUE_FORMATTED VLINE1_M '%g' 99 S.0
+    CALL LCD.TEXT 1.0 1.0 20.0 20.0 S.0
+    DATA32 milliseconds130
+	MOVEF_32 3000.0 milliseconds130
+	DATA32 timer130
+	TIMER_WAIT milliseconds130 timer130
+	TIMER_READY timer130
+    CALL MOTOR.GETCOUNT 'B' F.1
+    MATH ABS F.1 F.0
+    CALL MOTOR.GETCOUNT 'C' F.2
+    MATH ABS F.2 F.1
+    SUBF F.0 F.1 VERR_M
+    MULF VERR_M 2.0 F.1
+    ADDF 13.0 F.1 F.0
+    MULF VERR_M 2.0 F.2
+    ADDF 9.0 F.2 F.1
+    CALL MOTOR.STARTSYNC 'BC' F.0 F.1
+  while141:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTEQF F.0 25.0 endwhile141
+  whilebody141:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTF F.0 25.0 whilebody141
+  endwhile141:
+    DATA32 milliseconds144
+	MOVEF_32 20.0 milliseconds144
+	DATA32 timer144
+	TIMER_WAIT milliseconds144 timer144
+	TIMER_READY timer144
+    CALL MOTOR.RESETCOUNT 'BC'
+    CALL MOTOR.GETCOUNT 'B' F.1
+    MATH ABS F.1 F.0
+    CALL MOTOR.GETCOUNT 'C' F.2
+    MATH ABS F.2 F.1
+    SUBF F.0 F.1 VERR_M
+    MULF VERR_M 2.0 F.1
+    ADDF 13.0 F.1 F.0
+    MULF VERR_M 2.0 F.2
+    ADDF 9.0 F.2 F.1
+    CALL MOTOR.STARTSYNC 'BC' F.0 F.1
+    CALL SPEAKER.NOTE 100.0 'c#5' 100.0
+  while157:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTEQF F.0 30.0 endwhile157
+  whilebody157:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTF F.0 30.0 whilebody157
+  endwhile157:
+    CALL MOTOR.STOP 'BC' 'true'
+    CALL SPEAKER.NOTE 100.0 'c#5' 100.0
+    CALL MOTOR.GETCOUNT 'c' VGRAD_M
+    MOVEF_F 3.1415926535897932384 F.2
+    MULF VGRAD_M F.2 F.1
+    MULF F.1 8.2 F.0
+    DATAF tmpf166
+    DATA8 flag166
+    DIVF F.0 360.0 tmpf166
+    CP_EQF 0.0 360.0 flag166
+    SELECTF flag166 0.0 tmpf166 VMM_M
+
+    ADDF VMM_M 0.8 VMM_M
+    MOVEF_F VMM_M VLINE1_M
+    MATH FLOOR VLINE1_M VLINE1_M
+    JR_NEQF VLINE1_M 0.0 else169_1
+    MOVEF_F 1.0 VLINE1_M
+  else169_1:
+  endif169:
+    CALL LCD.CLEAR
+    STRINGS VALUE_FORMATTED VLINE1_M '%g' 99 S.0
+    CALL LCD.TEXT 1.0 1.0 20.0 20.0 S.0
+    DATA32 milliseconds173
+	MOVEF_32 1000000.0 milliseconds173
+	DATA32 timer173
+	TIMER_WAIT milliseconds173 timer173
+	TIMER_READY timer173
+ENDTHREAD:
+    RETURN
+SUB_SEN1:
+    CALL SENSOR.READPERCENT 1.0 F.2
+    SUBF F.2 VMIN1_M F.1
+    MULF 100.0 F.1 F.0
+    SUBF VMAX1_M VMIN1_M F.1
+    DATAF tmpf6
+    DATA8 flag6
+    DIVF F.0 F.1 tmpf6
+    CP_EQF 0.0 F.1 flag6
+    SELECTF flag6 0.0 tmpf6 VS1_M
+
+RETSUB_SEN1:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_SEN1:
+SUB_SEN2:
+    CALL SENSOR.READPERCENT 4.0 F.2
+    SUBF F.2 VMIN2_M F.1
+    MULF 100.0 F.1 F.0
+    SUBF VMAX2_M VMIN2_M F.1
+    DATAF tmpf11
+    DATA8 flag11
+    DIVF F.0 F.1 tmpf11
+    CP_EQF 0.0 F.1 flag11
+    SELECTF flag11 0.0 tmpf11 VS2_M
+
+RETSUB_SEN2:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_SEN2:
+SUB_LEFT:
+    CALL MOTOR.SCHEDULE 'BC' 20.0 0.0 7.0 0.0 'true' 
+
+	DATA8 layer12
+	DATA8 nos12
+	DATA8 busy12
+	CALL MOTORDECODEPORTSDESCRIPTOR 'BC' layer12 nos12
+	JR_EQ8 0 nos12 motornotbusy12
+  motorwaiting12:
+	OUTPUT_TEST layer12 nos12 busy12
+	JR_EQ8 busy12 0 motornotbusy12
+	SLEEP
+	JR motorwaiting12
+  motornotbusy12:
+    CALL MOTOR.SCHEDULESYNC 'BC' -20.0 20.0 120.0 'false'
+
+	DATA8 layer13
+	DATA8 nos13
+	DATA8 busy13
+	CALL MOTORDECODEPORTSDESCRIPTOR 'BC' layer13 nos13
+	JR_EQ8 0 nos13 motornotbusy13
+  motorwaiting13:
+	OUTPUT_TEST layer13 nos13 busy13
+	JR_EQ8 busy13 0 motornotbusy13
+	SLEEP
+	JR motorwaiting13
+  motornotbusy13:
+  while14:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTEQF F.0 VBLACK_M endwhile14
+  whilebody14:
+    CALL MOTOR.STARTSYNC 'BC' -20.0 20.0
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTF F.0 VBLACK_M whilebody14
+  endwhile14:
+    CALL MOTOR.STOP 'bc' 'true'
+RETSUB_LEFT:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_LEFT:
+SUB_RIGHT:
+    CALL MOTOR.SCHEDULE 'BC' 20.0 0.0 7.0 0.0 'true' 
+
+	DATA8 layer19
+	DATA8 nos19
+	DATA8 busy19
+	CALL MOTORDECODEPORTSDESCRIPTOR 'BC' layer19 nos19
+	JR_EQ8 0 nos19 motornotbusy19
+  motorwaiting19:
+	OUTPUT_TEST layer19 nos19 busy19
+	JR_EQ8 busy19 0 motornotbusy19
+	SLEEP
+	JR motorwaiting19
+  motornotbusy19:
+    CALL MOTOR.SCHEDULESYNC 'BC' 20.0 -20.0 120.0 'false'
+
+	DATA8 layer20
+	DATA8 nos20
+	DATA8 busy20
+	CALL MOTORDECODEPORTSDESCRIPTOR 'BC' layer20 nos20
+	JR_EQ8 0 nos20 motornotbusy20
+  motorwaiting20:
+	OUTPUT_TEST layer20 nos20 busy20
+	JR_EQ8 busy20 0 motornotbusy20
+	SLEEP
+	JR motorwaiting20
+  motornotbusy20:
+  while21:
+    CALL SENSOR.READPERCENT 1.0 F.0
+    JR_LTEQF F.0 VBLACK_M endwhile21
+  whilebody21:
+    CALL MOTOR.STARTSYNC 'BC' 20.0 -20.0
+    CALL SENSOR.READPERCENT 1.0 F.0
+    JR_GTF F.0 VBLACK_M whilebody21
+  endwhile21:
+    CALL MOTOR.STOP 'bc' 'true'
+RETSUB_RIGHT:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_RIGHT:
+SUB_AROUND:
+    CALL MOTOR.SCHEDULESYNC 'BC' -60.0 60.0 240.0 'false'
+
+	DATA8 layer26
+	DATA8 nos26
+	DATA8 busy26
+	CALL MOTORDECODEPORTSDESCRIPTOR 'BC' layer26 nos26
+	JR_EQ8 0 nos26 motornotbusy26
+  motorwaiting26:
+	OUTPUT_TEST layer26 nos26 busy26
+	JR_EQ8 busy26 0 motornotbusy26
+	SLEEP
+	JR motorwaiting26
+  motornotbusy26:
+  while27:
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_GTEQF F.0 50.0 endwhile27
+  whilebody27:
+    CALL MOTOR.STARTSYNC 'BC' -30.0 30.0
+    CALL SENSOR.READPERCENT 4.0 F.0
+    JR_LTF F.0 50.0 whilebody27
+  endwhile27:
+  while31:
+    CALL SENSOR.READPERCENT 3.0 F.0
+    JR_LTEQF F.0 13.0 endwhile31
+  whilebody31:
+    CALL MOTOR.STARTSYNC 'BC' -30.0 30.0
+    CALL SENSOR.READPERCENT 3.0 F.0
+    JR_GTF F.0 13.0 whilebody31
+  endwhile31:
+    CALL MOTOR.STOP 'BC' 'true'
+RETSUB_AROUND:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_AROUND:
+SUB_LINE:
+    WRITE32 ENDSUB_SEN1:CALLSUB36 STACKPOINTER RETURNSTACK
+    ADD8 STACKPOINTER 1 STACKPOINTER
+    JR SUB_SEN1
+CALLSUB36:
+    WRITE32 ENDSUB_SEN2:CALLSUB37 STACKPOINTER RETURNSTACK
+    ADD8 STACKPOINTER 1 STACKPOINTER
+    JR SUB_SEN2
+CALLSUB37:
+    SUBF VS1_M VS2_M VU_M
+    MULF VU_M VK_M F.1
+    ADDF VV_M F.1 F.0
+    CALL MOTOR.STARTPOWER 'C' F.0
+    MULF VU_M VK_M F.1
+    ADDF VV_M F.1 F.0
+    CALL MOTOR.STARTPOWER 'B' F.0
+RETSUB_LINE:
+    SUB8 STACKPOINTER 1 STACKPOINTER
+    READ32 RETURNSTACK STACKPOINTER INDEX
+    JR_DYNAMIC INDEX
+ENDSUB_LINE:
+}
+subcall SENSOR.READPERCENT       // FF
+{
+	IN_F port
+	OUT_F result
+
+	DATA8 layer
+	DATA8 no
+	DATA8 percentage
+
+	MOVEF_8 port no
+	SUB8 no 1 no
+	DIV8 no 4 layer
+	MATH MOD8 no 4 no
+
+	INPUT_READ layer no 0 -1 percentage
+	JR_LT8 percentage 0 novalue
+	
+	MOVE8_F percentage result
+	RETURN
+novalue:	
+	MOVE8_F 0 result
+}
+subcall MOTOR.SCHEDULE   // SFFFFSV    MOTORDECODEPORTSDESCRIPTOR
+{
+	IN_S ports 8
+	IN_F speed
+	IN_F step1
+	IN_F step2
+	IN_F step3
+	IN_S brake 8
+	
+	DATA8 layer
+	DATA8 nos
+	DATA8 spd
+	DATA32 stp1
+	DATA32 stp2
+	DATA32 stp3	
+	DATA8 brk
+	
+	CALL MOTORDECODEPORTSDESCRIPTOR ports layer nos
+	JR_EQ8 nos 0 noport
+
+	MOVEF_8 speed spd
+	MATH ABS step1 step1
+	MOVEF_32 step1 stp1
+	MATH ABS step2 step2
+	MOVEF_32 step2 stp2
+	MATH ABS step3 step3
+	MOVEF_32 step3 stp3	
+	AND8888_32 brake -538976289 brake        // AND 0xdfdfdfdf performs an upcase for 4 letters
+    STRINGS COMPARE brake 'TRUE' brk	
+
+	OUTPUT_STEP_SPEED layer nos spd stp1 stp2 stp3 brk
+noport:
+}
+subcall MOTORDECODEPORTSDESCRIPTOR  //  V
+{
+	IN_S descriptor 8
+	OUT_8 layer
+	OUT_8 nos
+
+	DATA8 i 
+	DATA8 c
+
+	MOVE8_8 0 layer
+	MOVE8_8 0 nos	
+	MOVE8_8 0 i
+loop:
+	READ8 descriptor i c
+	JR_EQ8 c 0 decoding_end
+	
+	JR_LT8 c 65 no_uppercase_port
+	JR_GT8 c 68 no_uppercase_port
+	SUB8 c 65 c
+	RL8  1 c c
+	OR8  nos c nos
+	JR loop_end
+no_uppercase_port:
+	JR_LT8 c 97 no_lowercase_port
+	JR_GT8 c 100 no_lowercase_port
+	SUB8 c 97 c
+	RL8  1 c c
+	OR8  nos c nos	
+	JR loop_end
+no_lowercase_port:
+	JR_LT8 c 49 loop_end
+	JR_GT8 c 52 loop_end
+	SUB8 c 49 layer
+loop_end:
+	ADD8 1 i i
+	JR loop	
+	
+decoding_end:
+	RETURN
+}
+subcall MOTOR.SCHEDULESYNC   // SFFFSV    MOTORSCHEDULESTEERIMPL
+{
+	IN_S ports 8
+	IN_F speed1
+	IN_F speed2
+	IN_F count
+	IN_S brake 8
+	
+	JR_GTEQF speed1 -100.0 nottoosmall1
+	MOVEF_F -100.0 speed1
+nottoosmall1:
+	JR_LTEQF speed1 100.0 nottoobig1
+	MOVEF_F 100.0 speed1
+nottoobig1:
+	JR_GTEQF speed2 -100.0 nottoosmall2
+	MOVEF_F -100.0 speed2
+nottoosmall2:
+	JR_LTEQF speed2 100.0 nottoobig2
+	MOVEF_F 100.0 speed2
+nottoobig2:
+
+	DATAF speed  
+	DATAF turn
+	MOVE8_F 0 speed
+	MOVE8_F 0 turn
+
+	DATAF speed1abs
+	DATAF speed2abs
+	MATH ABS speed1 speed1abs
+	MATH ABS speed2 speed2abs
+	JR_LTF speed1abs speed2abs secondisfaster
+	JR_EQF speed1abs 0.0 donecomputation
+	 MOVEF_F speed1 speed
+	 MULF 100.0 speed2 turn
+	 DIVF turn speed1 turn
+	 SUBF 100.0 turn turn
+	JR donecomputation
+secondisfaster:
+	 MOVEF_F speed2 speed
+	 MULF 100.0 speed1 turn
+	 DIVF turn speed2 turn
+	 SUBF turn 100.0 turn
+donecomputation:
+	
+	CALL MOTORSCHEDULESTEERIMPL ports speed turn count brake
+}
+subcall MOTORSCHEDULESTEERIMPL   // SFFFSV    MOTORDECODEPORTSDESCRIPTOR
+{
+	IN_S ports 8
+	IN_F speed
+	IN_F turn
+	IN_F count
+	IN_S brake 8
+	
+	DATA8 layer
+	DATA8 nos	
+	DATA8 first
+	DATA8 second
+	DATA8 invfirst
+	DATA8 invsecond
+	
+	CALL MOTORDECODEPORTSDESCRIPTOR ports layer nos
+	READ8 FIRSTOF2 nos first
+	JR_EQ8 0 first not_two_ports
+	XOR8 first nos second
+	READ8 MOTORISINVERTED layer invfirst
+	AND8 first invfirst invfirst
+	READ8 MOTORISINVERTED layer invsecond
+	AND8 second invsecond invsecond
+
+	JR_LTF turn 0.0 second_is_master
+first_is_master:
+	JR_EQ8 invfirst 0 non_invert_first
+	SUBF 0.0 speed speed
+	JR_NEQ8 invsecond 0 done_inversion
+	SUBF 200.0 turn turn
+	JR done_inversion
+non_invert_first:
+	JR_EQ8 invsecond 0 done_inversion
+	SUBF 200.0 turn turn
+	JR done_inversion
+
+second_is_master:
+	JR_EQ8 invsecond 0 non_invert_second
+	SUBF 0.0 speed speed
+	JR_NEQ8 invfirst 0 done_inversion
+	SUBF -200.0 turn turn
+	JR done_inversion
+non_invert_second:
+	JR_EQ8 invfirst 0 done_inversion
+	SUBF -200.0 turn turn
+	JR done_inversion
+
+done_inversion:
+	DATA32 cnt
+	DATA8 brk
+	MATH ABS count count
+	MOVEF_32 count cnt
+	AND8888_32 brake -538976289 brake        // AND 0xdfdfdfdf performs an upcase for 4 letters
+    STRINGS COMPARE brake 'TRUE' brk	
+
+	JR_LTEQ32 cnt 0 dontmove	
+
+	DATA8 spd  
+	DATA16 trn
+	MOVEF_16 turn trn
+	MOVEF_8 speed spd
+	OUTPUT_STEP_SYNC layer nos spd trn cnt brk	
+dontmove:	
+not_two_ports:
+}
+subcall MOTOR.STARTSYNC      // SFFV       MOTORSTARTSTEERIMPL
+{
+	IN_S ports 8
+	IN_F speed1
+	IN_F speed2
+
+	JR_GTEQF speed1 -100.0 nottoosmall1
+	MOVEF_F -100.0 speed1
+nottoosmall1:
+	JR_LTEQF speed1 100.0 nottoobig1
+	MOVEF_F 100.0 speed1
+nottoobig1:
+	JR_GTEQF speed2 -100.0 nottoosmall2
+	MOVEF_F -100.0 speed2
+nottoosmall2:
+	JR_LTEQF speed1 100.0 nottoobig2
+	MOVEF_F 100.0 speed2
+nottoobig2:
+
+	DATAF speed  
+	DATAF turn
+	MOVE8_F 0 speed
+	MOVE8_F 0 turn
+
+	DATAF speed1abs
+	DATAF speed2abs
+	MATH ABS speed1 speed1abs
+	MATH ABS speed2 speed2abs
+	JR_LTF speed1abs speed2abs secondisfaster
+	JR_EQF speed1abs 0.0 donecomputation
+	 MOVEF_F speed1 speed
+	 MULF 100.0 speed2 turn
+	 DIVF turn speed1 turn
+	 SUBF 100.0 turn turn
+	JR donecomputation
+secondisfaster:
+	 MOVEF_F speed2 speed
+	 MULF 100.0 speed1 turn
+	 DIVF turn speed2 turn
+	 SUBF turn 100.0 turn
+donecomputation:
+
+	CALL MOTORSTARTSTEERIMPL ports speed turn
+}
+subcall MOTORSTARTSTEERIMPL      // SFFV       MOTORDECODEPORTSDESCRIPTOR
+{
+	IN_S ports 8
+	IN_F speed
+	IN_F turn
+
+	DATA8 layer
+	DATA8 nos	
+	DATA8 first
+	DATA8 second
+	DATA8 invfirst
+	DATA8 invsecond
+
+	CALL MOTORDECODEPORTSDESCRIPTOR ports layer nos
+	READ8 FIRSTOF2 nos first
+	JR_EQ8 0 first not_two_ports
+	XOR8 first nos second
+	READ8 MOTORISINVERTED layer invfirst
+	AND8 first invfirst invfirst
+	READ8 MOTORISINVERTED layer invsecond
+	AND8 second invsecond invsecond
+
+	JR_LTF turn 0.0 second_is_master
+first_is_master:
+	JR_EQ8 invfirst 0 non_invert_first
+	SUBF 0.0 speed speed
+	JR_NEQ8 invsecond 0 done_inversion
+	SUBF 200.0 turn turn
+	JR done_inversion
+non_invert_first:
+	JR_EQ8 invsecond 0 done_inversion
+	SUBF 200.0 turn turn
+	JR done_inversion
+
+second_is_master:
+	JR_EQ8 invsecond 0 non_invert_second
+	SUBF 0.0 speed speed
+	JR_NEQ8 invfirst 0 done_inversion
+	SUBF -200.0 turn turn
+	JR done_inversion
+non_invert_second:
+	JR_EQ8 invfirst 0 done_inversion
+	SUBF -200.0 turn turn
+	JR done_inversion
+
+done_inversion:
+	DATA8 spd  
+	DATA16 trn
+	MOVEF_16 turn trn
+	MOVEF_8 speed spd
+	OUTPUT_STEP_SYNC layer nos spd trn 0 0
+not_two_ports:
+}
+subcall MOTOR.STOP       // SSV      MOTORDECODEPORTSDESCRIPTOR
+{
+	IN_S ports 8
+	IN_S brake 8
+
+	DATA8 layer
+	DATA8 nos	
+	DATA8 brk
+	
+	CALL MOTORDECODEPORTSDESCRIPTOR ports layer nos
+	JR_EQ8 nos 0 noport
+
+	AND8888_32 brake -538976289 brake        // AND 0xdfdfdfdf performs an upcase for 4 letters
+    STRINGS COMPARE brake 'TRUE' brk	
+	
+	OUTPUT_STOP layer nos brk
+noport:
+}
+subcall MOTOR.STARTPOWER      // SFV     MOTORDECODEPORTSDESCRIPTOR
+{
+	IN_S ports 8
+	IN_F power
+
+	DATA8 layer
+	DATA8 nos	
+
+	CALL MOTORDECODEPORTSDESCRIPTOR ports layer nos
+	JR_EQ8 nos 0 noport
+	
+	JR_GTEQF power -100.0 nottoosmall
+	MOVEF_F -100.0 power
+nottoosmall:
+	JR_LTEQF power 100.0 nottoobig
+	MOVEF_F 100.0 power
+nottoobig:
+
+	DATA8 pwr
+	MOVEF_8 power pwr
+
+    OUTPUT_TIME_POWER layer nos pwr 0 2147483647 0 0
+noport:
+}
+subcall MOTOR.GETCOUNT    // SF     MOTORDECODEPORTDESCRIPTOR
+{
+	IN_S port 8
+	OUT_F result
+	
+	DATA8 layer
+	DATA8 no
+	DATA32 tacho
+	
+	CALL MOTORDECODEPORTDESCRIPTOR port layer no
+	JR_LT8 no 0 noport
+	
+	OUTPUT_GET_COUNT layer no tacho
+	MOVE32_F tacho result
+
+	DATA8 nos
+	RL8 1 no nos
+	DATA8 inv
+	READ8 MOTORISINVERTED layer inv 
+	AND8 inv nos inv
+	JR_EQ8 inv 0 noinvert
+	SUBF 0.0 result result
+noinvert:
+	RETURN
+
+noport:	
+	MOVE8_F 0 result	
+}
+subcall MOTORDECODEPORTDESCRIPTOR  //  V
+{
+	IN_S descriptor 8
+	OUT_8 layer
+	OUT_8 no
+
+	DATA8 i 
+	DATA8 c
+
+	MOVE8_8 0 layer
+	MOVE8_8 -1 no
+	MOVE8_8 0 i
+loop:
+	READ8 descriptor i c
+	JR_EQ8 c 0 decoding_end
+	
+	JR_LT8 c 65 no_uppercase_port
+	JR_GT8 c 68 no_uppercase_port
+	SUB8 c 65 c
+	MOVE8_8 c no
+	JR loop_end
+no_uppercase_port:
+	JR_LT8 c 97 no_lowercase_port
+	JR_GT8 c 100 no_lowercase_port
+	SUB8 c 97 c
+	MOVE8_8 c no
+	JR loop_end
+no_lowercase_port:
+	JR_LT8 c 49 loop_end
+	JR_GT8 c 52 loop_end
+	SUB8 c 49 layer
+loop_end:
+	ADD8 1 i i
+	JR loop	
+	
+decoding_end:
+	RETURN
+}
+subcall MOTOR.RESETCOUNT    // SV        MOTORDECODEPORTSDESCRIPTOR
+{
+	IN_S ports 8
+	
+	DATA8 layer
+	DATA8 nos
+	CALL MOTORDECODEPORTSDESCRIPTOR ports layer nos
+	JR_EQ8 nos 0 noport
+
+	OUTPUT_CLR_COUNT layer nos
+noport:
+}
+subcall SPEAKER.NOTE      // FSFV
+{
+	IN_F volume
+	IN_S note 8
+	IN_F duration
+	
+	DATA8 vol
+	DATA16 tne
+	DATA16 dur
+	MOVEF_8 volume vol
+	NOTE_TO_FREQ note tne
+	MOVEF_16 duration dur
+	
+	SOUND TONE vol tne dur
+}
+subcall LCD.CLEAR   // V
+{
+	UI_DRAW(TOPLINE,0)
+	UI_DRAW(CLEAN)
+	
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}
+subcall LCD.TEXT     // FFFFSV
+{
+	IN_F col
+	IN_F x
+	IN_F y
+	IN_F font
+	IN_S text 252
+	
+	DATA8 col_8
+	DATA16 x_16
+	DATA16 y_16
+	DATA8 font_8	
+	MOVEF_8 col col_8
+	MOVEF_16 x x_16
+	MOVEF_16 y y_16
+	MOVEF_8 font font_8
+	
+	UI_DRAW SELECT_FONT font_8
+	UI_DRAW TEXT col_8 x_16 y_16 text
+
+	JR_NEQ32 0 STOPLCDUPDATE skipupdate
+	UI_DRAW UPDATE
+skipupdate:
+}

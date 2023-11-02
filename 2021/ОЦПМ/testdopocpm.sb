@@ -1,0 +1,56 @@
+k=0.7
+gray=28
+v=30
+Sensor.SetMode(1,0)
+Sensor.SetMode(2,0)
+Motor.Invert("b")
+Sensor.SetMode(4,2)
+black=9
+m=0
+z=0
+sub line
+  U=Sensor.ReadPercent(2)-Sensor.ReadPercent(3)
+  Motor.StartPower("C",v-U*k)
+  Motor.StartPower("B",v+U*k)
+EndSub
+Sub left
+Motor.MoveSync("BC",-20,20,230,"false")
+  While Sensor.ReadPercent(3)>black
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",20,-20,60,"true")
+EndSub
+Sub right
+Motor.MoveSync("BC",20,-20,230,"false")
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",-20,20,60,"true")
+  EndSub  
+Sub around
+  Motor.MoveSync("BC",20,-20,140,"false")
+  While Sensor.ReadPercent(2)<35
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.MoveSync("BC",-20,20,60,"true")
+EndSub 
+Sub go
+  Motor.Move("BC",40,70,"true")
+EndSub
+'============================================
+'============================================
+'============================================
+Motor.ResetCount("B")
+While Motor.GetCount("C")<42 And Sensor.ReadPercent(2)<>black
+    Motor.StartSync("bc",20,-20)
+  EndWhile
+  Motor.Stop("BC","false")
+  If Sensor.ReadPercent(2)<=black Then
+    Motor.MoveSync("BC",-20,20,62,"true")
+  EndIf

@@ -1,0 +1,139 @@
+gv_g = 0
+gv_r = 0
+gv_y = 0
+gv_w = 0
+gv_color = 0
+gv_x = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 0
+gv_min3 = 0
+gv_k1 = 0
+gv_k2 = 0
+gv_speed = 0
+gv_speedl = 0
+gv_speedr = 0
+gv_eold = 0
+gv_n = 0
+gv_p = 0
+gv_i = 0
+gv_i2cport = 0
+gv_i2cslvaddr = 0
+gv_d = 0
+gv_z = 0
+gv_sendarray [ 0 ] = 0
+gv_recvarray [ 0 ] = 0
+gv_snum = 0
+gv_sred = 0
+gv_sgreen = 0
+gv_sblue = 0
+gv_max = 0
+gv_min = 0
+gv_h = 0
+gv_s = 0
+gv_v = 0
+gv_g = 0
+gv_r = 0
+gv_y = 0
+gv_w = 0
+gv_color = 0
+gv_x = 0
+gv_max2 = 0
+gv_max3 = 0
+gv_min2 = 0
+gv_min3 = 0
+Sensor.SetMode ( 1 , 2 )
+Sensor.SetMode ( 2 , 0 )
+Sensor.SetMode ( 3 , 0 )
+gv_k1 = 0.2
+gv_k2 = 0
+gv_speed = 0
+gv_speedl = 0
+gv_speedr = 0
+gv_eold = 0
+gv_n = 0
+gv_p = 0
+gv_i = 0
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_p = 0
+gv_x = 0
+gv_d = 0
+gv_z = 0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+For gv_p = 1 To 100
+f_hsv_0 ()
+gv_x = gv_x + gv_h
+gv_z = gv_z + gv_s
+gv_d = gv_d + gv_v
+EndFor
+gv_h = gv_x / 100
+gv_s = gv_z / 100
+gv_v = gv_d / 100
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h )
+LCD.Write ( 10 , 30 , gv_s )
+LCD.Write ( 10 , 60 , gv_v )
+f_zamoroz_0 ()
+Sub f_zamoroz_0
+Buttons.Flush ()
+Motor.Stop ( "BC" , "true" )
+Buttons.Wait ()
+EndSub
+Sub f_hsv_0
+Sensor.SetMode ( 1 , 2 )
+gv_i2cport = 1
+gv_i2cslvaddr = 1
+gv_sendarray [ 0 ] = 66
+gv_recvarray = Sensor.CommunicateI2C ( gv_i2cport , gv_i2cslvaddr , 1 , 4 , gv_sendarray )
+gv_snum = gv_recvarray [ 0 ]
+gv_sred = gv_recvarray [ 1 ]
+gv_sgreen = gv_recvarray [ 2 ]
+gv_sblue = gv_recvarray [ 3 ]
+gv_sred = gv_sred / 255
+gv_sgreen = gv_sgreen / 255
+gv_sblue = gv_sblue / 255
+If ( gv_sred > gv_sgreen ) And ( gv_sred > gv_sblue ) Then
+gv_max = gv_sred
+ElseIf ( gv_sgreen > gv_sred ) And ( gv_sgreen > gv_sblue ) then
+gv_max = gv_sgreen
+ElseIf ( gv_sblue > gv_sred ) And ( gv_sblue > gv_sgreen ) then
+gv_max = gv_sblue
+EndIf
+If ( gv_sred < gv_sgreen ) And ( gv_sred < gv_sblue ) Then
+gv_min = gv_sred
+ElseIf ( gv_sgreen < gv_sred ) And ( gv_sgreen < gv_sblue ) then
+gv_min = gv_sgreen
+ElseIf ( gv_sblue < gv_sred ) And ( gv_sblue < gv_sgreen ) then
+gv_min = gv_sblue
+EndIf
+If ( gv_max = gv_min ) Then
+gv_h = 0
+Else
+If ( gv_sred = gv_max ) Then
+If ( gv_sgreen >= gv_sblue ) Then
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min )
+Else
+gv_h = 60 * ( gv_sgreen - gv_sblue ) / ( gv_max - gv_min ) + 360
+EndIf
+Else
+If ( gv_max = gv_sgreen ) Then
+gv_h = 60 * ( gv_sblue - gv_sred ) / ( gv_max - gv_min ) + 120
+Else
+gv_h = 60 * ( gv_sred - gv_sgreen ) / ( gv_max - gv_min ) + 240
+EndIf
+EndIf
+EndIf
+If ( gv_max = 0 ) Then
+gv_s = 0
+Else
+gv_s = 1 - gv_min / gv_max
+EndIf
+gv_v = gv_max
+LCD.Clear ()
+LCD.Write ( 10 , 10 , gv_h )
+LCD.Write ( 10 , 30 , gv_s )
+LCD.Write ( 10 , 60 , gv_v )
+EndSub

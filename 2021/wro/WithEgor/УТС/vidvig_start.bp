@@ -1,0 +1,6 @@
+Motor.Start("a",-20)
+Program.Delay(850)
+'while Motor.GetSpeed("a")<-7
+    'Motor.Start("a",-20)
+  'EndWhile
+  Motor.Stop("a","true")

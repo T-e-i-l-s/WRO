@@ -1,0 +1,84 @@
+Sensor.SetMode(1,2)
+'Num = recvarray[0] 'Значение color number I2C, для HSV
+'sRed = recvarray[1] 'Значение Red I2C для HSV
+'sGreen = recvarray[2] 'Значение Green I2C для HSV
+'sBlue = recvarray[3] 'Значение Blue I2C для HSV
+col = 0
+Red = 0
+@I2CPORT = 1 'Порт
+@I2CSLVADDR = 1 'Адрес
+@MSGSZEV3 = 0
+@MSGSZSLV = 0
+
+Function Col(in number I2, in number dal)
+  sendarray[0] = 66
+  I2CPORT=I2
+  recvarray = Sensor.CommunicateI2C(I2CPORT,1,1,4,sendarray)
+  if (I2CPORT = 1) Then
+    
+    if (dal = 1) Then
+      
+      c = recvarray[3]
+      If (c < 55) Then
+        col = 5
+      ElseIf (c < 121) Then
+        col = 1
+      ElseIf ( c > 200) Then
+        col = 6
+      EndIf
+      
+    ElseIf (dal = 2) Then
+      
+      c = recvarray[1]
+      If (c < 47) Then
+        col = 1
+      ElseIf (c < 140) Then
+        col = 5
+      ElseIf ( c > 140) Then
+        col = 6
+      EndIf
+      
+    EndIf
+    
+  elseif (I2CPORT = 4) Then
+    
+   
+    if (dal = 1) Then
+      
+      c = recvarray[2]
+      If (c < 63) Then
+        col = 1
+      ElseIf (c < 80) Then
+        col = 5
+      ElseIf ( c > 180) Then
+        col = 6
+      EndIf
+      
+    ElseIf (dal = 2) Then
+      
+      c = recvarray[1]
+      If (c < 51) Then
+        col = 1
+      ElseIf (c < 30) Then
+        col = 5
+      ElseIf ( c > 30) Then
+        col = 6
+      EndIf
+      
+    EndIf
+    
+    
+    
+  EndIf
+  LCD.Clear()
+  LCD.Text(1,20,20,2,col)
+  LCD.Text(1,20,60,2,c)
+  f1=EV3File.OpenWrite("num.txt")
+  EV3File.WriteLine(f1,col)
+  EV3File.WriteLine(f1,c)
+  EV3File.Close(f1)
+EndFunction
+
+While "true"
+  Col(1,2)
+EndWhile

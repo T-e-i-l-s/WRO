@@ -1,0 +1,31 @@
+Motor.Invert("B")
+Sensor.SetMode(1,0)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,0)
+s1=0
+s2=0
+k=0.225
+v=20
+min1=100
+max1=0
+min2=100
+max2=0
+
+'163
+'82
+'41
+'257,48
+
+s = 15
+l = 3.14*82
+x=360/l*s
+
+'==========================================================================================
+
+    Motor.ResetCount("BC")
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<x
+  Motor.Start("BC",20)
+EndWhile
+Motor.Stop("BC","true")
+

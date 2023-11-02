@@ -1,0 +1,169 @@
+Function move(in number sp , in number l)
+  Motor.ResetCount("BC")
+  While (Math.Abs(Motor.GetCount("C")) + Math.Abs(Motor.GetCount("B")))/2 <= l
+    U=Motor.GetCount("B") - Motor.GetCount("C")
+    Motor.StartPower("C",sp+U*0.8)
+    Motor.StartPower("B",sp-U*0.8)
+  EndWhile  
+  Motor.Stop("BC","true")  
+EndFunction
+
+
+Function toMM (in number mm ,in number sp)
+  l = mm/(82*3.14)*360
+  Motor.ResetCount("BC")
+  move(sp,l)
+  sp = 0
+EndFunction
+
+Sub left
+  l = 65  /(82*3.14)*360
+  Motor.Move("BC",20,l,"true")
+  Motor.MoveSync("BC",-20,20,170,"true")
+  While Sensor.ReadPercent(3)<20
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+  While Sensor.ReadPercent(3)>15
+    Motor.StartSync("BC",-20,20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+Sub right
+  l =50/(82*3.14)*360
+  Motor.Move("BC",20,l,"true")
+  Motor.MoveSync("BC",20,-20,170,"true")
+  While Sensor.ReadPercent(2)<20
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+  While Sensor.ReadPercent(2)>15
+    Motor.StartSync("BC",20,-20)
+  EndWhile
+  Motor.Stop("bc","true")
+EndSub
+
+Function left1 (in number grad)
+  l = ((2*3.14*186*grad)/360)
+  l = l/(3.14*82)*360
+  Motor.ResetCount("BC")
+  Motor.StartPower("C",35)
+  While Motor.GetCount("C") < l
+  EndWhile
+  Motor.Stop("BC","true")
+EndFunction
+
+Function right1 (in number grad)
+  l = ((2*3.14*186*grad)/360)
+  l = l/(3.14*82)*360
+  Motor.ResetCount("BC")
+  Motor.StartPower("B",35)
+  While Motor.GetCount("B") < l
+  EndWhile
+  Motor.Stop("BC","true")
+EndFunction
+
+Function left2 (in number grad)
+  l = ((2*3.14*186*grad)/360)/2
+  l = l/(3.14*82)*360
+  Motor.ResetCount("BC")
+  Motor.StartPower("C",20)
+  Motor.StartPower("B",-20)
+  While (Motor.GetCount("C") + Math.Abs(Motor.GetCount("B")))/2 < l
+  EndWhile
+  Motor.Stop("BC","true")
+EndFunction
+
+Function right2 (in number grad)
+  l = ((2*3.14*186*grad)/360)/2
+  l = l/(3.14*82)*360
+  Motor.ResetCount("BC")
+  Motor.StartPower("C",-20)
+  Motor.StartPower("B",20)
+  While (Motor.GetCount("B") + Math.Abs(Motor.GetCount("C")))/2 < l
+  EndWhile
+  Motor.Stop("BC","true")
+EndFunction
+
+Function close (in number speed)
+  Motor.Start("D",-50)
+  Program.Delay(1000)
+  Motor.Stop("BC","true")
+EndFunction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'1
+'toMM(100,-20)
+'right2(96)
+'toMM(60,20)
+'close(50)
+'Motor.Start("BC",20)
+'Program.Delay(1000)
+'Motor.Stop("BC","true")
+'toMM(75,-20)
+'left2(96)
+'toMM(90,20)
+
+
+
+
+
+
+
+'2
+'toMM(100,-20)
+'right2(96)
+'toMM(110,20)
+'close(50)
+'Motor.Start("BC",20)
+'Program.Delay(1000)
+'Motor.Stop("BC","true")
+'toMM(110,-20)
+'left2(96)
+'toMM(100,20)
+
+
+'3
+'toMM(100,-20)
+'left2(96)
+'toMM(110,20)
+'close(50)
+'Motor.Start("BC",20)
+'Program.Delay(1000)
+'Motor.Stop("BC","true")
+'toMM(110,-20)
+'right2(96)
+'toMM(100,20)
+
+'4
+'toMM(50,-20)
+'left1(190)
+'close(50)
+'grad = 190
+'l = ((2*3.14*186*grad)/360)
+'l = l/(3.14*82)*360
+'Motor.ResetCount("BC")
+'Motor.StartPower("C",-35)
+'While Math.Abs(Motor.GetCount("C")) < l
+'EndWhile
+'Motor.StartPower("BC",-30)
+'Program.Delay(1500)
+'Motor.Stop("BC","true")
+
+
+

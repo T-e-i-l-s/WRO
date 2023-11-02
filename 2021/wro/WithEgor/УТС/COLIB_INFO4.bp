@@ -1,0 +1,573 @@
+
+'  НАЗНАЧЕНИЕ ПЕРЕМЕННЫХ
+
+x=0
+z=0
+d=0
+
+max2=0
+max3=0
+min2=0
+min3=0
+Motor.Invert("b")
+Sensor.SetMode(1,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+
+p=0
+i=0
+I2CPORT = 1 'Порт
+I2CSLVADDR = 1 'Адрес
+
+g=0
+r=0
+y=0
+w=0
+color=0
+
+k1=0.15
+k2=2
+
+Speed=0
+Speedl=0
+Speedr=0
+eold=0
+n=0
+
+'========================= CАБЫ ===================================
+' САБ сканирование Кубиков и определение цвета и запись в переменную COLOR на ДАЛЬНЕМ расстоянии
+
+Sub hsv
+
+  
+  Sensor.SetMode(1,2)
+ I2CPORT = 1 'Порт
+ I2CSLVADDR = 1 'Адрес
+  
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(I2CPORT,I2CSLVADDR,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed / 255
+  sGreen = sGreen / 255
+  sBlue = sBlue / 255
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  'LCD.Write(10,80,Color)
+  'Program.Delay(100)
+  EndSub
+  
+'=============================================================
+
+' Саб сканирования цвета 100 раз на расстоянии Х
+Sub hsv_100
+  p=0
+  x=0
+  d=0
+  z=0
+  Sensor.SetMode(1,2)
+ I2CPORT = 1 'Порт
+  I2CSLVADDR = 1 'Адрес
+  ' СКАНИРУЕМ Кубик-красный на дальнем 1
+  
+  For p=1 To 100
+    hsv()
+    x=x+H
+    z=z+S
+    d=d+V
+  EndFor
+  H=x/100
+  S=z/100
+  V=d/100
+  
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  'LCD.Write(10,80,Color)
+  'Program.Delay(100)
+ 
+EndSub
+
+'==================================================================
+' Саб вычисления среднего значения для 3-го датчика
+Sub a3
+  S3=100*(Sensor.ReadPercent(3)-min3)/(max3-min3)
+  
+EndSub
+'=========================
+
+' Саб вычисления среднего значения для 2-го датчика
+Sub a2
+  S2=100*(Sensor.ReadPercent(2)-min2)/(max2-min2)
+  
+EndSub
+'=======================
+
+' Саб езда по линии по 2-ум датчикам (для вайлов)
+Sub polin2d
+  a3()
+  a2()
+  e=S2-S3
+  u=k1*e+k2*(e-eold)
+  eold=e
+  ' If speed<30 Then
+  ' speed=speed+0.5
+  'EndIf
+  Speedl=speed+u
+  Speedr=speed-u
+  Motor.StartPower("B",Speedl)
+  Motor.StartPower("C",Speedr)
+  
+EndSub
+'================================================
+
+'Саб заморозки
+Sub zamoroz
+  Buttons.Flush()
+  Motor.Stop("BC","true")
+  Buttons.Wait()
+EndSub
+'======================================================
+
+'======================================================
+
+' Саб задвигания датчика
+Sub zadvig
+  Motor.Start("a",80)
+  Program.Delay(100)
+  While Motor.GetSpeed("a")>2
+    Motor.Start("a",80)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+'==================================================
+
+' Саб выдвигания датчика
+Sub vidvig
+  Motor.Start("a",-80)
+  Program.Delay(100)
+  While Motor.GetSpeed("a")<-20
+    Motor.Start("a",-80)
+  EndWhile
+  Motor.Stop("a","true")
+EndSub
+'============================================================
+
+
+' ================= НАЧАЛО ==============================
+'vidvig()
+max2=0
+max3=0
+min2=100
+min3=100
+Motor.ResetCount("bc")
+Motor.Start("bc",30)
+While (Motor.GetCount("b") + Motor.GetCount("c") )/2<500
+  
+  If Sensor.ReadPercent(2) > max2 Then
+    max2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(2) < min2 Then
+    min2=Sensor.ReadPercent(2)
+  EndIf
+  If Sensor.ReadPercent(3) > max3 Then
+    max3=Sensor.ReadPercent(3)
+  EndIf
+  If Sensor.ReadPercent(3) < min3 Then
+    min3=Sensor.ReadPercent(3)
+  EndIf
+  
+EndWhile
+
+Motor.Stop("bc","true")
+'Program.Delay(100)
+
+
+
+Motor.ResetCount("bc")
+  
+  speed=20
+  q=1
+  For i=1 To 9
+    a3()
+    a2()
+    While S3>10 And S2>10 Or S3<10 And S2<10
+      polin2d()
+    EndWhile
+    
+    Motor.Stop("bc","true")
+    'Program.Delay(100)
+       
+    
+    If q=1 Then ' 1-я лампочка 95 mm
+    hsv_100()
+    H1=H
+    S1=S
+    V1=V
+    
+'redd1_H=H
+'redd1_S=S
+'redd1_V=V
+
+'F1=EV3File.OpenWrite("WRO2021/red1.dat")
+'EV3File.WriteLine(F1,redd1_H)
+'EV3File.WriteLine(F1,redd1_S)
+'EV3File.WriteLine(F1,redd1_V)
+    'EV3File.Close(F1)
+    
+    If (H > 120) Or (H=0) Or (H >= 0 And H <= 20) Then'(H > 120) Then '(H >= 50 And H <= 360) or (H >= 0 And H <= 20) Then 'Or (S>0.3 And S<0.5) Then  
+    Color1 = 5  'Red
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+      ElseIf (H < 120) Then '(H > 20 And H < 45) Then
+        '(H >= yeld1_H-10 And H <= yeld1_H+20) Then 'And S>=0.4 And V>0.030 Then
+    Color1 = 4  'Yellow 
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+  'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+  'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  Else
+    color1 = 6 
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+    EndIf
+    'zamoroz()
+  EndIf
+  
+    If q=3 Then ' 2-я лампочка 170 mm
+    hsv_100()
+    
+    H2=H
+    S22=S
+    V2=V
+    
+    
+    'redd2_H=H
+'redd2_S=S
+'redd2_V=V
+
+'F2=EV3File.OpenWrite("WRO2021/red2.dat")
+'EV3File.WriteLine(F2,redd2_H)
+'EV3File.WriteLine(F2,redd2_S)
+'EV3File.WriteLine(F2,redd2_V)
+'EV3File.Close(F2)
+    
+    If (V < 0.043) Then '(H > 120) Or (H>=0 And H<40) Then'(H > 120) Then '(V > 0 And V < 0.020) Then '(H > 150 And H < 360) Or (S>0.3 And S<0.5) Then  
+    Color2 = 5  'Red
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+      Else 'ElseIf (H < 120) Then '(V > 0.020) Then '(V > 0.020 And V < 0.03)
+        '(H >= yeld2_H-2 And H <= yeld2_H+10) Then 'And S>=0.4 And V>0.030 Then
+    Color2 = 4  'Yellow 
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+  'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+  'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  'Else
+    'color2 = 6 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+  EndIf
+    'zamoroz()
+    EndIf
+  
+  'If q=5 Then ' 3-я лампочка 95 mm
+    'hsv()
+    
+    'H3=H
+    'S33=S
+    'V3=V
+    
+    
+    'If (H > 120) Or (H=0) Or (H >= 0 And H <= 20) Then '(H > 120) Then '(H >= 300 And H <= 360) or (H >= 0 And H <= 20) Then 'Or (S>0.3 And S<0.5) Then  
+    'Color3 = 5  'Red
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+      'ElseIf (H < 120) Then '(H > 20 And H < 45) Then
+        '(H >= yeld1_H-10 And H <= yeld1_H+20) Then 'And S>=0.4 And V>0.030 Then
+    'Color3 = 4  'Yellow 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+  'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+  'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  'Else
+    'color3 = 6 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+    'EndIf
+    
+  'EndIf
+  
+  
+  If q=8 Then ' 4-я лампочка 148 mm
+    hsv_100()
+    
+    H4=H
+    S4=S
+    V4=V
+    
+    
+    'redd3_H=H
+'redd3_S=S
+'redd3_V=V
+
+'F3=EV3File.OpenWrite("WRO2021/red3.dat")
+'EV3File.WriteLine(F3,redd3_H)
+'EV3File.WriteLine(F3,redd3_S)
+'EV3File.WriteLine(F3,redd3_V)
+    'EV3File.Close(F3)
+    
+    If (H < 30) Then '(H > 150) or ( H < 40 )Then '(H >= 60 And H <= 360) or (H >= 0 And H <= 20) Then 'Or (S>0.3 And S<0.5) Then  
+    Color4 = 5  'Red
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+      Else 'ElseIf (H < 150) Then '(H > 25 And H <= 45) Then
+        '(H >= yeld1_H-10 And H <= yeld1_H+20) Then 'And S>=0.4 And V>0.030 Then
+    Color4 = 4  'Yellow 
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+  'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+  'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  'Else
+    'color4 = 6 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+    EndIf
+    'zamoroz()
+  EndIf
+  
+    Motor.MoveSync("bc",30,30,50,"true")
+    'zamoroz()
+    q=q+1
+  EndFor
+'========= РАЗВОРОТ ====================================
+Motor.MoveSync("bc",-20,-20,150,"true")
+Motor.MoveSync("bc",-20,20,300,"true")
+a2()
+a3()
+While Sensor.ReadPercent(3)>10
+  Motor.StartSync("bc",-20,20)
+EndWhile
+Motor.Stop("bc","true")
+'Program.Delay(100)
+'zamoroz()
+
+a2()
+a3()
+While Sensor.ReadPercent(2)>50
+  Motor.StartSync("bc",10,-10)
+EndWhile
+Motor.Stop("bc","true")
+'Program.Delay(100)
+'zamoroz()
+
+a3()
+a2()
+While S3>10 And S2>10 Or S3<10 And S2<10
+  speed=30
+  polin2d()
+EndWhile
+
+Motor.Stop("bc","true")
+'Program.Delay(100)
+
+Motor.MoveSync("bc",30,30,50,"true")
+'zamoroz()
+speed=50
+  q=0
+For i=1 To 4
+  k1=0.2
+  k2=0
+    a3()
+    a2()
+    While S3>10 And S2>10 Or S3<10 And S2<10
+      polin2d()
+    EndWhile
+    
+    Motor.Stop("bc","true")
+    'Program.Delay(100)
+zamoroz()
+If q=1 Then ' 5-я лампочка 195 mm
+    hsv_100()
+    
+    H5=H
+    S5=S
+    V5=V
+    
+    
+'redd4_H=H
+'redd4_S=S
+'redd4_V=V
+
+'F4=EV3File.OpenWrite("WRO2021/red4.dat")
+'EV3File.WriteLine(F4,redd4_H)
+'EV3File.WriteLine(F4,redd4_S)
+'EV3File.WriteLine(F4,redd4_V)
+'EV3File.Close(F4)
+    
+    If (H < 25) or H>280 Then '(V < 0.01178) (V >= 0 And V <= 0.012) Or (V >= 0.017) Then
+    'If (H = 0 And S = 1 And V > 0.015) Or (H = 0 And S = 1 And V < 0.009) Or (H = -0 And S > -1 And V < 0.009) Or ((H > 300 And H < 360) And S < 0.7 And V > 0.011) Or (H = 0 And S = 0 And V = 0) Then ' Or (H >= 100 And H <= 360) Then
+    Color5 = 5  'Red
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+    Else'ElseIf (V > 0.0118) Then '(V > 0.013) (V > 0.012 And V < 0.017) Then
+      'ElseIf (H = 0 And S < 1 And V > 0.011) Or ((H > 0 And H < 50) And S < 1 And V > 0.011) Or (H = 0 And S = 1 And V < 0.012) Or ((H > 100 And H < 300) And S < 1 And V < 1) Then
+        '(H >= yeld2_H-2 And H <= yeld2_H+10) Then 'And S>=0.4 And V>0.030 Then
+    Color5 = 4  'Yellow 
+    Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+  'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+  'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  'Else
+    'color5 = 6 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+  EndIf
+    'zamoroz()
+    EndIf 
+  
+  'If q=4 Then ' 6-я лампочка 95 mm
+    'hsv()
+    
+    'H6=H
+    'S6=S
+    'V6=V
+    
+    
+    'If (H > 120) Or (H=0) Or (H >= 0 And H <= 20) Then'(H > 120) Then '(H >= 300 And H <= 360) or (H >= 0 And H <= 20) Then 'Or (S>0.3 And S<0.5) Then  
+    'Color6 = 5  'Red
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Red")
+    'Speaker.Wait()
+      'ElseIf (H < 120) Then '(H > 20 And H < 45) Then
+        '(H >= yeld1_H-10 And H <= yeld1_H+20) Then 'And S>=0.4 And V>0.030 Then
+    'Color6 = 4  'Yellow 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Yellow")
+    'Speaker.Wait()
+  'ElseIf (H > 115 And H < 180) or (H=0) Then
+    'Color = 3  'green
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Green")
+    'Speaker.Wait()
+  'ElseIf (H > 30 And H < 74) and S < 0.50 Then
+    'Color = 6  'white
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/White")
+    'Speaker.Wait()
+  'Else
+    'color6 = 6 
+    'Speaker.Play(100,"/home/root/lms2012/prjs/WRO2021/Zero")
+    'Speaker.Wait()
+    'EndIf
+    'zamoroz()
+  'EndIf
+  
+Motor.MoveSync("bc",30,30,50,"true")
+    'zamoroz()
+    q=q+1
+  EndFor
+
+LCD.Clear()
+LCD.Write(10,10,H1)
+LCD.Write(10,40,S1)
+LCD.Write(10,70,V1)
+LCD.Write(10,100,Color1)
+
+LCD.Write(40,20,H2)
+LCD.Write(40,50,S22)
+LCD.Write(40,80,V2)
+LCD.Write(40,110,Color2)
+
+'LCD.Write(50,10,H3)
+'LCD.Write(50,40,S33)
+'LCD.Write(50,70,V3)
+'LCD.Write(50,100,Color3)
+
+LCD.Write(70,10,H4)
+LCD.Write(70,40,S4)
+LCD.Write(70,70,V4)
+LCD.Write(70,100,Color4)
+
+LCD.Write(100,20,H5)
+LCD.Write(100,50,S5)
+LCD.Write(100,80,V5)
+LCD.Write(100,110,Color5)
+
+'LCD.Write(110,10,H6)
+'LCD.Write(110,40,S6)
+'LCD.Write(110,70,V6)
+'LCD.Write(110,100,Color6)
+
+Program.Delay(1200000)
+

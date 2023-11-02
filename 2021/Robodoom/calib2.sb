@@ -1,0 +1,13 @@
+F1=EV3File.OpenRead("wro2021/calib.dat")
+min1=EV3File.ConvertToNumber(EV3File.ReadLine(F1))
+max1=EV3File.ConvertToNumber(EV3File.ReadLine(F1))
+min2=EV3File.ConvertToNumber(EV3File.ReadLine(F1))
+max2=EV3File.ConvertToNumber(EV3File.ReadLine(F1))
+EV3File.Close(F1)
+
+LCD.Clear()
+LCD.Text(1,20,20,2,min1)
+LCD.Text(1,20,40,2,max1)
+LCD.Text(1,20,60,2,min2)
+LCD.Text(1,20,80,2,max2)
+Program.Delay(100000)

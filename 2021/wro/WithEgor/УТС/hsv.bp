@@ -1,0 +1,100 @@
+'  НАЗНАЧЕНИЕ ПЕРЕМЕННЫХ
+'  Переменные цветов
+g=0
+r=0
+y=0
+w=0
+color=0
+x=0
+
+max2=0
+max3=0
+min2=0
+min3=0
+
+Sensor.SetMode(1,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+k1=0.2
+k2=0
+
+Speed=0
+Speedl=0
+Speedr=0
+eold=0
+n=0
+
+p=0
+i=0
+I2CPORT = 1 'Порт
+I2CSLVADDR = 1 'Адрес
+
+' ========= САБЫ ======================================
+'=======================================================
+
+' САБ сканирование Кубиков - здесь хайтехник просто сканирует 1 раз и выдает три значения H S V
+
+'Sub hsv
+
+  
+  Sensor.SetMode(1,2)
+ I2CPORT = 1 'Порт
+ I2CSLVADDR = 1 'Адрес
+  
+  sendarray[0] = 66 'отсылаемое значение внутри датчика (0x42)
+  recvarray = Sensor.CommunicateI2C(I2CPORT,I2CSLVADDR,1,4,sendarray)
+  'принятие массива с элементами RGB по порядку
+  sNum = recvarray[0] 'Значение color number I2C, для HSV
+  sRed = recvarray[1] 'Значение Red I2C для HSV
+  sGreen = recvarray[2] 'Значение Green I2C для HSV
+  sBlue = recvarray[3] 'Значение Blue I2C для HSV
+  sRed = sRed / 255
+  sGreen = sGreen / 255
+  sBlue = sBlue / 255
+  If (sRed > sGreen) And (sRed > sBlue) Then
+    max = sRed
+  ElseIf (sGreen > sRed) And (sGreen > sBlue) then
+    max = sGreen
+  ElseIf (sBlue > sRed) And (sBlue > sGreen) then
+    max = sBlue
+  EndIf  
+  If (sRed < sGreen) And (sRed < sBlue) Then
+    min = sRed
+  ElseIf (sGreen < sRed) And (sGreen < sBlue) then
+    min = sGreen
+  ElseIf (sBlue < sRed) And (sBlue < sGreen) then
+    min = sBlue
+  EndIf
+  If (max = min) Then
+    H = 0
+  Else     
+    If (sRed = max) Then
+      If (sGreen >= sBlue) Then
+        H = 60 * (sGreen - sBlue) / (max - min)
+      Else
+        H = 60 * (sGreen - sBlue) / (max - min) + 360
+      EndIf
+    Else
+      If (max = sGreen) Then
+        H = 60 * (sBlue - sRed) / (max - min) + 120
+      Else
+        H = 60 * (sRed - sGreen) / (max - min) + 240
+      EndIf
+    EndIf
+  EndIf
+  If (max = 0) Then
+    S = 0
+  Else
+    S = 1 - min / max
+  EndIf
+  V = max
+  
+  LCD.Clear()
+  LCD.Write(10,10,H)
+  LCD.Write(10,30,S)
+  LCD.Write(10,60,V)
+  'LCD.Write(10,80,Color)
+  Program.Delay(20000)
+
+  
+

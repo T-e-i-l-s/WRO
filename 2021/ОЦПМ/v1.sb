@@ -1,0 +1,194 @@
+Sensor.SetMode(4,2)
+Sensor.SetMode(2,0)
+Sensor.SetMode(3,0)
+c1=0
+c2=0
+c3=0
+c4=0
+c5=0
+c6=0
+c7=0
+c8=0
+c9=0
+c10=0
+While (Motor.GetCount("B")+Motor.GetCount("c"))/2<300
+  s1=Sensor.ReadPercent(2)
+  s2=Sensor.ReadPercent(3)
+  If s1<min1 Then
+    min1=s1
+    EndIf
+  If s1>max1 Then
+    max1=s1
+  EndIf
+  If s2<min2 Then
+    min2=s2
+    EndIf
+  If s2>max2 Then
+    max2=s2
+  EndIf
+  Motor.StartSync("BC",40,40)
+EndWhile
+Motor.Stop("BC","true")
+Sub left
+Motor.MoveSync("BC",-30,30,170,"false")
+  While Sensor.ReadPercent(3)>black
+    Motor.StartSync("BC",-30,30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",20,-20,40,"true")
+EndSub
+Sub right
+Motor.MoveSync("BC",30,-30,170,"false")
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("bc","true")
+  Motor.MoveSync("BC",-20,20,40,"true")
+  EndSub  
+Sub around
+  Motor.MoveSync("BC",40,-40,140,"false")
+  While Sensor.ReadPercent(2)>black
+    Motor.StartSync("BC",30,-30)
+  EndWhile
+  Motor.Stop("BC","true")
+  Motor.MoveSync("BC",-20,20,50,"true")
+EndSub 
+Sub sen1
+  s1=100*(Sensor.ReadPercent(2)-min1)/(max1-min1)
+EndSub
+Sub sen2
+  s2=100*(Sensor.ReadPercent(3)-min2)/(max2-min2)
+  EndSub
+  Sub GoToLine
+  sen1()
+  sen2()
+While (s1>10 Or s2<80) And (s1<8 Or s2>10) And (s1>10 Or s2>10)
+  sen1()
+  sen2()
+  U=s1-s2
+  Motor.StartPower("C",gray-U*k)
+  Motor.StartPower("B",gray+U*k)
+EndWhile
+Motor.Stop("BC","FALSE")
+EndSub
+'===========================================================
+'===========================================================
+'===========================================================
+'===========================================================
+'===========================================================
+If c1=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c1=5 then
+  around()
+elseif c1=4 then
+  left()
+elseif c1=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c2=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c2=5 then
+  around()
+elseif c2=4 then
+  left()
+elseif c2=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c3=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c3=5 then
+  around()
+elseif c3=4 then
+  left()
+elseif c3=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c4=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c4=5 then
+  around()
+elseif c4=4 then
+  left()
+elseif c4=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c5=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c5=5 then
+  around()
+elseif c5=4 then
+  left()
+elseif c5=2 then
+  right()
+EndIf
+'============================================================
+If c6=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c6=5 then
+  around()
+elseif c6=4 then
+  left()
+elseif c6=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c7=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c7=5 then
+  around()
+elseif c7=4 then
+  left()
+elseif c7=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c8=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c8=5 then
+  around()
+elseif c8=4 then
+  left()
+elseif c8=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c9=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c9=5 then
+  around()
+elseif c9=4 then
+  left()
+elseif c9=2 then
+  right()
+EndIf
+'============================================================
+GoToLine()
+'============================================================
+If c10=0 Then
+  Motor.Move("BC",30,60,"true")
+ElseIf c10=5 then
+  around()
+elseif c10=4 then
+  left()
+elseif c10=2 then
+  right()
+EndIf
+'============================================================

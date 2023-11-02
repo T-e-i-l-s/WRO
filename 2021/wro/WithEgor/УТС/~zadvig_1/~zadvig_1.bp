@@ -1,0 +1,6 @@
+Motor.Start ( "a" , 80 )
+Program.Delay ( 100 )
+while Motor.GetSpeed ( "a" ) > 20
+Motor.Start ( "a" , 80 )
+EndWhile
+Motor.Stop ( "a" , "true" )
